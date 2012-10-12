@@ -3,10 +3,10 @@ package project42;
 import java.io.File;
 
 public class Landscape {
-private final int sizeX = 12,sizeY = 8;
-private int width,height;
-private GameObject block[][] = new Block[sizeX][sizeY];
-private LevelLoader loader = null;
+final int sizeX = 12,sizeY = 8;
+int width,height;
+GameObject block[][] = new Block[sizeX][sizeY];
+LevelLoader loader = null;
 
 	public static void main(String[] args) {
 		new Landscape(1200,800);
@@ -22,7 +22,7 @@ private LevelLoader loader = null;
 				block[i][j] = new Block(width/sizeX,blockType[j]);
 			}
 		}
-		print();
+//		print();
 	}
 	
 	
