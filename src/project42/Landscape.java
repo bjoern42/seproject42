@@ -10,7 +10,7 @@ private GameObject block[][] = new Block[sizeX][sizeY];
 		height = pHeight;
 		for(int i=0; i<block.length; i++){
 			for(int j=0; j<block.length; j++){
-				block[i][j] = new Block();
+				block[i][j] = new Block(42);
 			}
 		}
 	}
