@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 public class LevelLoader {
-private BufferedReader reader = null;
+BufferedReader reader = null;
 
 	public LevelLoader(File file){
 		try {

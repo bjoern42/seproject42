@@ -3,7 +3,7 @@ package project42;
 import java.awt.Graphics;
 
 public abstract class GameObject {
-protected int width,height;
+int width,height;
 	
 	public GameObject(int pWidth,int pHeight){
 		width = pWidth;
