@@ -9,5 +9,14 @@ protected int width,height;
 		width = pWidth;
 		height = pHeight;
 	}
+	
+	public int getWidth(){
+		return width;
+	}
+	
+	public int getHeight(){
+		return height;
+	}
+	
 	public abstract void paint(Graphics g,int x,int y);
 }
