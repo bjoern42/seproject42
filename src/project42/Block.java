@@ -11,6 +11,10 @@ int type = TYP_LUFT;
 		type = pType;
 	}
 	
+	public int getType(){
+		return type;
+	}
+	
 	@Override
 	public String toString(){
 		return "["+String.valueOf(type)+"]";
@@ -18,7 +22,7 @@ int type = TYP_LUFT;
 
 	@Override
 	public void update() {
-		System.out.print(this);
+//		System.out.println(this);
 		getX();
 		getY();
 		getWidth();

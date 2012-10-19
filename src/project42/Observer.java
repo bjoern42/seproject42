@@ -3,9 +3,14 @@ package project42;
 import java.util.LinkedList;
 
 public class Observer implements Observable {
-LinkedList<GameObject[]> objects = new LinkedList<GameObject[]>();
+LinkedList<Block[]> objects = new LinkedList<Block[]>();
+Player player = null;
+
+	public Observer(Player pPlayer){
+		player  = pPlayer;
+	}
 	
-	public void add(GameObject[] object){
+	public void add(Block[] object){
 		objects.add(object);
 	}
 	
@@ -19,10 +24,19 @@ LinkedList<GameObject[]> objects = new LinkedList<GameObject[]>();
 	
 	@Override
 	public void update() {
-		for(GameObject block[] : objects){
+		boolean inArea = false;
+		for(Block block[] : objects){
 			for(int i=0; i<block.length; i++){
 				block[i].update();
+				if( block[i].getType() == Block.TYP_GRAS && block[i].isInArea(player.getX(), player.getY(), player.getWidth(), player.getHeight())){
+					inArea = true;
+				}
 			}
+		}
+		if(!inArea){
+			player.move(0, 10);
+		}else{
+			System.out.println(player.getY());
 		}
 	}
 }
