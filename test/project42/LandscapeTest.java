@@ -9,17 +9,12 @@ public class LandscapeTest {
 
 	@Before
 	public void setUp() throws Exception {
-		Landscape tester = new Landscape(10,20);
-		assertEquals("Result",10,tester.width);
-		assertEquals("Result",20,tester.height);
 	}
 
 	@Test
 	public void testLandscape() {
+		Landscape landscape = new Landscape(10,20);
+		assertEquals("Result",10,landscape.width);
+		assertEquals("Result",20,landscape.height);
 	}
-
-	@Test
-	public void testPrint() {
-	}
-
 }

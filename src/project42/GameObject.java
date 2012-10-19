@@ -1,13 +1,28 @@
 package project42;
 
-import java.awt.Graphics;
-
-public abstract class GameObject {
-int width,height;
+public abstract class GameObject implements Observable{
+int x, y, width, height;
 	
-	public GameObject(int pWidth,int pHeight){
+	public GameObject(int pX, int pY, int pWidth,int pHeight){
 		width = pWidth;
 		height = pHeight;
+		x = pX;
+		y = pY;
+	}
+	
+	public boolean isInArea(int pX, int pY, int pWidth, int pHeight){
+		if(pX + pWidth > x && pX < x + width && pY + pHeight > y && pY < y + height){
+			return true;
+		}
+		return false;
+	}
+	
+	public int getX(){
+		return x;
+	}
+	
+	public int getY(){
+		return y;
 	}
 	
 	public int getWidth(){
@@ -17,6 +32,4 @@ int width,height;
 	public int getHeight(){
 		return height;
 	}
-	
-	public abstract void paint(Graphics g,int x,int y);
 }
