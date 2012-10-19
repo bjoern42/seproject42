@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.InputStreamReader;
 
 public class LevelLoader {
@@ -26,7 +25,7 @@ BufferedReader reader = null;
 				retVal[i] = Integer.parseInt(tmp[i]);
 			}
 			return retVal;
-		} catch (IOException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
 		}
