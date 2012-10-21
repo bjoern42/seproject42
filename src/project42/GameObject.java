@@ -1,7 +1,7 @@
 package project42;
 
 
-public abstract class GameObject implements Observable{
+public abstract class GameObject{
 int x, y, width, height;
 
 	public GameObject(int pX, int pY, int pWidth,int pHeight){
@@ -12,7 +12,6 @@ int x, y, width, height;
 	}
 	
 	public boolean isInArea(int pX, int pY, int pWidth, int pHeight){
-		pY += 10;
 		if(pX + pWidth > x && pX < x + width && pY + pHeight > y && pY < y + height){
 			return true;
 		}

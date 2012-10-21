@@ -1,7 +1,7 @@
 package project42;
 
 
-public class Block extends GameObject{
+public class Block extends GameObject  implements Observable{
 static final int TYP_LUFT = 0;	
 static final int TYP_GRAS = 1;
 int type = TYP_LUFT;
@@ -21,8 +21,9 @@ int type = TYP_LUFT;
 	}
 
 	@Override
-	public void update() {
-//		System.out.println(this);
+	public void update(int pChange) {
+		System.out.print(this);
+		x += pChange;
 		getX();
 		getY();
 		getWidth();
