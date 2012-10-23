@@ -22,7 +22,7 @@ private boolean test = true;
 		int size = width/SIZE_X;
 		player = new Player(SIZE_X*size/2, SIZE_Y*size-size*3, size, size*2);
 		objects = new Observer(size ,SIZE_X, SIZE_Y);		
-		
+		System.out.println(player.getX());
 		startGravity();
 //		jump();
 	}
@@ -65,11 +65,9 @@ private boolean test = true;
 		if(objects.isMovableArea(player.getX() + SPEED, player.getY(), player.getWidth(), player.getHeight())){
 			counter+=SPEED;
 			if(counter > player.getWidth()){
-				System.out.println("removed");
-				counter = 0;
+				counter = SPEED;
 				objects.removeFirst();
 			}
-			
 			objects.update(-SPEED);
 		}else{
 			counter = 0;
@@ -81,9 +79,10 @@ private boolean test = true;
 		if(objects.isMovableArea(player.getX() - SPEED, player.getY(), player.getWidth(), player.getHeight())){
 			counter+=SPEED;
 			if(counter > player.getWidth()){
-				counter = 0;
+				counter = SPEED;
 				objects.removeLast();
 			}
+			
 			objects.update(SPEED);
 		}
 		else{
