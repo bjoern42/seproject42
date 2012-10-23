@@ -1,115 +1,93 @@
 package project42;
 
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
+import java.util.List;
 
-public class Landscape implements KeyListener{
-final int SIZE_X = 12,SIZE_Y = 8, GRAVITY = 10, SPEED = 10, JUMP_HEIGHT = 10;
-int width, height, counter = 0;
+public class Landscape{
+final int SIZE_X = 12,SIZE_Y = 8, GRAVITY = 20, SPEED = 10, JUMP_HEIGHT = 20;
+int width, height;
 LevelLoader loader = null;
 Player player = null;
 Observer objects = null;
-
-private boolean test = true;
-
-	public static void main(String[] args) {
-		new Landscape(1200,800);
-	}
+Observable observable = null;
+boolean jump = true;
 	
-	public Landscape(int pWidth,int pHeight){
+	public Landscape(Observable pObservable, int pWidth,int pHeight){
+		observable = pObservable;
 		width = pWidth;
 		height = pHeight;
 		int size = width/SIZE_X;
 		player = new Player(SIZE_X*size/2, SIZE_Y*size-size*3, size, size*2);
-		objects = new Observer(size ,SIZE_X, SIZE_Y);		
-		System.out.println(player.getX());
-		startGravity();
-//		jump();
+		objects = new Observer(size ,SIZE_X, SIZE_Y);
+		gravity();
 	}
 	
-	private void startGravity(){
+	public Player getPlayer(){
+		return player;
+	}
+	
+	public List<Block[]> getVisibleBlocks(){
+		return objects.getVisibleBlocks();
+	}
+	
+	private void pause(){
+		try {
+			Thread.sleep(20);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private void gravity(){
 		new Thread(){
 			public void run(){
 				while(true){
-					try {
-						Thread.sleep(100);
-						if(objects.isMovableArea(player.getX(), player.getY() + GRAVITY, player.getWidth(), player.getHeight())){
-							player.move(0, GRAVITY);
-						}
-						movetest(test);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
+					pause();
+					boolean isMovableArea = objects.isMovableArea(player.getX(), player.getY() + GRAVITY, player.getWidth(), player.getHeight());
+					if(jump && isMovableArea){
+						player.move(0, GRAVITY);
+						observable.update(0);
 					}
 				}
 			}
 		}.start();
 	}
 	
-	private void movetest(boolean right){
-		if(right){
-			right();
-		}else{
-			left();
+	public void jump(){
+		if(jump){
+			jump = false;
+			new Thread(){
+				public void run(){
+					for(int j = 0; j < JUMP_HEIGHT;j++){
+						if(objects.isMovableArea(player.getX(), player.getY() - GRAVITY/2, player.getWidth(), player.getHeight())){
+							pause();
+							player.move(0, -GRAVITY/2);
+							observable.update(0);
+						}
+					}
+					for(int j = 0; j < JUMP_HEIGHT;j++){
+						if(objects.isMovableArea(player.getX(), player.getY() + GRAVITY, player.getWidth(), player.getHeight())){
+							pause();
+							player.move(0, GRAVITY);
+							observable.update(0);
+						}
+					}
+					jump = true;
+				}
+			}.start();
 		}
 	}
 	
-	private void jump(){
-		for(int i = 0; i < JUMP_HEIGHT;i++){
-			if(objects.isMovableArea(player.getX(), player.getY() - GRAVITY, player.getWidth(), player.getHeight())){
-				player.move(0, -GRAVITY*2);
-			}
-		}
-	}
-	
-	private void right(){
+	public void right(){
 		if(objects.isMovableArea(player.getX() + SPEED, player.getY(), player.getWidth(), player.getHeight())){
-			counter+=SPEED;
-			if(counter > player.getWidth()){
-				counter = SPEED;
-				objects.removeFirst();
-			}
 			objects.update(-SPEED);
-		}else{
-			counter = 0;
-			test = false;
+			observable.update(0);
 		}
 	}
 	
-	private void left(){
+	public void left(){
 		if(objects.isMovableArea(player.getX() - SPEED, player.getY(), player.getWidth(), player.getHeight())){
-			counter+=SPEED;
-			if(counter > player.getWidth()){
-				counter = SPEED;
-				objects.removeLast();
-			}
-			
 			objects.update(SPEED);
-		}
-		else{
-			counter = 0;
+			observable.update(0);
 		}
 	}
-	
-	@Override
-	public void keyPressed(KeyEvent arg0) {
-		switch (arg0.getKeyCode()){
-			case KeyEvent.VK_KP_UP:{
-				jump();
-				break;
-			}
-			case KeyEvent.VK_KP_LEFT:{
-				left();
-				break;
-			}
-			case KeyEvent.VK_KP_RIGHT:{
-				right();
-				break;
-			}
-		}
-	}
-	@Override
-	public void keyReleased(KeyEvent arg0) {}
-
-	@Override
-	public void keyTyped(KeyEvent arg0) {}
 }

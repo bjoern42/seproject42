@@ -15,6 +15,10 @@ int type = TYP_LUFT;
 		return type;
 	}
 	
+	public void setX(int pX){
+		x = pX;
+	}
+	
 	@Override
 	public String toString(){
 		return "["+String.valueOf(type)+"]";
@@ -24,9 +28,5 @@ int type = TYP_LUFT;
 	public void update(int pChange) {
 		System.out.print(this);
 		x += pChange;
-		getX();
-		getY();
-		getWidth();
-		getHeight();
 	}
 }

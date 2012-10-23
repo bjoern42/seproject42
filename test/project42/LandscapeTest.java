@@ -14,7 +14,7 @@ public class LandscapeTest {
 
 	@Test
 	public void testLandscape() {
-		Landscape landscape = new Landscape(10,20);
+		Landscape landscape = new Landscape(null,10,20);
 		assertEquals("Result",10,landscape.width);
 		assertEquals("Result",20,landscape.height);
 	}

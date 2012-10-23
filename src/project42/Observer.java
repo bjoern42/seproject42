@@ -2,11 +2,11 @@ package project42;
 
 import java.io.File;
 import java.util.LinkedList;
+import java.util.List;
 
 public class Observer implements Observable {
 LinkedList<Block[]> objects = new LinkedList<Block[]>();
 int start, length, size, sizeX;
-boolean endReached = false;
 
 	public Observer(int pSize, int pSizeX, int pSizeY){
 		start = 0;
@@ -25,19 +25,19 @@ boolean endReached = false;
 			objects.add(block);
 			i++;
 		}
-
+	}
+	
+	public List<Block[]> getVisibleBlocks(){
+		return objects.subList(start, start+length);
 	}
 	
 	public void removeFirst(){
-		if(start < objects.size()){
-			int x = (sizeX-1)*size;
+		if(start+length < objects.size()){
+			int x = sizeX*size;
 			for(Block b:objects.get(start+length)){
-				b.x = x;
+				b.setX(x);
 			}
-			endReached = false;
 			start++;
-		}else{
-			endReached = true;
 		}
 	}
 	
@@ -46,12 +46,9 @@ boolean endReached = false;
 			int x = 0;
 			
 			for(Block b:objects.get(start)){
-				b.x = x;
+				b.setX(x);
 			}
-			endReached = false;
 			start--;
-		}else{
-			endReached = true;
 		}
 	}
 	
@@ -61,17 +58,24 @@ boolean endReached = false;
 	
 	@Override
 	public void update(int pChange) {
-		if( !endReached){
-			for(int i=start; i < start+length;i++){
-				Block block[] = objects.get(i);
-				System.out.print(block[0].getX()+"\t");
-				for(int j=0; j<block.length; j++){
-					block[j].update(pChange);
-				}
-				System.out.println();
-			}
-			System.out.println("------------------------------------------");
+		System.out.println(objects.get(start)[0].getX());
+		if(objects.get(start)[0].getX() <= -size){
+			removeFirst();
+		}else if(objects.get(start+length-1)[0].getX() >= (length-1)*size){
+			removeLast();
 		}
+		for(int i=start; i < start+length;i++){
+			Block block[] = objects.get(i);
+			System.out.print(block[0].getX()+"\t");
+			for(int j=0; j<block.length; j++){
+				block[j].update(pChange);
+			}
+			if(i==start+6){
+				System.out.print("<-player");
+			}
+			System.out.println();
+		}
+		System.out.println("------------------------------------------");
 	}
 	
 	public boolean isMovableArea(int pX, int pY, int pWidth, int pHeight){
