@@ -18,4 +18,24 @@ public class LandscapeTest {
 		assertEquals("Result",10,landscape.width);
 		assertEquals("Result",20,landscape.height);
 	}
+	
+	@Test
+	public void testLeft(){
+		Observer observer = new Observer(100, 12, 8);
+		Landscape landscape = new Landscape(observer,10,20);
+		Block block = observer.getVisibleBlocks().get(0)[0];
+		int x = block.getX();
+		landscape.left();
+		assertEquals("Result",x+10,block.getX());
+	}
+	
+	@Test
+	public void testRight(){
+		Observer observer = new Observer(100, 12, 8);
+		Landscape landscape = new Landscape(observer,10,20);
+		Block block = landscape.getVisibleBlocks().get(0)[0];
+		int x = block.getX();
+		landscape.right();
+		assertEquals("Result",x-10,block.getX());
+	}
 }

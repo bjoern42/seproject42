@@ -44,38 +44,26 @@ int start, length, size, sizeX;
 	public void removeLast(){
 		if(start > 0){
 			int x = 0;
-			
 			for(Block b:objects.get(start)){
 				b.setX(x);
 			}
 			start--;
 		}
 	}
-	
-	public int getLastX(){
-		return objects.getLast()[0].getX();
-	}
-	
+
 	@Override
 	public void update(int pChange) {
-		System.out.println(objects.get(start)[0].getX());
-		if(objects.get(start)[0].getX() <= -size){
+		if(objects.get(start)[0].getX() < -size-pChange){
 			removeFirst();
-		}else if(objects.get(start+length-1)[0].getX() >= (length-1)*size){
+		}else if(objects.get(start+length-1)[0].getX() > (length-1)*size-pChange){
 			removeLast();
 		}
 		for(int i=start; i < start+length;i++){
 			Block block[] = objects.get(i);
-			System.out.print(block[0].getX()+"\t");
 			for(int j=0; j<block.length; j++){
 				block[j].update(pChange);
 			}
-			if(i==start+6){
-				System.out.print("<-player");
-			}
-			System.out.println();
 		}
-		System.out.println("------------------------------------------");
 	}
 	
 	public boolean isMovableArea(int pX, int pY, int pWidth, int pHeight){

@@ -26,7 +26,6 @@ int type = TYP_LUFT;
 
 	@Override
 	public void update(int pChange) {
-		System.out.print(this);
 		x += pChange;
 	}
 }

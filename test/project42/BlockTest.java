@@ -18,6 +18,8 @@ public class BlockTest {
 		assertEquals("Result",1,tester.type);
 		assertEquals("Result",10,tester.getWidth());
 		assertEquals("Result",10,tester.getHeight());
+		assertEquals("Result",0,tester.getX());
+		assertEquals("Result",0,tester.getY());
 	}
 	
 	@Test
@@ -66,4 +68,23 @@ public class BlockTest {
 		assertEquals("Result","[1]",tester.toString());
 	}
 
+	@Test
+	public void testGetType(){
+		Block tester = new Block(0,0,10,1);
+		assertEquals("Result",1,tester.getType());
+	}
+	
+	@Test
+	public void testSetX(){
+		Block tester = new Block(0,0,10,1);
+		tester.setX(20);
+		assertEquals("Result",20,tester.getX());
+	}
+	
+	@Test
+	public void testUpdate(){
+		Block tester = new Block(0,0,10,1);
+		tester.update(10);
+		assertEquals("Result",10,tester.getX());
+	}
 }
