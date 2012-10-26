@@ -6,20 +6,18 @@ import java.util.List;
 
 public class Observer implements Observable {
 LinkedList<Block[]> objects = new LinkedList<Block[]>();
-int start, length, size, sizeX;
+int start, length, size;
 
-	public Observer(int pSize, int pSizeX, int pSizeY){
+	public Observer(File map, int pSize, int pLength){
 		start = 0;
-		length = pSizeX+1;
+		length = pLength+1;
 		size = pSize;
-		sizeX = pSizeX;
-		LevelLoader loader = new LevelLoader(new File("map.lvl"));
-
+		LevelLoader loader = new LevelLoader(map);
 		int blockType[] = null;
 		int i = 0;
 		while((blockType = loader.readNext()) != null){
-			Block block[] = new Block[pSizeY];
-			for(int j=0; j<pSizeY; j++){
+			Block block[] = new Block[blockType.length];
+			for(int j=0; j<blockType.length; j++){
 				block[j] = new Block(size*i, size*j, size,blockType[j]);
 			}
 			objects.add(block);
@@ -33,7 +31,7 @@ int start, length, size, sizeX;
 	
 	public void removeFirst(){
 		if(start+length < objects.size()){
-			int x = sizeX*size;
+			int x = (length-1)*size;
 			for(Block b:objects.get(start+length)){
 				b.setX(x);
 			}

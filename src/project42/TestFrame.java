@@ -5,6 +5,8 @@ import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.geom.Rectangle2D;
+import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -19,21 +21,21 @@ Image buffer = null;
 boolean up = false, right = false, left = false;
 
 	public static void main(String[] args) {
-		new TestFrame(1200, 800);
+		new TestFrame(1200, 800, 12);
 	}
 	
-	public TestFrame(int pWidth, int pHeight){
+	public TestFrame(int pWidth, int pHeight, int pLength){
 		super("TestFrame");
 		setSize(pWidth, pHeight);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		
-		landscape = new Landscape(this,pWidth, pHeight);
+		landscape = new Landscape(new File("map.lvl"),this,pWidth, pHeight, pLength);
 		setVisible(true);
 		addKeyListener(this);
 		
 		while(true){
 			try {
-				Thread.sleep(30);
+				Thread.sleep(20);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
@@ -80,8 +82,8 @@ boolean up = false, right = false, left = false;
 		img = Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("images/player.png"));
 		player = landscape.getPlayer();
 //		bufG.drawString(""+player.getX()+","+player.getY(), player.getX(), player.getY());
-		bufG.drawImage(img, player.getX(), player.getY(), player.getWidth(), player.getHeight(), this);
-		
+//		bufG.drawImage(img, player.getX(), player.getY(), player.getWidth(), player.getHeight(), this);
+		bufG.fillRect(player.getX(), player.getY(), player.getWidth(), player.getHeight());
 		g.drawImage(buffer,0,0,this);
 	}
 

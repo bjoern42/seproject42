@@ -1,5 +1,6 @@
 package project42;
 
+import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -9,11 +10,20 @@ Landscape landscape = null;
 Player player = null;
 
 	public static void main(String[] args) {
-		new TUI();
+		new TUI().test();
 	}
 	
 	public TUI(){
-		landscape = new Landscape(this,1200, 800);
+		landscape = new Landscape(new File("mapTUI.lvl"),this,800, 800,4);
+	}
+	
+	private void test(){
+		landscape.jump();
+		try {
+			Thread.sleep(2000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 		for(int i=0;i<100;i++){
 			landscape.right();
 		}

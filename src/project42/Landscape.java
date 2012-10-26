@@ -1,9 +1,10 @@
 package project42;
 
+import java.io.File;
 import java.util.List;
 
 public class Landscape{
-final int SIZE_X = 12,SIZE_Y = 8, GRAVITY = 20, SPEED = 10, JUMP_HEIGHT = 20;
+final int GRAVITY = 10, SPEED = 10, JUMP_HEIGHT = 16;
 int width, height;
 LevelLoader loader = null;
 Player player = null;
@@ -11,13 +12,13 @@ Observer objects = null;
 Observable observable = null;
 boolean jump = true;
 	
-	public Landscape(Observable pObservable, int pWidth,int pHeight){
+	public Landscape(File map,Observable pObservable, int pWidth,int pHeight, int pLength){
 		observable = pObservable;
 		width = pWidth;
 		height = pHeight;
-		int size = width/SIZE_X;
-		player = new Player(SIZE_X*size/2, SIZE_Y*size-size*3, size, size*2);
-		objects = new Observer(size ,SIZE_X, SIZE_Y);
+		int size = width/pLength;
+		player = new Player(pLength*size/2, 0, size, size*2);
+		objects = new Observer(map, size ,pLength);
 		gravity();
 	}
 	
@@ -44,7 +45,7 @@ boolean jump = true;
 					pause();
 					boolean isMovableArea = objects.isMovableArea(player.getX(), player.getY() + GRAVITY, player.getWidth(), player.getHeight());
 					if(jump && isMovableArea){
-						player.move(0, GRAVITY);
+						player.move(0, GRAVITY*2);
 						observable.update(0);
 					}
 				}
@@ -58,16 +59,16 @@ boolean jump = true;
 			new Thread(){
 				public void run(){
 					for(int j = 0; j < JUMP_HEIGHT;j++){
-						if(objects.isMovableArea(player.getX(), player.getY() - GRAVITY/2, player.getWidth(), player.getHeight())){
+						if(objects.isMovableArea(player.getX(), player.getY() - GRAVITY, player.getWidth(), player.getHeight())){
 							pause();
-							player.move(0, -GRAVITY/2);
+							player.move(0, -GRAVITY);
 							observable.update(0);
 						}
 					}
 					for(int j = 0; j < JUMP_HEIGHT;j++){
-						if(objects.isMovableArea(player.getX(), player.getY() + GRAVITY, player.getWidth(), player.getHeight())){
+						if(objects.isMovableArea(player.getX(), player.getY() + GRAVITY*2, player.getWidth(), player.getHeight())){
 							pause();
-							player.move(0, GRAVITY);
+							player.move(0, GRAVITY*2);
 							observable.update(0);
 						}
 					}
