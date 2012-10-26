@@ -1,10 +1,17 @@
 package project42;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Graphics;
+import java.awt.Image;
 import java.awt.Insets;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -14,6 +21,7 @@ public class JumpNRun extends JFrame implements ActionListener{
 GUI gui = null;
 JPanel pMenu = new JPanel();
 JButton btStart = new JButton("Starten"), btEditor = new JButton("Level Editor");
+Image img = null;
 
 	public static void main(String[] args) {
 		new JumpNRun(1200, 800, 12);
@@ -29,12 +37,34 @@ JButton btStart = new JButton("Starten"), btEditor = new JButton("Level Editor")
 		btStart.addActionListener(this);
 		btEditor.addActionListener(this);
 		
+		pMenu.setLayout(new BoxLayout(pMenu, BoxLayout.Y_AXIS));
+		pMenu.setBorder(BorderFactory.createEmptyBorder(getHeight()*3/5, getWidth()/3, getHeight()/4, getWidth()/3));
+		btStart.setAlignmentX(Component.CENTER_ALIGNMENT);
+		btEditor.setAlignmentX(Component.CENTER_ALIGNMENT);
 		pMenu.add(btStart);
 		pMenu.add(btEditor);
+		
 		gui = new GUI(width, height, length);
-		addKeyListener(gui);
+		img = Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("images/background.png"));
+		
 		add(BorderLayout.CENTER,pMenu);
 		setVisible(true);
+		test(getGraphics());
+	}
+	
+	public void test(Graphics g){
+		System.out.println(img);
+		
+	}
+	
+	public void paint(Graphics g){
+		super.paintComponents(g);
+		g.drawImage(img, 0, 0, getWidth(), getHeight(), this);
+		g.setColor(Color.WHITE);
+		g.fillRect(getWidth()/3,getHeight()*6/11, getWidth()/3,  getHeight()/4);
+		
+		btEditor.repaint();
+		btStart.repaint();
 	}
 	
 	@Override
@@ -44,11 +74,7 @@ JButton btStart = new JButton("Starten"), btEditor = new JButton("Level Editor")
 			add(BorderLayout.CENTER,gui);
 			validate();
 			repaint();
-			new Thread(){
-				public void run(){
-					gui.start();
-				}
-			}.start();
+			gui.start();
 		}else{
 			//Level Editor
 		}

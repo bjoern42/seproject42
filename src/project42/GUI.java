@@ -13,45 +13,55 @@ import javax.swing.JPanel;
 
 @SuppressWarnings("serial")
 public class GUI extends JPanel implements KeyListener, Observable{
-final int ACTION_RIGHT = 0, ACTION_LEFT = 1, ACTION_NORMAL = 2;
+final int ACTION_RIGHT = 0, ACTION_LEFT = 1, ACTION_NORMAL = 2, ACTION_JUMP = 3;
 List<Block[]> objects = new LinkedList<Block[]>();
 Landscape landscape = null;
 Player player = null;
-Image buffer = null;
 boolean up = false, right = false, left = false;
-Image imgGras, imgPlayer_NORMAL, imgPlayer_RIGHT, imgPlayer_LEFT, imgBackground;
+Image buffer = null, imgGras, imgPlayer_NORMAL, imgPlayer_JUMP, imgPlayer_RIGHT, imgPlayer_LEFT, imgBackground;
 int action = ACTION_NORMAL;
-	
+Thread game = null;
+
 	public GUI(int pWidth, int pHeight, int pLength){		
 		landscape = new Landscape(new File("map.lvl"),this,pWidth, pHeight, pLength);
 		
 		imgBackground = Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("images/background.png"));
-		imgGras = Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("images/gras2.jpg"));
-		imgPlayer_NORMAL = Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("images/player_normal.png"));
-		imgPlayer_RIGHT = Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("images/player_right.png"));
-		imgPlayer_LEFT = Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("images/player_left.png"));
+		imgGras = Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("images/gras.jpg"));
+		imgPlayer_NORMAL = Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("images/player_normal.gif"));
+		imgPlayer_JUMP = Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("images/player_jump.gif"));
+		imgPlayer_RIGHT = Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("images/player_right.gif"));
+		imgPlayer_LEFT = Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("images/player_left.gif"));
+		
+		addKeyListener(this);
+		
+		game = new Thread(){
+			public void run(){
+				while(true){
+					try {
+						Thread.sleep(20);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+					if(up){
+						action = ACTION_JUMP;
+						landscape.jump();
+					}
+					if(right){
+						action = ACTION_RIGHT;
+						landscape.right();
+					}
+					if(left){
+						action = ACTION_LEFT;
+						landscape.left();
+					}
+				}
+			}
+		};
 	}
-	
+
 	public void start(){
-		while(true){
-			try {
-				Thread.sleep(20);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-			if(up){
-				action = ACTION_NORMAL;
-				landscape.jump();
-			}
-			if(right){
-				action = ACTION_RIGHT;
-				landscape.right();
-			}
-			if(left){
-				action = ACTION_LEFT;
-				landscape.left();
-			}
-		}
+		requestFocus();
+		game.start();
 	}
 	
 	@Override
@@ -86,6 +96,10 @@ int action = ACTION_NORMAL;
 
 	private void paintPlayer(Graphics g){
 		switch(action){
+			case ACTION_JUMP:{
+				g.drawImage(imgPlayer_JUMP, player.getX(), player.getY(), player.getWidth(), player.getHeight(), this);	
+				break;
+			}
 			case ACTION_NORMAL:{
 				g.drawImage(imgPlayer_NORMAL, player.getX(), player.getY(), player.getWidth(), player.getHeight(), this);	
 				break;
