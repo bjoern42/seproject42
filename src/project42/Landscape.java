@@ -4,7 +4,7 @@ import java.io.File;
 import java.util.List;
 
 public class Landscape{
-final int GRAVITY = 10, SPEED = 10, JUMP_HEIGHT = 16;
+final int GRAVITY = 10, SPEED = 10, JUMP_HEIGHT = 12;
 int width, height;
 LevelLoader loader = null;
 Player player = null;
@@ -43,7 +43,7 @@ boolean jump = true;
 			public void run(){
 				while(true){
 					pause();
-					boolean isMovableArea = objects.isMovableArea(player.getX(), player.getY() + GRAVITY, player.getWidth(), player.getHeight());
+					boolean isMovableArea = objects.isMovableArea(player.getX(), player.getY() + GRAVITY*2, player.getWidth(), player.getHeight());
 					if(jump && isMovableArea){
 						player.move(0, GRAVITY*2);
 						observable.update(0);

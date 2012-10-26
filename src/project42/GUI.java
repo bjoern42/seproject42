@@ -5,34 +5,34 @@ import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.awt.geom.Rectangle2D;
 import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.swing.JFrame;
+import javax.swing.JPanel;
 
 @SuppressWarnings("serial")
-public class TestFrame extends JFrame implements KeyListener, Observable{
+public class GUI extends JPanel implements KeyListener, Observable{
+final int ACTION_RIGHT = 0, ACTION_LEFT = 1, ACTION_NORMAL = 2;
 List<Block[]> objects = new LinkedList<Block[]>();
 Landscape landscape = null;
 Player player = null;
 Image buffer = null;
 boolean up = false, right = false, left = false;
-
-	public static void main(String[] args) {
-		new TestFrame(1200, 800, 12);
+Image imgGras, imgPlayer_NORMAL, imgPlayer_RIGHT, imgPlayer_LEFT, imgBackground;
+int action = ACTION_NORMAL;
+	
+	public GUI(int pWidth, int pHeight, int pLength){		
+		landscape = new Landscape(new File("map.lvl"),this,pWidth, pHeight, pLength);
+		
+		imgBackground = Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("images/background.png"));
+		imgGras = Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("images/gras2.jpg"));
+		imgPlayer_NORMAL = Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("images/player_normal.png"));
+		imgPlayer_RIGHT = Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("images/player_right.png"));
+		imgPlayer_LEFT = Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("images/player_left.png"));
 	}
 	
-	public TestFrame(int pWidth, int pHeight, int pLength){
-		super("TestFrame");
-		setSize(pWidth, pHeight);
-		setDefaultCloseOperation(EXIT_ON_CLOSE);
-		
-		landscape = new Landscape(new File("map.lvl"),this,pWidth, pHeight, pLength);
-		setVisible(true);
-		addKeyListener(this);
-		
+	public void start(){
 		while(true){
 			try {
 				Thread.sleep(20);
@@ -40,12 +40,15 @@ boolean up = false, right = false, left = false;
 				e.printStackTrace();
 			}
 			if(up){
+				action = ACTION_NORMAL;
 				landscape.jump();
 			}
 			if(right){
+				action = ACTION_RIGHT;
 				landscape.right();
 			}
 			if(left){
+				action = ACTION_LEFT;
 				landscape.left();
 			}
 		}
@@ -63,30 +66,41 @@ boolean up = false, right = false, left = false;
 		}
 		Graphics bufG= buffer.getGraphics();
 		objects = landscape.getVisibleBlocks();
-		Image img = Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("images/background.png"));
-		bufG.drawImage(img,0,0, getWidth(), getHeight(),this);
+		bufG.drawImage(imgBackground,0,0, getWidth(), getHeight(),this);
 
 		for(Block column[]:objects){
 			for(Block block:column){
 				switch (block.getType()){
 					case Block.TYP_GRAS:{
-						img = Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("images/gras2.jpg"));
-						bufG.drawImage(img, block.getX(), block.getY(), block.getWidth(), block.getHeight(), this);
-						bufG.drawString(""+block.getX()+","+block.getY(), block.getX(), block.getY());
+						bufG.drawImage(imgGras, block.getX(), block.getY(), block.getWidth(), block.getHeight(), this);
 						break;
 					}
 				}
 				
 			}
 		}
-		img = Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("images/player.png"));
 		player = landscape.getPlayer();
-//		bufG.drawString(""+player.getX()+","+player.getY(), player.getX(), player.getY());
-//		bufG.drawImage(img, player.getX(), player.getY(), player.getWidth(), player.getHeight(), this);
-		bufG.fillRect(player.getX(), player.getY(), player.getWidth(), player.getHeight());
+		paintPlayer(bufG);
 		g.drawImage(buffer,0,0,this);
 	}
 
+	private void paintPlayer(Graphics g){
+		switch(action){
+			case ACTION_NORMAL:{
+				g.drawImage(imgPlayer_NORMAL, player.getX(), player.getY(), player.getWidth(), player.getHeight(), this);	
+				break;
+			}
+			case ACTION_RIGHT:{
+				g.drawImage(imgPlayer_RIGHT, player.getX(), player.getY(), player.getWidth(), player.getHeight(), this);
+				break;
+			}
+			case ACTION_LEFT:{
+				g.drawImage(imgPlayer_LEFT, player.getX(), player.getY(), player.getWidth(), player.getHeight(), this);
+				break;
+			}
+		}
+	}
+	
 	@Override
 	public void update(int pChange) {
 		repaint();
@@ -125,7 +139,9 @@ boolean up = false, right = false, left = false;
 				right = false;
 				break;
 			}
-		}	
+		}
+		action = ACTION_NORMAL;
+		repaint();
 	}
 
 	@Override
