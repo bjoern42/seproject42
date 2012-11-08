@@ -49,17 +49,11 @@ Image img = null;
 		
 		add(BorderLayout.CENTER,pMenu);
 		setVisible(true);
-		test(getGraphics());
-	}
-	
-	public void test(Graphics g){
-		System.out.println(img);
-		
 	}
 	
 	public void paint(Graphics g){
 		super.paintComponents(g);
-		g.drawImage(img, 0, 0, getWidth(), getHeight(), this);
+//		g.drawImage(img, 0, 0, getWidth(), getHeight(), this);
 		g.setColor(Color.WHITE);
 		g.fillRect(getWidth()/3,getHeight()*6/11, getWidth()/3,  getHeight()/4);
 		

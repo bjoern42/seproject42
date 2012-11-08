@@ -17,13 +17,13 @@ final int ACTION_RIGHT = 0, ACTION_LEFT = 1, ACTION_NORMAL = 2, ACTION_JUMP = 3;
 List<Block[]> objects = new LinkedList<Block[]>();
 Landscape landscape = null;
 Player player = null;
-boolean up = false, right = false, left = false;
-Image buffer = null, imgGras, imgPlayer_NORMAL, imgPlayer_JUMP, imgPlayer_RIGHT, imgPlayer_LEFT, imgBackground;
+boolean up = false, right = false, left = false, running = true;;
+Image buffer = null, imgGras, imgPlayer_NORMAL, imgPlayer_JUMP, imgPlayer_RIGHT, imgPlayer_LEFT, imgBackground,imgEnemie;
 int action = ACTION_NORMAL;
 Thread game = null;
 
 	public GUI(int pWidth, int pHeight, int pLength){		
-		landscape = new Landscape(new File("map.lvl"),this,pWidth, pHeight, pLength);
+		landscape = new Landscape(this,new File("map.lvl"),this,pWidth, pHeight, pLength);
 		
 		imgBackground = Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("images/background.png"));
 		imgGras = Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("images/gras.jpg"));
@@ -31,12 +31,12 @@ Thread game = null;
 		imgPlayer_JUMP = Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("images/player_jump.gif"));
 		imgPlayer_RIGHT = Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("images/player_right.gif"));
 		imgPlayer_LEFT = Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("images/player_left.gif"));
-		
+		imgEnemie = Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("images/enemy.png"));
 		addKeyListener(this);
 		
 		game = new Thread(){
 			public void run(){
-				while(true){
+				while(running){
 					try {
 						Thread.sleep(20);
 					} catch (InterruptedException e) {
@@ -61,7 +61,14 @@ Thread game = null;
 
 	public void start(){
 		requestFocus();
+		running = true;
 		game.start();
+		landscape.start();
+		System.out.println("test");
+	}
+
+	public void stop(){
+		running = false;
 	}
 	
 	@Override
@@ -80,14 +87,19 @@ Thread game = null;
 
 		for(Block column[]:objects){
 			for(Block block:column){
-				switch (block.getType()){
-					case Block.TYP_GRAS:{
-						bufG.drawImage(imgGras, block.getX(), block.getY(), block.getWidth(), block.getHeight(), this);
-						break;
+				if(block != null){
+					switch (block.getType()){
+						case Block.TYP_GRAS:{
+							bufG.drawImage(imgGras, block.getX(), block.getY(), block.getWidth(), block.getHeight(), this);
+							break;
+						}
 					}
-				}
-				
+					bufG.drawString(""+block.getX()+" "+block.getY(), block.getX(), block.getY());
+				}				
 			}
+		}
+		for(Enemy e:landscape.getEnemies()){
+			bufG.drawImage(imgEnemie, e.getX(), e.getY(), e.getWidth(), e.getHeight(), this);
 		}
 		player = landscape.getPlayer();
 		paintPlayer(bufG);

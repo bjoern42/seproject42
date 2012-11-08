@@ -18,7 +18,7 @@ File map = null;
 	@Test
 	public void testLandscape() {
 		Observer observer = new Observer(map,100, 12);
-		Landscape landscape = new Landscape(map,observer,1200,800,12);
+		Landscape landscape = new Landscape(null,map,observer,1200,800,12);
 		assertEquals("Result",10,landscape.width);
 		assertEquals("Result",20,landscape.height);
 		landscape.jump();
@@ -27,7 +27,7 @@ File map = null;
 	@Test
 	public void testLeft(){
 		Observer observer = new Observer(map,100, 12);
-		Landscape landscape = new Landscape(map,observer,1200,800,12);
+		Landscape landscape = new Landscape(null,map,observer,1200,800,12);
 		Block block = landscape.getVisibleBlocks().get(0)[0];
 		int x = block.getX();
 		landscape.left();
@@ -38,7 +38,7 @@ File map = null;
 	@Test
 	public void testRight(){
 		Observer observer = new Observer(map,100, 12);
-		Landscape landscape = new Landscape(map,observer,1200,800,12);
+		Landscape landscape = new Landscape(null,map,observer,1200,800,12);
 		Block block = landscape.getVisibleBlocks().get(0)[0];
 		int x = block.getX();
 		landscape.right();
@@ -49,7 +49,7 @@ File map = null;
 	@Test
 	public void testJump(){
 		Observer observer = new Observer(map,100, 12);
-		Landscape landscape = new Landscape(map,observer,1200,800,12);
+		Landscape landscape = new Landscape(null,map,observer,1200,800,12);
 		Player player = landscape.getPlayer();
 		int y = player.getY();
 		landscape.jump();

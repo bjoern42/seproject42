@@ -14,7 +14,7 @@ Player player = null;
 	}
 	
 	public TUI(){
-		landscape = new Landscape(new File("mapTUI.lvl"),this,800, 800,4);
+		landscape = new Landscape(null,new File("mapTUI.lvl"),this,800, 800,4);
 	}
 	
 	private void test(){

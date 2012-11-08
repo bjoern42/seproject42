@@ -3,27 +3,34 @@ package project42;
 import java.io.File;
 import java.util.List;
 
+
 public class Landscape{
 final int GRAVITY = 10, SPEED = 10, JUMP_HEIGHT = 16;
 int width, height;
-LevelLoader loader = null;
 Player player = null;
+List<Enemy> enemies = null;
 Observer objects = null;
 Observable observable = null;
-boolean jump = true;
+GUI gui = null;
+boolean jump = true, running = true;
 	
-	public Landscape(File map,Observable pObservable, int pWidth,int pHeight, int pLength){
+	public Landscape(GUI pGui,File map,Observable pObservable, int pWidth,int pHeight, int pLength){
+		gui = pGui;
 		observable = pObservable;
 		width = pWidth;
 		height = pHeight;
 		int size = width/pLength;
 		player = new Player(pLength*size/2, 0, size, size*2);
 		objects = new Observer(map, size ,pLength);
-		gravity();
+		enemies = objects.getEnemies();
 	}
 	
 	public Player getPlayer(){
 		return player;
+	}
+	
+	public List<Enemy> getEnemies(){
+		return enemies;
 	}
 	
 	public List<Block[]> getVisibleBlocks(){
@@ -38,17 +45,38 @@ boolean jump = true;
 		}
 	}
 	
-	private void gravity(){
+	public void start(){
 		new Thread(){
 			public void run(){
-				while(true){
+				while(running){
 					pause();
+					boolean update = false;
+					//gravity
 					boolean isMovableArea = objects.isMovableArea(player.getX(), player.getY() + GRAVITY*2, player.getWidth(), player.getHeight());
 					if(jump && isMovableArea){
 						player.move(0, GRAVITY*2);
+						update = true;
+					}
+					//enemies
+					for(Enemy e:enemies){
+						int direction = e.getDirection();
+						if(e.isInArea(player.getX(), player.getY(), player.getWidth(), player.getHeight())){
+							System.out.println("hit");
+							running = false;
+							break;
+						}
+						if(objects.isInFrame(e.getX()) && objects.isMovableArea(e.getX()+(SPEED/4+SPEED)*direction, e.getY(), e.getWidth(), e.getHeight())){
+							e.move(SPEED/4*direction, 0);
+							update = true;
+						}else{
+							e.changeDirection();
+						}
+					}
+					if(update){
 						observable.update(0);
 					}
 				}
+				gui.stop();
 			}
 		}.start();
 	}

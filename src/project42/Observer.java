@@ -6,6 +6,7 @@ import java.util.List;
 
 public class Observer implements Observable {
 LinkedList<Block[]> objects = new LinkedList<Block[]>();
+LinkedList<Enemy> enemies = new LinkedList<Enemy>();
 int start, length, size;
 
 	public Observer(File map, int pSize, int pLength){
@@ -18,6 +19,10 @@ int start, length, size;
 		while((blockType = loader.readNext()) != null){
 			Block block[] = new Block[blockType.length];
 			for(int j=0; j<blockType.length; j++){
+				if(blockType[j] == Block.TYP_ENEMY){
+					enemies.add(new Enemy(size*i, size*j, size,blockType[j]));
+					blockType[j] = Block.TYP_AIR;
+				}
 				block[j] = new Block(size*i, size*j, size,blockType[j]);
 			}
 			objects.add(block);
@@ -27,6 +32,10 @@ int start, length, size;
 	
 	public List<Block[]> getVisibleBlocks(){
 		return objects.subList(start, start+length);
+	}
+	
+	public List<Enemy> getEnemies(){
+		return enemies;
 	}
 	
 	public void removeFirst(){
@@ -49,6 +58,13 @@ int start, length, size;
 		}
 	}
 
+	public boolean isInFrame(int pX){
+		if(pX > -size && pX < (length-1)*size){
+			return true;
+		}
+		return false;
+	}
+	
 	@Override
 	public void update(int pChange) {
 		if(objects.get(start)[0].getX() < -size-pChange){
@@ -62,17 +78,21 @@ int start, length, size;
 				block[j].update(pChange);
 			}
 		}
+		for(Enemy e:enemies){
+			e.update(pChange);
+		}
 	}
 	
 	public boolean isMovableArea(int pX, int pY, int pWidth, int pHeight){
-		boolean movable = true;
 		for(Block block[] : objects){
 			for(int i=0; i<block.length; i++){
-				if( block[i].getType() == Block.TYP_GRAS && block[i].isInArea(pX, pY, pWidth, pHeight)){
-					movable = false;
+				if(block[i].isInArea(pX, pY, pWidth, pHeight)){
+					if(block[i].getType() == Block.TYP_GRAS){
+						return false;
+					}
 				}
 			}
 		}
-		return movable;
+		return true;
 	}
 }
