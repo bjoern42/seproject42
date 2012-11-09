@@ -4,7 +4,7 @@ import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
 
-public class TUI implements Observable {
+public final class TUI implements Observable {
 List<Block[]> objects = new LinkedList<Block[]>();
 Landscape landscape = null;	
 Player player = null;
@@ -14,7 +14,7 @@ Player player = null;
 	}
 	
 	public TUI(){
-		landscape = new Landscape(null,new File("mapTUI.lvl"),this,800, 800,4);
+		landscape = new Landscape(new File("mapTUI.lvl"),this,800, 800,4);
 	}
 	
 	private void test(){

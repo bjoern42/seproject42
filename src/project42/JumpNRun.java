@@ -30,6 +30,7 @@ Image img = null;
 	public JumpNRun(int width, int height, int length){
 		super("Jump and Run");
 		setVisible(true);
+		setResizable(false);
 		Insets insets = getInsets();
 		setSize(width+insets.left+insets.right, height+insets.bottom+insets.top);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);

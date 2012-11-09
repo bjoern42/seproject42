@@ -12,7 +12,7 @@ import java.util.List;
 import javax.swing.JPanel;
 
 @SuppressWarnings("serial")
-public class GUI extends JPanel implements KeyListener, Observable{
+public final class GUI extends JPanel implements KeyListener, Observable{
 final int ACTION_RIGHT = 0, ACTION_LEFT = 1, ACTION_NORMAL = 2, ACTION_JUMP = 3;
 List<Block[]> objects = new LinkedList<Block[]>();
 Landscape landscape = null;
@@ -23,7 +23,7 @@ int action = ACTION_NORMAL;
 Thread game = null;
 
 	public GUI(int pWidth, int pHeight, int pLength){		
-		landscape = new Landscape(this,new File("map.lvl"),this,pWidth, pHeight, pLength);
+		landscape = new Landscape(new File("map.lvl"),this,pWidth, pHeight, pLength);
 		
 		imgBackground = Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("images/background.png"));
 		imgGras = Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("images/gras.jpg"));
@@ -64,7 +64,6 @@ Thread game = null;
 		running = true;
 		game.start();
 		landscape.start();
-		System.out.println("test");
 	}
 
 	public void stop(){
@@ -99,7 +98,11 @@ Thread game = null;
 			}
 		}
 		for(Enemy e:landscape.getEnemies()){
-			bufG.drawImage(imgEnemie, e.getX(), e.getY(), e.getWidth(), e.getHeight(), this);
+			if(e.isDead()){
+				//draw dead enemy
+			}else{
+				bufG.drawImage(imgEnemie, e.getX(), e.getY(), e.getWidth(), e.getHeight(), this);
+			}
 		}
 		player = landscape.getPlayer();
 		paintPlayer(bufG);

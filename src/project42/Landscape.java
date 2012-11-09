@@ -4,18 +4,15 @@ import java.io.File;
 import java.util.List;
 
 
-public class Landscape{
+public final class Landscape{
 final int GRAVITY = 10, SPEED = 10, JUMP_HEIGHT = 16;
 int width, height;
 Player player = null;
 List<Enemy> enemies = null;
 Observer objects = null;
 Observable observable = null;
-GUI gui = null;
-boolean jump = true, running = true;
 	
-	public Landscape(GUI pGui,File map,Observable pObservable, int pWidth,int pHeight, int pLength){
-		gui = pGui;
+	public Landscape(File map,Observable pObservable, int pWidth,int pHeight, int pLength){
 		observable = pObservable;
 		width = pWidth;
 		height = pHeight;
@@ -37,7 +34,7 @@ boolean jump = true, running = true;
 		return objects.getVisibleBlocks();
 	}
 	
-	private void pause(){
+	public static void pause(){
 		try {
 			Thread.sleep(20);
 		} catch (InterruptedException e) {
@@ -48,27 +45,32 @@ boolean jump = true, running = true;
 	public void start(){
 		new Thread(){
 			public void run(){
-				while(running){
+				while(true){
 					pause();
 					boolean update = false;
 					//gravity
-					boolean isMovableArea = objects.isMovableArea(player.getX(), player.getY() + GRAVITY*2, player.getWidth(), player.getHeight());
-					if(jump && isMovableArea){
+					if(player.getJump() && objects.isMovableArea(player.getX(), player.getY() + GRAVITY*2, player.getWidth(), player.getHeight())){
 						player.move(0, GRAVITY*2);
 						update = true;
 					}
 					//enemies
 					for(Enemy e:enemies){
 						int direction = e.getDirection();
-						if(e.isInArea(player.getX(), player.getY(), player.getWidth(), player.getHeight())){
-							System.out.println("hit");
-							running = false;
-							break;
+						//collision with enemy
+						if(!player.getLock() && objects.isMovableArea(player.getX(), player.getY() + 1, player.getWidth(), player.getHeight()) && e.isInArea(player.getX(), player.getY()+1, player.getWidth(), player.getHeight()) && !e.isInArea(player.getX(), player.getY(), player.getWidth(), player.getHeight())){
+							e.kill();
+						}else if(!e.isDead() && e.isInArea(player.getX(), player.getY(), player.getWidth(), player.getHeight())){
+							player.hit();
 						}
-						if(objects.isInFrame(e.getX()) && objects.isMovableArea(e.getX()+(SPEED/4+SPEED)*direction, e.getY(), e.getWidth(), e.getHeight())){
+						//move enemy
+						boolean isMovableArea = objects.isMovableArea(e.getX()+(SPEED/4)*direction, e.getY(), e.getWidth(), e.getHeight());
+						if(!e.isDead() && objects.isInFrame(e.getX()) && isMovableArea){
 							e.move(SPEED/4*direction, 0);
+							if(Math.random() > 0.995){
+								e.jump(objects, observable, GRAVITY/2, JUMP_HEIGHT);
+							}
 							update = true;
-						}else{
+						}else if(!isMovableArea){
 							e.changeDirection();
 						}
 					}
@@ -76,32 +78,12 @@ boolean jump = true, running = true;
 						observable.update(0);
 					}
 				}
-				gui.stop();
 			}
 		}.start();
 	}
 	
 	public void jump(){
-		if(jump && !objects.isMovableArea(player.getX(), player.getY() + GRAVITY, player.getWidth(), player.getHeight())){
-			jump = false;
-			new Thread(){
-				public void run(){
-					for(int j = 0; j < JUMP_HEIGHT;j++){
-						if(objects.isMovableArea(player.getX(), player.getY() - GRAVITY, player.getWidth(), player.getHeight())){
-							pause();
-							player.move(0, -GRAVITY);
-							observable.update(0);
-						}
-					}
-					while(objects.isMovableArea(player.getX(), player.getY() + GRAVITY*2, player.getWidth(), player.getHeight())){
-						pause();
-						player.move(0, GRAVITY*2);
-						observable.update(0);
-					}
-					jump = true;
-				}
-			}.start();
-		}
+		player.jump(objects, observable, GRAVITY, JUMP_HEIGHT);
 	}
 	
 	public void right(){

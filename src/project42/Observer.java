@@ -4,14 +4,14 @@ import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
 
-public class Observer implements Observable {
+public final class Observer implements Observable {
 LinkedList<Block[]> objects = new LinkedList<Block[]>();
 LinkedList<Enemy> enemies = new LinkedList<Enemy>();
-int start, length, size;
+int start, length, size, change = 0;
 
 	public Observer(File map, int pSize, int pLength){
 		start = 0;
-		length = pLength+1;
+		length = pLength+2;
 		size = pSize;
 		LevelLoader loader = new LevelLoader(map);
 		int blockType[] = null;
@@ -81,18 +81,28 @@ int start, length, size;
 		for(Enemy e:enemies){
 			e.update(pChange);
 		}
+		change += pChange*-1;
 	}
 	
 	public boolean isMovableArea(int pX, int pY, int pWidth, int pHeight){
-		for(Block block[] : objects){
-			for(int i=0; i<block.length; i++){
-				if(block[i].isInArea(pX, pY, pWidth, pHeight)){
-					if(block[i].getType() == Block.TYP_GRAS){
+		int x = (change+pX) / size, y = pY / size;
+		for(int i=-1;i<=2;i++){
+			if(x+i >= 0 && x+i < objects.size()){
+				Block block[] = objects.get(x+i);
+				for(int j=-1;j<=pHeight/size;j++){
+					if(y+j >= 0 && y+j<block.length && block[y+j].isInArea(pX, pY, pWidth, pHeight) && block[y+j].getType() == Block.TYP_GRAS){
 						return false;
 					}
 				}
 			}
 		}
 		return true;
+//		for(Block block[] : objects){
+//			for(int i=0; i<block.length; i++){
+//				if(block[i].isInArea(pX, pY, pWidth, pHeight) && block[i].getType() == Block.TYP_GRAS){
+//					return false;
+//				}
+//			}
+//		}
 	}
 }

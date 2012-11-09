@@ -6,7 +6,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStreamReader;
 
-public class LevelLoader {
+public final class LevelLoader {
 BufferedReader reader = null;
 
 	public LevelLoader(File file){
