@@ -19,9 +19,10 @@ import javax.swing.JPanel;
 @SuppressWarnings("serial")
 public class JumpNRun extends JFrame implements ActionListener{
 GUI gui = null;
+EditorGUI egui = null;
 JPanel pMenu = new JPanel();
 JButton btStart = new JButton("Starten"), btEditor = new JButton("Level Editor");
-Image img = null;
+//Image img = null;
 
 	public static void main(String[] args) {
 		new JumpNRun(1200, 800, 12);
@@ -46,7 +47,8 @@ Image img = null;
 		pMenu.add(btEditor);
 		
 		gui = new GUI(width, height, length);
-		img = Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("images/background.png"));
+		egui = new EditorGUI(width, height, length);
+		//img = Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("images/background.png"));
 		
 		add(BorderLayout.CENTER,pMenu);
 		setVisible(true);
@@ -70,8 +72,16 @@ Image img = null;
 			validate();
 			repaint();
 			gui.start();
+		if(arg0.getSource() == btEditor){
+		
+		}
 		}else{
-			//Level Editor
+			System.out.println("ELSE CASE");
+			remove(pMenu);
+			add(BorderLayout.CENTER,egui);
+			validate();
+			repaint();
+			egui.start();
 		}
 	}
 }
