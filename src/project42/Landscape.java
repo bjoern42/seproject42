@@ -17,7 +17,7 @@ Observable observable = null;
 		width = pWidth;
 		height = pHeight;
 		int size = width/pLength;
-		player = new Player(pLength*size/2, 0, size, size*2);
+		player = new Player(pLength*size/2, 360, size, size*2);
 		objects = new Observer(map, size ,pLength);
 		enemies = objects.getEnemies();
 	}

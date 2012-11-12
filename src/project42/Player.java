@@ -8,6 +8,10 @@ boolean lock = false;
 		super(pX, pY, pWidth, pHeight);
 	}
 	
+	public void drown(){
+		System.out.println("You are dead!");
+	}
+	
 	public void hit(){
 		if(!lock){
 			if(health > 0){

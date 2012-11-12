@@ -93,6 +93,11 @@ int start, length, size, change = 0;
 					if(y+j >= 0 && y+j<block.length && block[y+j].isInArea(pX, pY, pWidth, pHeight) && block[y+j].getType() == Block.TYP_GRAS){
 						return false;
 					}
+					//drowning block[y+1] instead of [y+j] is neccesary that the player cant "fall" through water
+					if(y+j >= 0 && y+j<block.length && block[y+1].isInArea(pX, pY, pWidth, pHeight) && block[y+1].getType() == Block.TYP_WATER){
+						System.out.println("YOU DROWNED");
+						return true;
+					}
 				}
 			}
 		}

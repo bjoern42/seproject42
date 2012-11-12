@@ -5,6 +5,7 @@ public class Block extends GameObject  implements Observable{
 static final int TYP_AIR = 0;	
 static final int TYP_GRAS = 1;
 static final int TYP_ENEMY = 2;
+static final int TYP_WATER = 3;
 int type = TYP_AIR;
 
 	public Block(int pX, int pY, int pSize,int pType) {

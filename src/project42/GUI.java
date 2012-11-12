@@ -20,12 +20,12 @@ List<Block[]> objects = new LinkedList<Block[]>();
 Landscape landscape = null;
 Player player = null;
 boolean up = false, right = false, left = false, running = true;;
-Image buffer = null, imgGras, imgPlayer_NORMAL, imgPlayer_JUMP, imgPlayer_RIGHT, imgPlayer_LEFT, imgBackground,imgEnemie;
+Image buffer = null, imgGras, imgWater, imgPlayer_NORMAL, imgPlayer_JUMP, imgPlayer_RIGHT, imgPlayer_LEFT, imgBackground,imgEnemie;
 int action = ACTION_NORMAL;
 Thread game = null;
 
 	public GUI(int pWidth, int pHeight, int pLength){		
-		landscape = new Landscape(new File("map.lvl"),this,pWidth, pHeight, pLength);
+		landscape = new Landscape(new File("bigmap.lvl"),this,pWidth, pHeight, pLength);
 		
 		imgBackground = Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("images/tinybg.png"));
 		imgGras = Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("images/gras.jpg"));
@@ -34,6 +34,7 @@ Thread game = null;
 		imgPlayer_RIGHT = Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("images/player_right.gif"));
 		imgPlayer_LEFT = Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("images/player_left.gif"));
 		imgEnemie = Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("images/enemy.png"));
+		imgWater = Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("images/water.gif"));
 		addKeyListener(this);
 		
 		game = new Thread(){
@@ -107,6 +108,10 @@ Thread game = null;
 					switch (block.getType()){
 						case Block.TYP_GRAS:{
 							bufG.drawImage(imgGras, block.getX(), block.getY(), block.getWidth(), block.getHeight(), this);
+							break;
+						}
+						case Block.TYP_WATER:{
+							bufG.drawImage(imgWater, block.getX(), block.getY(), block.getWidth(), block.getHeight(), this);
 							break;
 						}
 					}
