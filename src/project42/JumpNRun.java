@@ -22,7 +22,7 @@ GUI gui = null;
 EditorGUI egui = null;
 JPanel pMenu = new JPanel();
 JButton btStart = new JButton("Starten"), btEditor = new JButton("Level Editor");
-//Image img = null;
+Image img = null;
 
 	public static void main(String[] args) {
 		new JumpNRun(1200, 800, 12);
@@ -35,6 +35,7 @@ JButton btStart = new JButton("Starten"), btEditor = new JButton("Level Editor")
 		Insets insets = getInsets();
 		setSize(width+insets.left+insets.right, height+insets.bottom+insets.top);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
+		setBackground(Color.BLACK);
 		
 		btStart.addActionListener(this);
 		btEditor.addActionListener(this);
@@ -56,9 +57,9 @@ JButton btStart = new JButton("Starten"), btEditor = new JButton("Level Editor")
 	
 	public void paint(Graphics g){
 		super.paintComponents(g);
-//		g.drawImage(img, 0, 0, getWidth(), getHeight(), this);
-		g.setColor(Color.WHITE);
-		g.fillRect(getWidth()/3,getHeight()*6/11, getWidth()/3,  getHeight()/4);
+		//g.drawImage(img, 0, 0, getWidth(), getHeight(), this);
+		g.setColor(Color.BLACK);
+		g.fillRect(getWidth(),getHeight(), getWidth(),  getHeight());
 		
 		btEditor.repaint();
 		btStart.repaint();

@@ -1,5 +1,7 @@
 package project42;
 
+import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Toolkit;
@@ -25,7 +27,7 @@ Thread game = null;
 	public GUI(int pWidth, int pHeight, int pLength){		
 		landscape = new Landscape(new File("map.lvl"),this,pWidth, pHeight, pLength);
 		
-		imgBackground = Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("images/background.png"));
+		imgBackground = Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("images/tinybg.png"));
 		imgGras = Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("images/gras.jpg"));
 		imgPlayer_NORMAL = Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("images/player_normal.gif"));
 		imgPlayer_JUMP = Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("images/player_jump.gif"));
@@ -81,8 +83,23 @@ Thread game = null;
 			buffer = createVolatileImage(getWidth(),getHeight());
 		}
 		Graphics bufG= buffer.getGraphics();
+		
+		//ToDO: run loading sequenz just as long as imgBackground is buffering
+		
+		//LOADING SEQUENZ
+		bufG.setColor(Color.BLUE);
+		bufG.fillRect(0, 0, 1280, 800);
+		bufG.setColor(Color.BLACK);
+		Font fontBIG = new Font("Verdana", Font.BOLD, 64);
+		Font fontSMALL = new Font("Verdana", Font.BOLD, 12);
+		bufG.setFont(fontBIG);
+		bufG.drawString("LOADING", 400, 300);
+		bufG.setFont(fontSMALL);
+		//END OF LOADING SEQUENZ
+		
 		objects = landscape.getVisibleBlocks();
 		bufG.drawImage(imgBackground,0,0, getWidth(), getHeight(),this);
+		bufG.setColor(Color.BLACK);
 
 		for(Block column[]:objects){
 			for(Block block:column){
@@ -93,7 +110,7 @@ Thread game = null;
 							break;
 						}
 					}
-					bufG.drawString(""+block.getX()+" "+block.getY(), block.getX(), block.getY());
+					//bufG.drawString(""+block.getX()+" "+block.getY(), block.getX(), block.getY());
 				}				
 			}
 		}
