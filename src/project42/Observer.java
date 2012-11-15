@@ -31,6 +31,9 @@ int start, length, size, change = 0;
 	}
 	
 	public List<Block[]> getVisibleBlocks(){
+		if(start+length>objects.size()){
+			return objects;
+		}
 		return objects.subList(start, start+length);
 	}
 	

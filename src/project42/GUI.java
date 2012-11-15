@@ -22,8 +22,8 @@ Image buffer = null, imgGras, imgPlayer_NORMAL, imgPlayer_JUMP, imgPlayer_RIGHT,
 int action = ACTION_NORMAL;
 Thread game = null;
 
-	public GUI(int pWidth, int pHeight, int pLength){		
-		landscape = new Landscape(new File("map.lvl"),this,pWidth, pHeight, pLength);
+	public GUI(File map,int pWidth, int pHeight, int pLength){		
+		landscape = new Landscape(map,this,pWidth, pHeight, pLength);
 		
 		imgBackground = Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("images/background.png"));
 		imgGras = Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("images/gras.jpg"));
