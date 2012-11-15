@@ -17,7 +17,7 @@ File map = null;
 	
 	@Test
 	public void testUpdate(){
-		Observer observer = new Observer(map, 100, 12);
+		Observer observer = new Observer(null,map, 100, 12);
 		Block block = observer.getVisibleBlocks().get(0)[0];
 		int oldX = block.getX();
 		observer.update(10);
@@ -33,7 +33,7 @@ File map = null;
 	
 	@Test
 	public void testIsMovableArea(){
-		Observer observer = new Observer(map, 100, 12);
-		assertEquals("Result",false,observer.isMovableArea(0, 500, 100, 200));
+		Observer observer = new Observer(null,map, 100, 12);
+		assertEquals("Result",false,observer.isMovableArea(0, 500, 100, 200,false));
 	}
 }

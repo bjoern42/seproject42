@@ -16,7 +16,6 @@ import java.io.FilenameFilter;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -25,13 +24,13 @@ import javax.swing.ListSelectionModel;
 @SuppressWarnings("serial")
 public class JumpNRun extends JFrame implements ActionListener{
 GUI gui = null;
-JPanel pMenu, pButtons = new JPanel(),pList = new JPanel();
+EditorGUI egui = null;
+JPanel pMenu, pButtons = new JPanel(),pList = new JPanel(),pCurrent;
 JButton btStart = new JButton("Starten"), btEditor = new JButton("Level Editor");
 Image img = null;
 JList<File> list = null;
 JScrollPane scroll = null;
 int width, height, length;
-JLabel picLabel;
 
 	public static void main(String[] args) {
 		new JumpNRun(1200, 800, 12);
@@ -50,8 +49,10 @@ JLabel picLabel;
 		btStart.addActionListener(this);
 		btEditor.addActionListener(this);
 		
-		img = Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("images/background.png"));
+		img = Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("images/mainframe.png"));
 		pMenu = new ImgPanel(img);
+		
+		egui = new EditorGUI(width, height, length);
 		
 		pMenu.setLayout(new BorderLayout());
 		GridLayout layout = new GridLayout(2, 1);
@@ -85,21 +86,31 @@ JLabel picLabel;
 		
 		setVisible(true);
 		
+		pCurrent = pMenu;
 		scroll.setPreferredSize(new Dimension(scroll.getWidth(), btStart.getY()-scroll.getY()));
 	}
 	
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
 		if(arg0.getSource() == btStart){
-			remove(pMenu);
-			gui = new GUI(list.getSelectedValue(),width, height, length);
-			add(BorderLayout.CENTER,gui);
-			validate();
-			repaint();
+			gui = new GUI(this, list.getSelectedValue(),width, height, length);
+			changePanel(gui);
 			gui.start();
-		}else{
-			//Level Editor
+		}else if(arg0.getSource() == btEditor){
+			changePanel(egui);
 		}
+	}
+	
+	public void reset(){
+		changePanel(pMenu);
+	}
+	
+	private void changePanel(JPanel panel){
+		remove(pCurrent);
+		pCurrent = panel;
+		add(BorderLayout.CENTER,panel);
+		validate();
+		repaint();
 	}
 	
 	private class ImgPanel extends JPanel{
@@ -113,10 +124,8 @@ JLabel picLabel;
 		@Override
 		public void paint(Graphics g){
 			g.drawImage(img, 0, 0, getWidth(), getHeight(), this);
-			
 			g.setColor(Color.GRAY);
 			g.fillRect(scroll.getX()-20, scroll.getY()-20, scroll.getWidth()+40, btEditor.getY()+btEditor.getHeight()-scroll.getY()+100);
-			
 			btEditor.repaint();
 			btStart.repaint();
 			list.repaint();

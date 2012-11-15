@@ -8,8 +8,10 @@ public final class Observer implements Observable {
 LinkedList<Block[]> objects = new LinkedList<Block[]>();
 LinkedList<Enemy> enemies = new LinkedList<Enemy>();
 int start, length, size, change = 0;
+Player player = null;
 
-	public Observer(File map, int pSize, int pLength){
+	public Observer(Player pPlayer, File map, int pSize, int pLength){
+		player = pPlayer;
 		start = 0;
 		length = pLength+2;
 		size = pSize;
@@ -87,25 +89,26 @@ int start, length, size, change = 0;
 		change += pChange*-1;
 	}
 	
-	public boolean isMovableArea(int pX, int pY, int pWidth, int pHeight){
+	public boolean isMovableArea(int pX, int pY, int pWidth, int pHeight,boolean playerMoving){
 		int x = (change+pX) / size, y = pY / size;
 		for(int i=-1;i<=2;i++){
 			if(x+i >= 0 && x+i < objects.size()){
 				Block block[] = objects.get(x+i);
 				for(int j=-1;j<=pHeight/size;j++){
-					if(y+j >= 0 && y+j<block.length && block[y+j].isInArea(pX, pY, pWidth, pHeight) && block[y+j].getType() == Block.TYP_GRAS){
-						return false;
+					if(y+j >= 0 && y+j<block.length && block[y+j].isInArea(pX, pY, pWidth, pHeight)){
+						if(block[y+j].getType() == Block.TYP_GRAS){
+							return false;
+						}else if(block[y+1].getType() == Block.TYP_WATER){
+							player.setHealth(0);
+							return true;
+						}else if(playerMoving && block[y+j].getType() == Block.TYP_COIN){
+							player.increaseCoins();
+							block[y+j].setType(Block.TYP_AIR);
+						}
 					}
 				}
 			}
 		}
 		return true;
-//		for(Block block[] : objects){
-//			for(int i=0; i<block.length; i++){
-//				if(block[i].isInArea(pX, pY, pWidth, pHeight) && block[i].getType() == Block.TYP_GRAS){
-//					return false;
-//				}
-//			}
-//		}
 	}
 }

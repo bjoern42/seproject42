@@ -44,19 +44,19 @@ boolean jump = true, falling = false;
 		y += pY;
 	}
 	
-	public void jump(final Observer observer, final Observable observable, final int gravity, final int height){
-		if(jump && !observer.isMovableArea(getX(), getY() + gravity, getWidth(), getHeight())){
+	public void jump(final Observer observer, final Observable observable, final int gravity, final int height,final boolean player){
+		if(jump && !observer.isMovableArea(getX(), getY() + gravity, getWidth(), getHeight(),player)){
 			jump = false;
 			new Thread(){
 				public void run(){
 					for(int j = 0; j < height;j++){
-						if(observer.isMovableArea(getX(), getY() - gravity, getWidth(), getHeight())){
+						if(observer.isMovableArea(getX(), getY() - gravity, getWidth(), getHeight(),player)){
 							Landscape.pause();
 							move(0, -gravity);
 							observable.update(0);
 						}
 					}
-					while(observer.isMovableArea(getX(), getY() + gravity*2, getWidth(), getHeight())){
+					while(observer.isMovableArea(getX(), getY() + gravity*2, getWidth(), getHeight(),player)){
 						Landscape.pause();
 						move(0, gravity*2);
 						observable.update(0);

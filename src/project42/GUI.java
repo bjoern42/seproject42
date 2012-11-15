@@ -1,5 +1,6 @@
 package project42;
 
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Toolkit;
@@ -9,6 +10,7 @@ import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 @SuppressWarnings("serial")
@@ -17,13 +19,17 @@ final int ACTION_RIGHT = 0, ACTION_LEFT = 1, ACTION_NORMAL = 2, ACTION_JUMP = 3;
 List<Block[]> objects = new LinkedList<Block[]>();
 Landscape landscape = null;
 Player player = null;
-boolean up = false, right = false, left = false, running = true;;
-Image buffer = null, imgGras, imgPlayer_NORMAL, imgPlayer_JUMP, imgPlayer_RIGHT, imgPlayer_LEFT, imgBackground,imgEnemie;
+boolean up = false, right = false, left = false;
+Image buffer = null, imgGras, imgPlayer_NORMAL, imgPlayer_JUMP, imgPlayer_RIGHT, imgPlayer_LEFT, imgBackground,imgEnemie,imgEnemieDead,imgWater,imgHealth,imgCoin,imgCoinCount;
 int action = ACTION_NORMAL;
-Thread game = null;
+JumpNRun main = null;
+GUI gui;
 
-	public GUI(File map,int pWidth, int pHeight, int pLength){		
+	public GUI(final JumpNRun pMain, File map,int pWidth, int pHeight, int pLength){		
 		landscape = new Landscape(map,this,pWidth, pHeight, pLength);
+		player = landscape.getPlayer();
+		main = pMain;
+		gui = this;
 		
 		imgBackground = Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("images/background.png"));
 		imgGras = Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("images/gras.jpg"));
@@ -31,12 +37,23 @@ Thread game = null;
 		imgPlayer_JUMP = Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("images/player_jump.gif"));
 		imgPlayer_RIGHT = Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("images/player_right.gif"));
 		imgPlayer_LEFT = Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("images/player_left.gif"));
-		imgEnemie = Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("images/enemy.png"));
+		imgEnemie = Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("images/enemy.gif"));
+		imgEnemieDead = Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("images/enemy_dead.png"));
+		imgWater = Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("images/water.png"));
+		imgHealth = Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("images/health.png"));
+		imgCoin = Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("images/coin.png"));
+		imgCoinCount = Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("images/coinCount.png"));
 		addKeyListener(this);
-		
-		game = new Thread(){
+	}
+
+	public void start(){
+		getGraphics().drawImage(imgBackground,0,0, getWidth(), getHeight(),this);
+		Landscape.pause();
+		requestFocus();
+		landscape.start();
+		new Thread(){
 			public void run(){
-				while(running){
+				while(player.getHealth() > 0){
 					try {
 						Thread.sleep(20);
 					} catch (InterruptedException e) {
@@ -55,19 +72,10 @@ Thread game = null;
 						landscape.left();
 					}
 				}
+				JOptionPane.showMessageDialog(gui, "Player died!", "Game over!", JOptionPane.OK_OPTION);
+				main.reset();
 			}
-		};
-	}
-
-	public void start(){
-		requestFocus();
-		running = true;
-		game.start();
-		landscape.start();
-	}
-
-	public void stop(){
-		running = false;
+		}.start();
 	}
 	
 	@Override
@@ -84,6 +92,7 @@ Thread game = null;
 		objects = landscape.getVisibleBlocks();
 		bufG.drawImage(imgBackground,0,0, getWidth(), getHeight(),this);
 
+		//paint landscape
 		for(Block column[]:objects){
 			for(Block block:column){
 				if(block != null){
@@ -91,21 +100,34 @@ Thread game = null;
 						case Block.TYP_GRAS:{
 							bufG.drawImage(imgGras, block.getX(), block.getY(), block.getWidth(), block.getHeight(), this);
 							break;
+						}case Block.TYP_WATER:{
+							bufG.drawImage(imgWater, block.getX(), block.getY(), block.getWidth(), block.getHeight(), this);
+							break;
+						}case Block.TYP_COIN:{
+							bufG.drawImage(imgCoin, block.getX(), block.getY(), block.getWidth(), block.getHeight(), this);
+							break;
 						}
 					}
-					bufG.drawString(""+block.getX()+" "+block.getY(), block.getX(), block.getY());
+//					bufG.drawString(""+block.getX()+" "+block.getY(), block.getX(), block.getY());
 				}				
 			}
 		}
+		//paint enemies
 		for(Enemy e:landscape.getEnemies()){
 			if(e.isDead()){
-				//draw dead enemy
+				bufG.drawImage(imgEnemieDead, e.getX(), e.getY(), e.getWidth(), e.getHeight(), this);
 			}else{
 				bufG.drawImage(imgEnemie, e.getX(), e.getY(), e.getWidth(), e.getHeight(), this);
 			}
 		}
-		player = landscape.getPlayer();
+		//paint player
 		paintPlayer(bufG);
+		for(int i=0;i<player.getHealth();i++){
+			bufG.drawImage(imgHealth, 10+i*30, 10, 30, 30, this);
+		}
+		bufG.drawImage(imgCoinCount, getWidth()-50, 10, 50, 40, this);
+		bufG.setFont(new Font("Verdana", Font.BOLD, 15));
+		bufG.drawString(""+player.getCoins(),getWidth()-35, 35);
 		g.drawImage(buffer,0,0,this);
 	}
 

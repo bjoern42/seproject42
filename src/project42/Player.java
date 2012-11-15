@@ -1,7 +1,8 @@
 package project42;
 
 public final class Player extends GameObject{
-int health = 3;
+final int coinsForLife = 50;
+int health = 3,coins = 0;
 boolean lock = false;
 
 	public Player(int pX, int pY, int pWidth, int pHeight) {
@@ -11,11 +12,8 @@ boolean lock = false;
 	public void hit(){
 		if(!lock){
 			if(health > 0){
-				System.out.println("health--");
 				health--;
 				lock = true;
-			}else{
-				System.out.println("You are dead!");
 			}
 		}else{
 			new Thread(){
@@ -33,5 +31,25 @@ boolean lock = false;
 	
 	public boolean getLock(){
 		return lock;
+	}
+	
+	public int getHealth(){
+		return health;
+	}
+	
+	public void setHealth(int pHealth){
+		health = pHealth;
+	}
+	
+	public int getCoins(){
+		return coins;
+	}
+	
+	public void increaseCoins(){
+		coins++;
+		if(coins > coinsForLife){
+			coins = 0;
+			health++;
+		}
 	}
 }
