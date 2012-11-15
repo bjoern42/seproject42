@@ -12,6 +12,10 @@ boolean lock = false;
 		System.out.println("You are dead!");
 	}
 	
+	public void reset(){
+		this.y = 0;
+	}
+	
 	public void hit(){
 		if(!lock){
 			if(health > 0){

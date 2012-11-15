@@ -73,16 +73,12 @@ Image img = null;
 			validate();
 			repaint();
 			gui.start();
-		if(arg0.getSource() == btEditor){
-		
-		}
-		}else{
-			System.out.println("ELSE CASE");
+		}else if(arg0.getSource() == btEditor){
 			remove(pMenu);
 			add(BorderLayout.CENTER,egui);
 			validate();
 			repaint();
 			egui.start();
-		}
+		}	
 	}
 }

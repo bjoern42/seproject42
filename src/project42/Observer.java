@@ -90,15 +90,18 @@ int start, length, size, change = 0;
 			if(x+i >= 0 && x+i < objects.size()){
 				Block block[] = objects.get(x+i);
 				for(int j=-1;j<=pHeight/size;j++){
-					if(y+j >= 0 && y+j<block.length && block[y+j].isInArea(pX, pY, pWidth, pHeight) && block[y+j].getType() == Block.TYP_GRAS){
-						return false;
-					}
-					//drowning block[y+1] instead of [y+j] is neccesary that the player cant "fall" through water
-					if(y+j >= 0 && y+j<block.length && block[y+1].isInArea(pX, pY, pWidth, pHeight) && block[y+1].getType() == Block.TYP_WATER){
-						System.out.println("YOU DROWNED");
-						return true;
+					if(y+j >= 0 && y+j<block.length && block[y+j].isInArea(pX, pY, pWidth, pHeight)){
+						if(block[y+j].getType() == Block.TYP_GRAS){
+							return false;
+						//drowning block[y+1] instead of [y+j] is neccesary that the player cant "fall" through water
+						}else if(block[y+1].getType() == Block.TYP_WATER){
+							System.out.println("YOU DROWNED");
+							return true;
+						}
 					}
 				}
+
+
 			}
 		}
 		return true;
