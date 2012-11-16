@@ -54,20 +54,14 @@ GUI gui;
 		new Thread(){
 			public void run(){
 				while(player.getHealth() > 0){
-					try {
-						Thread.sleep(20);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
+					Landscape.pause(20);
 					if(up){
 						action = ACTION_JUMP;
 						landscape.jump();
-					}
-					if(right){
+					}if(right){
 						action = ACTION_RIGHT;
 						landscape.right();
-					}
-					if(left){
+					}if(left){
 						action = ACTION_LEFT;
 						landscape.left();
 					}

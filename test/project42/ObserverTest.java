@@ -45,10 +45,38 @@ File map = null;
 		Landscape landscape = new Landscape(map,observer,1200,800,12);
 		Player player = landscape.getPlayer();
 		int y = player.getY();
-		System.out.println(player.getJump());
 		landscape.jump();
 		
 		assertEquals("Result",true,player.getJump());
 		assertEquals("Result",true,y != player.getY());
+	}
+	
+	@Test
+	public void testRemoveFirst(){
+		
+	}
+	
+	@Test
+	public void testRemoveLast(){
+		
+	}
+	
+	@Test
+	public void testIsInFrame(){
+		Observer observer = new Observer(null,map,100, 12);
+		assertEquals("Result",false,observer.isInFrame(1300));
+		assertEquals("Result",true,observer.isInFrame(800));
+	}
+	
+	@Test
+	public void testGetVisibleBlocks(){
+		Observer observer = new Observer(null,map,100, 12);
+		assertEquals("Result",observer.length,observer.getVisibleBlocks().size());
+	}
+	
+	@Test
+	public void testGetEnemies(){
+		Observer observer = new Observer(null,map,100, 12);
+		assertEquals("Result",observer.enemies,observer.getEnemies());
 	}
 }
