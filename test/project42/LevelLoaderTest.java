@@ -24,6 +24,8 @@ public class LevelLoaderTest {
 
 	@Test
 	public void testReadNext() {
+		LevelLoader mapExist = new LevelLoader(new File("map.lvl"));
+		assertEquals("Result",0,mapExist.readNext()[0]);
 	}
 
 }

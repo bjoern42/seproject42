@@ -12,12 +12,13 @@ File map = null;
 
 	@Before
 	public void setUp() throws Exception {
-		map = new File("mapTUI.lvl");
+		map = new File("map.lvl");
 	}
 	
 	@Test
 	public void testUpdate(){
-		Observer observer = new Observer(null,map, 100, 12);
+		Player player = new Player(0, 0, 10, 20);
+		Observer observer = new Observer(player,map, 100, 12);
 		Block block = observer.getVisibleBlocks().get(0)[0];
 		int oldX = block.getX();
 		observer.update(10);
@@ -33,7 +34,21 @@ File map = null;
 	
 	@Test
 	public void testIsMovableArea(){
-		Observer observer = new Observer(null,map, 100, 12);
+		Player player = new Player(0, 0, 10, 20);
+		Observer observer = new Observer(player,map, 100, 12);
 		assertEquals("Result",false,observer.isMovableArea(0, 500, 100, 200,false));
+	}
+	
+	@Test
+	public void testJump(){
+		Observer observer = new Observer(null,map,100, 12);
+		Landscape landscape = new Landscape(map,observer,1200,800,12);
+		Player player = landscape.getPlayer();
+		int y = player.getY();
+		System.out.println(player.getJump());
+		landscape.jump();
+		
+		assertEquals("Result",true,player.getJump());
+		assertEquals("Result",true,y != player.getY());
 	}
 }

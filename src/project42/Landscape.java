@@ -34,9 +34,9 @@ Observable observable = null;
 		return objects.getVisibleBlocks();
 	}
 	
-	public static void pause(){
+	public static void pause(int pause){
 		try {
-			Thread.sleep(20);
+			Thread.sleep(pause);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -46,43 +46,42 @@ Observable observable = null;
 		new Thread(){
 			public void run(){
 				while(player.getHealth() > 0){
-					pause();
-					boolean update = false;
-					//gravity
-					if(player.getJump() && objects.isMovableArea(player.getX(), player.getY() + GRAVITY*2, player.getWidth(), player.getHeight(),true)){
-						player.move(0, GRAVITY*2);
-						if(player.getY()>height){
-							player.setHealth(0);
-						}
-						update = true;
-					}
-					//enemies
-					for(Enemy e:enemies){
-						int direction = e.getDirection();
-						//collision with enemy
-						if(!player.getLock() && objects.isMovableArea(player.getX(), player.getY() + 1, player.getWidth(), player.getHeight(),true) && e.isInArea(player.getX(), player.getY()+1, player.getWidth(), player.getHeight()) && !e.isInArea(player.getX(), player.getY(), player.getWidth(), player.getHeight())){
-							e.kill();
-						}else if(!e.isDead() && e.isInArea(player.getX(), player.getY(), player.getWidth(), player.getHeight())){
-							player.hit();
-						}
-						//move enemy
-						boolean isMovableArea = objects.isMovableArea(e.getX()+(SPEED/4)*direction, e.getY(), e.getWidth(), e.getHeight(),false);
-						if(!e.isDead() && objects.isInFrame(e.getX()) && isMovableArea){
-							e.move(SPEED/4*direction, 0);
-							if(Math.random() > 0.995){
-								e.jump(objects, observable, GRAVITY/2, JUMP_HEIGHT,false);
-							}
-							update = true;
-						}else if(!isMovableArea){
-							e.changeDirection();
-						}
-					}
-					if(update){
-						observable.update(0);
-					}
+					pause(20);
+					gravity();
+					handleEnemies();
+					observable.update(0);
 				}
 			}
 		}.start();
+	}
+	
+	public void gravity(){
+		if(player.getJump() && objects.isMovableArea(player.getX(), player.getY() + GRAVITY*2, player.getWidth(), player.getHeight(),true)){
+			player.move(0, GRAVITY*2);
+			if(player.getY()>height){
+				player.setHealth(0);
+			}
+		}
+	}
+	
+	public void handleEnemies(){
+		for(Enemy e:enemies){
+			int direction = e.getDirection();
+			if(!player.getLock() && objects.isMovableArea(player.getX(), player.getY() + 1, player.getWidth(), player.getHeight(),true) && e.isInArea(player.getX(), player.getY()+1, player.getWidth(), player.getHeight()) && !e.isInArea(player.getX(), player.getY(), player.getWidth(), player.getHeight())){
+				e.kill();
+			}else if(!e.isDead() && e.isInArea(player.getX(), player.getY(), player.getWidth(), player.getHeight())){
+				player.hit();
+			}
+			boolean isMovableArea = objects.isMovableArea(e.getX()+(SPEED/4)*direction, e.getY(), e.getWidth(), e.getHeight(),false);
+			if(!e.isDead() && objects.isInFrame(e.getX()) && isMovableArea){
+				e.move(SPEED/4*direction, 0);
+				if(Math.random() > 0.995){
+					e.jump(objects, observable, GRAVITY/2, JUMP_HEIGHT,false);
+				}
+			}else if(!isMovableArea){
+				e.changeDirection();
+			}
+		}
 	}
 	
 	public void jump(){

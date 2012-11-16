@@ -18,12 +18,8 @@ boolean lock = false;
 		}else{
 			new Thread(){
 				public void run(){
-					try {
-						Thread.sleep(1000);
-						lock = false;
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
+					Landscape.pause(1000);
+					lock = false;
 				}
 			}.start();
 		}

@@ -75,6 +75,13 @@ public class BlockTest {
 	}
 	
 	@Test
+	public void testSetType(){
+		Block tester = new Block(0,0,10,1);
+		tester.setType(2);
+		assertEquals("Result",2,tester.getType());
+	}
+	
+	@Test
 	public void testSetX(){
 		Block tester = new Block(0,0,10,1);
 		tester.setX(20);

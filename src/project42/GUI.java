@@ -48,7 +48,7 @@ GUI gui;
 
 	public void start(){
 		getGraphics().drawImage(imgBackground,0,0, getWidth(), getHeight(),this);
-		Landscape.pause();
+		Landscape.pause(100);
 		requestFocus();
 		landscape.start();
 		new Thread(){

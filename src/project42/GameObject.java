@@ -51,13 +51,13 @@ boolean jump = true, falling = false;
 				public void run(){
 					for(int j = 0; j < height;j++){
 						if(observer.isMovableArea(getX(), getY() - gravity, getWidth(), getHeight(),player)){
-							Landscape.pause();
+							Landscape.pause(20);
 							move(0, -gravity);
 							observable.update(0);
 						}
 					}
 					while(observer.isMovableArea(getX(), getY() + gravity*2, getWidth(), getHeight(),player)){
-						Landscape.pause();
+						Landscape.pause(20);
 						move(0, gravity*2);
 						observable.update(0);
 					}
