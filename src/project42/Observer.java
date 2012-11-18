@@ -100,7 +100,6 @@ Player player = null;
 							return false;
 						}else if(block[y+1].getType() == Block.TYP_WATER){
 							player.setHealth(0);
-							return true;
 						}else if(playerMoving && block[y+j].getType() == Block.TYP_COIN){
 							player.increaseCoins();
 							block[y+j].setType(Block.TYP_AIR);
