@@ -4,6 +4,9 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
+import de.htwg.project42.controller.Landscape;
+import de.htwg.project42.model.Player;
+
 public class PlayerTest {
 
 	@Test
@@ -62,7 +65,7 @@ public class PlayerTest {
 		Player player = new Player(0, 0, 10, 20);
 		player.increaseCoins();
 		assertEquals("Result",1,player.getCoins());
-		player.coins = player.coinsForLife;
+		player.setCoins(player.getCoinsForLife());
 		player.increaseCoins();
 		assertEquals("Result",0,player.getCoins());
 	}

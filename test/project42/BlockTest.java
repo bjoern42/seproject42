@@ -5,6 +5,8 @@ import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 
+import de.htwg.project42.model.Block;
+
 public class BlockTest {
 
 	@Before
@@ -15,7 +17,7 @@ public class BlockTest {
 	public void testBlock() {
 		Block tester = new Block(0,0,10,1);
 		
-		assertEquals("Result",1,tester.type);
+		assertEquals("Result",1,tester.getType());
 		assertEquals("Result",10,tester.getWidth());
 		assertEquals("Result",10,tester.getHeight());
 		assertEquals("Result",0,tester.getX());

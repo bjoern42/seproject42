@@ -1,4 +1,4 @@
-package project42;
+package de.htwg.project42.view;
 
 import java.awt.Font;
 import java.awt.Graphics;
@@ -13,18 +13,38 @@ import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
+
+import de.htwg.project42.controller.Landscape;
+import de.htwg.project42.model.Block;
+import de.htwg.project42.model.Enemy;
+import de.htwg.project42.model.Player;
+import de.htwg.project42.observer.Observable;
+
+/**
+ * GUI for JumpNRun.
+ * @author bjeschle,toofterd
+ * @version 1.0
+ */
 @SuppressWarnings("serial")
 public final class GUI extends JPanel implements KeyListener, Observable{
-final int ACTION_RIGHT = 0, ACTION_LEFT = 1, ACTION_NORMAL = 2, ACTION_JUMP = 3;
-List<Block[]> objects = new LinkedList<Block[]>();
-Landscape landscape = null;
-Player player = null;
-boolean up = false, right = false, left = false;
-Image buffer = null, imgGras, imgPlayer_NORMAL, imgPlayer_JUMP, imgPlayer_RIGHT, imgPlayer_LEFT, imgBackground,imgEnemie,imgEnemieDead,imgWater,imgHealth,imgCoin,imgCoinCount;
-int action = ACTION_NORMAL;
-JumpNRun main = null;
-GUI gui;
+private final int ACTION_RIGHT = 0, ACTION_LEFT = 1, ACTION_NORMAL = 2, ACTION_JUMP = 3;
+private List<Block[]> objects = new LinkedList<Block[]>();
+private Landscape landscape = null;
+private Player player = null;
+private boolean up = false, right = false, left = false;
+private Image buffer = null, imgGras, imgPlayer_NORMAL, imgPlayer_JUMP, imgPlayer_RIGHT, imgPlayer_LEFT, imgBackground,imgEnemie,imgEnemieDead,imgWater,imgHealth,imgCoin,imgCoinCount;
+private int action = ACTION_NORMAL;
+private JumpNRun main = null;
+private GUI gui;
 
+	/**
+	 * Creates GUI.
+	 * @param pMain - JumpNRun
+	 * @param map - Game map
+	 * @param pWidth - Width
+	 * @param pHeight - Height
+	 * @param pLength - Visible blocks
+	 */
 	public GUI(final JumpNRun pMain, File map,int pWidth, int pHeight, int pLength){		
 		landscape = new Landscape(map,this,pWidth, pHeight, pLength);
 		player = landscape.getPlayer();
@@ -46,6 +66,9 @@ GUI gui;
 		addKeyListener(this);
 	}
 
+	/**
+	 * Starts Game.
+	 */
 	public void start(){
 		getGraphics().drawImage(imgBackground,0,0, getWidth(), getHeight(),this);
 		Landscape.pause(100);
@@ -77,6 +100,9 @@ GUI gui;
 		paint(g);
 	}
 	
+	/**
+	 * Draws all components. (Double buffered)
+	 */
 	@Override
 	public void paint(Graphics g){
 		if(buffer==null){
@@ -125,6 +151,10 @@ GUI gui;
 		g.drawImage(buffer,0,0,this);
 	}
 
+	/**
+	 * Draws the player.
+	 * @param g - Graphics
+	 */
 	private void paintPlayer(Graphics g){
 		switch(action){
 			case ACTION_JUMP:{
@@ -146,11 +176,17 @@ GUI gui;
 		}
 	}
 	
+	/**
+	 * Paint components.
+	 */
 	@Override
 	public void update(int pChange) {
 		repaint();
 	}
 	
+	/**
+	 * Key handling.
+	 */
 	@Override
 	public void keyPressed(final KeyEvent arg0) {
 		switch (arg0.getKeyCode()){
@@ -169,6 +205,9 @@ GUI gui;
 		}
 	}
 
+	/**
+	 * Key handling.
+	 */
 	@Override
 	public void keyReleased(KeyEvent arg0) {
 		switch (arg0.getKeyCode()){

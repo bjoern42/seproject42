@@ -6,6 +6,12 @@ import java.io.File;
 
 import org.junit.Test;
 
+import de.htwg.project42.controller.Landscape;
+import de.htwg.project42.model.Block;
+import de.htwg.project42.model.GameObject;
+import de.htwg.project42.model.Player;
+import de.htwg.project42.observer.Observer;
+
 public class GameObjectTest {
 
 	@Test
@@ -57,7 +63,7 @@ public class GameObjectTest {
 	public void testGetJump() {
 		GameObject obj = new Player(0,0,100,200);
 		assertEquals("Result",true,obj.getJump());
-		obj.jump = false;
+		obj.setJump(false);
 		assertEquals("Result",false,obj.getJump());
 	}
 
@@ -73,19 +79,19 @@ public class GameObjectTest {
 		Player obj = new Player(600,500,100,200);
 		Observer observer = new Observer(obj, new File("map.lvl"), 100, 12);
 		int y = obj.getY();
-		obj.jump = false;
+		obj.setJump(false);
 		obj.jump(observer, observer, 10, 10, true);
 		Landscape.pause(100);
 		assertEquals("Result",true,y == obj.getY());
-		obj.y = 400;
-		obj.x = 0;
-		obj.jump = true;
+		obj.setY(400);
+		obj.setX(0);
+		obj.setJump(true);
 		obj.jump(observer, observer, 10, 10, true);
 		Landscape.pause(100);
 		assertEquals("Result",false,y == obj.getY());
-		obj.y = y;
-		obj.x = 600;
-		obj.jump = true;
+		obj.setY(y);
+		obj.setX(600);
+		obj.setJump(true);
 		obj.jump(observer, observer, 10, 3, true);
 		Landscape.pause(100);
 		assertEquals("Result",false,y == obj.getY());

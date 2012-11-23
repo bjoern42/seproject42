@@ -7,6 +7,11 @@ import java.io.File;
 import org.junit.Before;
 import org.junit.Test;
 
+import de.htwg.project42.controller.Landscape;
+import de.htwg.project42.model.Block;
+import de.htwg.project42.model.Player;
+import de.htwg.project42.observer.Observer;
+
 public class ObserverTest {
 File map = null;
 
@@ -49,8 +54,8 @@ File map = null;
 		Landscape landscape = new Landscape(map,observer,1200,800,12);
 		Player player = landscape.getPlayer();
 		int y = 500;
-		player.y = y;
-		player.jump = true;
+		player.setY(y);
+		player.setJump(true);
 		landscape.jump();
 		assertEquals("Result",false,player.getJump());
 		Landscape.pause(100);
@@ -61,20 +66,20 @@ File map = null;
 	public void testRemoveFirst(){
 		Observer observer = new Observer(null,map,100, 12);
 		observer.removeFirst();
-		assertEquals("Result",1,observer.start);
-		observer.start = 8000;
+		assertEquals("Result",1,observer.getStart());
+		observer.setStart(8000);
 		observer.removeFirst();
-		assertEquals("Result",8000,observer.start);
+		assertEquals("Result",8000,observer.getStart());
 	}
 	
 	@Test
 	public void testRemoveLast(){
 		Observer observer = new Observer(null,map,100, 12);
 		observer.removeLast();
-		assertEquals("Result",0,observer.start);
-		observer.start = 10;
+		assertEquals("Result",0,observer.getStart());
+		observer.setStart(10);
 		observer.removeLast();
-		assertEquals("Result",9,observer.start);
+		assertEquals("Result",9,observer.getStart());
 	}
 	
 	@Test
@@ -88,7 +93,7 @@ File map = null;
 	@Test
 	public void testGetVisibleBlocks(){
 		Observer observer = new Observer(null,map,100, 12);
-		assertEquals("Result",observer.length,observer.getVisibleBlocks().size());
+		assertEquals("Result",observer.getLength(),observer.getVisibleBlocks().size());
 		observer = new Observer(null,new File("mapTUI.lvl"),100, 12);
 		assertEquals("Result",5,observer.getVisibleBlocks().size());
 	}
@@ -96,6 +101,6 @@ File map = null;
 	@Test
 	public void testGetEnemies(){
 		Observer observer = new Observer(null,map,100, 12);
-		assertEquals("Result",observer.enemies,observer.getEnemies());
+		assertEquals("Result",observer.getEnemies(),observer.getEnemies());
 	}
 }

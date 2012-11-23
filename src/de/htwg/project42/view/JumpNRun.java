@@ -1,4 +1,4 @@
-package project42;
+package de.htwg.project42.view;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -21,21 +21,32 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
 
+/**
+ * Main class for JumpNRun.
+ * @author bjeschle,toofterd
+ * @version 1.0
+ */
 @SuppressWarnings("serial")
 public class JumpNRun extends JFrame implements ActionListener{
-GUI gui = null;
-EditorGUI egui = null;
-JPanel pMenu, pButtons = new JPanel(),pList = new JPanel(),pCurrent;
-JButton btStart = new JButton("Starten"), btEditor = new JButton("Level Editor");
-Image img = null;
-JList<File> list = null;
-JScrollPane scroll = null;
-int width, height, length;
+private GUI gui = null;
+private EditorGUI egui = null;
+private JPanel pMenu, pButtons = new JPanel(),pList = new JPanel(),pCurrent;
+private JButton btStart = new JButton("Starten"), btEditor = new JButton("Level Editor");
+private Image img = null;
+private JList<File> list = null;
+private JScrollPane scroll = null;
+private int width, height, length;
 
 	public static void main(String[] args) {
 		new JumpNRun(1200, 800, 12);
 	}
 	
+	/**
+	 * Initialises main screen.
+	 * @param pWidth - Width
+	 * @param pHeight - Height
+	 * @param pLength - Visible blocks
+	 */
 	public JumpNRun(int pWidth, int pHeight, int pLength){
 		super("Jump and Run");
 		width = pWidth;
@@ -90,6 +101,9 @@ int width, height, length;
 		scroll.setPreferredSize(new Dimension(scroll.getWidth(), btStart.getY()-scroll.getY()));
 	}
 	
+	/**
+	 * Button handling.
+	 */
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
 		if(arg0.getSource() == btStart){
@@ -101,10 +115,17 @@ int width, height, length;
 		}
 	}
 	
+	/**
+	 * Changes to main panel.
+	 */
 	public void reset(){
 		changePanel(pMenu);
 	}
 	
+	/**
+	 * Changes visible panel.
+	 * @param panel - panel to be visible
+	 */
 	private void changePanel(JPanel panel){
 		remove(pCurrent);
 		pCurrent = panel;
@@ -113,14 +134,26 @@ int width, height, length;
 		repaint();
 	}
 	
+	/**
+	 * JPanel with background image.
+	 * @author bjeschle,toofterd
+	 * @version 1.0
+	 */
 	private class ImgPanel extends JPanel{
 		Image img;
 		
+		/**
+		 * Creates an ImgPanel
+		 * @param pImg - Background image
+		 */
 		public ImgPanel(Image pImg){
 			super();
 			img = pImg;
 		}
 		
+		/**
+		 * Draws background.
+		 */
 		@Override
 		public void paint(Graphics g){
 			g.drawImage(img, 0, 0, getWidth(), getHeight(), this);

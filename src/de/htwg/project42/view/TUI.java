@@ -1,24 +1,41 @@
-package project42;
+package de.htwg.project42.view;
 
 import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
 
+
+import de.htwg.project42.controller.Landscape;
+import de.htwg.project42.model.Block;
+import de.htwg.project42.model.Player;
+import de.htwg.project42.observer.Observable;
+
+/**
+ * TUI for JumpNRun.
+ * @author bjeschle,toofterd
+ * @version 1.0
+ */
 public final class TUI implements Observable {
-List<Block[]> objects = new LinkedList<Block[]>();
-Landscape landscape = null;	
-Player player = null;
+private List<Block[]> objects = new LinkedList<Block[]>();
+private Landscape landscape = null;	
+private Player player = null;
 
 	public static void main(String[] args) {
 		new TUI();
 	}
 	
+	/**
+	 * Creates TUI and starts tests.
+	 */
 	public TUI(){
 		landscape = new Landscape(new File("mapTUI.lvl"),this,800, 800,5);
 		landscape.start();
 		test();
 	}
 	
+	/**
+	 * Testruns.
+	 */
 	private void test(){
 		landscape.jump();
 		try {
@@ -35,6 +52,9 @@ Player player = null;
 		landscape.jump();
 	}
 	
+	/**
+	 * Prints the landscape.
+	 */
 	@Override
 	public void update(int pChange) {
 		objects = landscape.getVisibleBlocks();
