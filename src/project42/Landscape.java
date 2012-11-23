@@ -3,15 +3,27 @@ package project42;
 import java.io.File;
 import java.util.List;
 
-
+/**
+ * Controller class for JumpNRun game.
+ * @author bjeschle,toofterd
+ * @version 1.0
+ */
 public final class Landscape{
-final int GRAVITY = 10, SPEED = 10, JUMP_HEIGHT = 16;
-int width, height;
-Player player = null;
-List<Enemy> enemies = null;
-Observer objects = null;
-Observable observable = null;
+protected final int GRAVITY = 10, SPEED = 10, JUMP_HEIGHT = 16;
+protected int width, height;
+protected Player player = null;
+protected List<Enemy> enemies = null;
+protected Observer objects = null;
+protected Observable observable = null;
 	
+	/**
+	 * Generates Landscape.
+	 * @param map - map to be loaded.
+	 * @param pObservable - Observer
+	 * @param pWidth - 
+	 * @param pHeight - 
+	 * @param pLength
+	 */
 	public Landscape(File map,Observable pObservable, int pWidth,int pHeight, int pLength){
 		observable = pObservable;
 		width = pWidth;

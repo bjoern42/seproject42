@@ -10,11 +10,13 @@ Landscape landscape = null;
 Player player = null;
 
 	public static void main(String[] args) {
-		new TUI().test();
+		new TUI();
 	}
 	
 	public TUI(){
-		landscape = new Landscape(new File("mapTUI.lvl"),this,800, 800,4);
+		landscape = new Landscape(new File("mapTUI.lvl"),this,800, 800,5);
+		landscape.start();
+		test();
 	}
 	
 	private void test(){
@@ -44,9 +46,6 @@ Player player = null;
 			for(Block block:objects.get(i)){
 				System.out.print(block);
 			}
-//			if(i==7){
-//				System.out.print("<-player");
-//			}
 			if(rowX-player.getX() < player.getWidth() && rowX-player.getX() > -player.getWidth()){
 				System.out.print("<-player");
 			}
