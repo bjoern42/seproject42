@@ -3,6 +3,8 @@ package project42;
 import static org.junit.Assert.*;
 
 import java.io.File;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -11,28 +13,67 @@ import de.htwg.project42.controller.Landscape;
 import de.htwg.project42.model.Block;
 import de.htwg.project42.model.Enemy;
 import de.htwg.project42.model.Player;
+import de.htwg.project42.observer.Observable;
 import de.htwg.project42.observer.Observer;
 
-public class LandscapeTest {
-	File map = null;
+public class LandscapeTest implements Observable{
+private List<Block[]> objects = new LinkedList<Block[]>();
+private Observer observer;
+private Landscape landscape;
 
 	@Before
 	public void setUp() throws Exception {
-		map = new File("test.lvl");
+		initialise();
+	}
+
+	private void initialise(){
+		if(landscape == null){
+			File mapF = null;
+			for(File f: new File(".").listFiles()){
+				if(f.getName().endsWith(".lvl")){
+					mapF = f;
+					break;
+				}
+			}
+			int map[][] = new int[7][];
+			int row[] = {1,1,1,1};
+			map[0] = row;
+			int row1[] = {1,0,3,1};
+			map[1] = row1;
+			int row2[] = {4,0,0,1};
+			map[2] = row2;
+			int row3[] = {1,1,1,1};
+			map[3] = row3;
+			int row4[] = {0,0,2,1};
+			map[4] = row4;
+			int row5[] = {0,0,0,1};
+			map[5] = row5;
+			int row6[] = {1,1,1,1};
+			map[6] = row6;
+			for(int i=0; i<map.length;i++){
+				Block b[] = new Block[map[i].length];
+				for(int j=0; j<map[i].length;j++){
+					b[j] = new Block(100*i, 100*j, 100, map[i][j]);
+				}
+				objects.add(b);
+			}
+			landscape = new Landscape(mapF, this, 400, 400, 4);
+			observer = landscape.getObserver();
+			observer.setBlocks(objects);
+			Enemy e = landscape.getEnemies().get(0);
+			e.setX(400);
+			e.setY(200);
+		}
 	}
 
 	@Test
 	public void testLandscape() {
-		Observer observer = new Observer(null, map, 100, 4);
-		Landscape landscape = new Landscape(map, observer, 400, 400, 4);
 		assertEquals("Result", 400, landscape.getWidth());
 		assertEquals("Result", 400, landscape.getHeight());
 	}
 
 	@Test
 	public void testLeft() {
-		Observer observer = new Observer(null, map, 100, 4);
-		Landscape landscape = new Landscape(map, observer, 400, 400, 4);
 		Block block = landscape.getVisibleBlocks().get(0)[0];
 		int x = block.getX();
 		Player player = landscape.getPlayer();
@@ -49,8 +90,6 @@ public class LandscapeTest {
 
 	@Test
 	public void testRight() {
-		Observer observer = new Observer(null, map, 100, 4);
-		Landscape landscape = new Landscape(map, observer, 400, 400, 4);
 		Block block = landscape.getVisibleBlocks().get(0)[0];
 		int x = block.getX();
 		Player player = landscape.getPlayer();
@@ -67,21 +106,16 @@ public class LandscapeTest {
 
 	@Test
 	public void testGetPlayer() {
-		Landscape landscape = new Landscape(map, null, 400, 400, 4);
 		assertEquals("Result", landscape.getPlayer(), landscape.getPlayer());
 	}
 
 	@Test
 	public void testGetEnemies() {
-		Observer observer = new Observer(null, map, 100, 4);
-		Landscape landscape = new Landscape(map, observer, 400, 400, 4);
 		assertEquals("Result", landscape.getEnemies(), landscape.getEnemies());
 	}
 	
 	@Test
 	public void testGravity() {
-		Observer observer = new Observer(null, map, 100, 4);
-		Landscape landscape = new Landscape(map, observer, 400, 400, 4);
 		Player player = landscape.getPlayer();
 		player.setX(200);
 		int y = player.getY();
@@ -108,19 +142,8 @@ public class LandscapeTest {
 		assertEquals("Result", y, player.getY());
 	}
 
-	/*
-1,1,1,1
-1,0,3,1
-4,X,X,1
-1,1,1,1
-0,0,2,1
-0,0,0,1
-1,1,1,1
-	 */
 	@Test
 	public void testHandleEnemies() {
-		Observer observer = new Observer(null, map, 100, 4);
-		Landscape landscape = new Landscape(map, observer, 400, 400, 4);
 		landscape.setEnemyJumpChances(0);
 		Player player = landscape.getPlayer();
 		Enemy enemy = landscape.getEnemies().get(0);
@@ -136,7 +159,6 @@ public class LandscapeTest {
 		enemy.setX(400);
 		landscape.handleEnemies();
 		assertEquals("Result", 400, enemy.getX());
-		System.out.println(enemy.getDirection());
 		player.setX(enemy.getX());
 		player.setY(enemy.getY());
 		player.setLock(false);
@@ -168,8 +190,6 @@ public class LandscapeTest {
 
 	@Test
 	public void testJump() {
-		Observer observer = new Observer(null, map, 100, 4);
-		Landscape landscape = new Landscape(map, observer, 400, 400, 4);
 		Player player = landscape.getPlayer();
 		int y = player.getY();
 		landscape.jump();
@@ -179,8 +199,6 @@ public class LandscapeTest {
 	
 	@Test
 	public void testStart() {
-		Observer observer = new Observer(null, map, 100, 4);
-		Landscape landscape = new Landscape(map, observer, 400, 400, 4);
 		Player player = landscape.getPlayer();
 		int y = player.getY();
 		landscape.start();
@@ -189,8 +207,12 @@ public class LandscapeTest {
 		player.setHealth(0);
 		player.setY(100);
 		y = 100;
+		Landscape.pause(100);
 		landscape.start();
-		Landscape.pause(200);
+		Landscape.pause(500);
 		assertEquals("Result", true, y == player.getY());
 	}
+
+	@Override
+	public void update(int pChange) {}
 }

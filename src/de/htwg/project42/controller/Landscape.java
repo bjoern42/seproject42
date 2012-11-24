@@ -42,6 +42,10 @@ private Observable observable = null;
 		enemies = objects.getEnemies();
 	}
 	
+	public Observer getObserver(){
+		return objects;
+	}
+	
 	/**
 	 * Returns the player.
 	 * @return Player

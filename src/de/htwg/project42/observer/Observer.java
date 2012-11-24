@@ -29,7 +29,7 @@ private Player player = null;
 	 */
 	public Observer(Player pPlayer, File map, int pSize, int pLength){
 		player = pPlayer;
-		setStart(0);
+		start = 0;
 		length = pLength+2;
 		size = pSize;
 		LevelLoader loader = new LevelLoader(map);
@@ -60,6 +60,10 @@ private Player player = null;
 		return objects.subList(getStart(), getStart()+getLength());
 	}
 	
+	
+	public void setBlocks(List<Block[]> list){
+		objects = list;
+	}
 	/**
 	 * Returns all enemies.
 	 * @return enemies
