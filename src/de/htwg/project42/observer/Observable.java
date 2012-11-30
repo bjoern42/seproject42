@@ -7,8 +7,7 @@ package de.htwg.project42.observer;
  */
 public interface Observable {
 	/**
-	 * Called if GameObject position should be changed.
-	 * @param pChange - change
+	 * Called if GameObject position has changed.
 	 */
-	void update(int pChange);
+	void update();
 }

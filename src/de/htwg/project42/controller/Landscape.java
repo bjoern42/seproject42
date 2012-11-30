@@ -7,6 +7,7 @@ import java.util.List;
 import de.htwg.project42.model.Block;
 import de.htwg.project42.model.Enemy;
 import de.htwg.project42.model.GameObject;
+import de.htwg.project42.model.Level;
 import de.htwg.project42.model.Player;
 import de.htwg.project42.observer.Observable;
 import de.htwg.project42.observer.Observer;
@@ -16,15 +17,14 @@ import de.htwg.project42.observer.Observer;
  * @author bjeschle,toofterd
  * @version 1.0
  */
-public final class Landscape{
+public final class Landscape extends Observer{
 private static final int GRAVITY = 10, SPEED = 10, JUMP_HEIGHT = 16, RUN_PAUSE = 20, ENEMY_SPEED_FACTOR = 4;
 private static final double STANDARD_ENEMY_JUMP_CHANCES = 0.995;
 private double enemyJumpChances = STANDARD_ENEMY_JUMP_CHANCES;
 private int width, height;
 private Player player = null;
 private List<Enemy> enemies = null;
-private Observer objects = null;
-private Observable observable = null;
+private Level level = null;
 	
 	/**
 	 * Generates Landscape.
@@ -35,17 +35,17 @@ private Observable observable = null;
 	 * @param pLength - Visible columns
 	 */
 	public Landscape(File map,Observable pObservable, int pWidth,int pHeight, int pLength){
-		observable = pObservable;
+		addObserver(pObservable);
 		width = pWidth;
 		height = pHeight;
 		int size = width/pLength;
 		player = new Player(pLength*size/2, 0, size, size*2);
-		objects = new Observer(player, map, size ,pLength);
-		enemies = objects.getEnemies();
+		level = new Level(player, map, size ,pLength);
+		enemies = level.getEnemies();
 	}
 	
-	public Observer getObserver(){
-		return objects;
+	public Level getObserver(){
+		return level;
 	}
 	
 	/**
@@ -69,7 +69,7 @@ private Observable observable = null;
 	 * @return visible blocks
 	 */
 	public List<Block[]> getVisibleBlocks(){
-		return objects.getVisibleBlocks();
+		return level.getVisibleBlocks();
 	}
 	
 	/**
@@ -82,8 +82,9 @@ private Observable observable = null;
 					GameObject.pause(RUN_PAUSE);
 					gravity();
 					handleEnemies();
-					observable.update(0);
+					notifyObserver();
 				}
+				removeAllObserver();
 			}
 		}.start();
 	}
@@ -92,7 +93,7 @@ private Observable observable = null;
 	 * Handles the gravity.
 	 */
 	public void gravity(){
-		if(player.getJump() && objects.isMovableArea(player.getX(), player.getY() + GRAVITY*2, player.getWidth(), player.getHeight(),true)){
+		if(player.getJump() && level.isMovableArea(player.getX(), player.getY() + GRAVITY*2, player.getWidth(), player.getHeight(),true)){
 			player.move(0, GRAVITY*2);
 			if(player.getY()>height){
 				player.setHealth(0);
@@ -106,16 +107,16 @@ private Observable observable = null;
 	public void handleEnemies(){
 		for(Enemy e:enemies){
 			int direction = e.getDirection();
-			if(!player.getLock() && objects.isMovableArea(player.getX(), player.getY() + 1, player.getWidth(), player.getHeight(),true) && e.isInArea(player.getX(), player.getY()+1, player.getWidth(), player.getHeight()) && !e.isInArea(player.getX(), player.getY(), player.getWidth(), player.getHeight())){
+			if(!player.getLock() && level.isMovableArea(player.getX(), player.getY() + 1, player.getWidth(), player.getHeight(),true) && e.isInArea(player.getX(), player.getY()+1, player.getWidth(), player.getHeight()) && !e.isInArea(player.getX(), player.getY(), player.getWidth(), player.getHeight())){
 				e.kill();
 			}else if(!e.isDead() && e.isInArea(player.getX(), player.getY(), player.getWidth(), player.getHeight())){
 				player.hit();
 			}
-			boolean isMovableArea = objects.isMovableArea(e.getX()+(SPEED/ENEMY_SPEED_FACTOR)*direction, e.getY(), e.getWidth(), e.getHeight(),false);
-			if(!e.isDead() && objects.isInFrame(e.getX()) && isMovableArea){
+			boolean isMovableArea = level.isMovableArea(e.getX()+(SPEED/ENEMY_SPEED_FACTOR)*direction, e.getY(), e.getWidth(), e.getHeight(),false);
+			if(!e.isDead() && level.isInFrame(e.getX()) && isMovableArea){
 				e.move(SPEED/ENEMY_SPEED_FACTOR*direction, 0);
 				if(Math.random() > enemyJumpChances){
-					e.jump(objects, observable, GRAVITY/2, JUMP_HEIGHT,false);
+					e.jump(level, this, GRAVITY/2, JUMP_HEIGHT,false);
 				}
 			}else if(!isMovableArea){
 				e.changeDirection();
@@ -135,7 +136,7 @@ private Observable observable = null;
 	 * Makes the player jump.
 	 */
 	public void jump(){
-		player.jump(objects, observable, GRAVITY, JUMP_HEIGHT,true);
+		player.jump(level, this, GRAVITY, JUMP_HEIGHT,true);
 	}
 	
 	/**
@@ -143,9 +144,9 @@ private Observable observable = null;
 	 * This is realized by moving all visible blocks to the left.
 	 */
 	public void right(){
-		if(objects.isMovableArea(player.getX() + SPEED, player.getY(), player.getWidth(), player.getHeight(),true)){
-			objects.update(-SPEED);
-			observable.update(0);
+		if(level.isMovableArea(player.getX() + SPEED, player.getY(), player.getWidth(), player.getHeight(),true)){
+			level.update(-SPEED);
+			notifyObserver();
 		}
 	}
 	
@@ -154,9 +155,9 @@ private Observable observable = null;
 	 * This is realized by moving all visible blocks to the right.
 	 */
 	public void left(){
-		if(objects.isMovableArea(player.getX() - SPEED, player.getY(), player.getWidth(), player.getHeight(),true)){
-			objects.update(SPEED);
-			observable.update(0);
+		if(level.isMovableArea(player.getX() - SPEED, player.getY(), player.getWidth(), player.getHeight(),true)){
+			level.update(SPEED);
+			notifyObserver();
 		}
 	}
 	

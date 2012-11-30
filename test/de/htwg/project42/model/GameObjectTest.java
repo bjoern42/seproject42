@@ -8,7 +8,7 @@ import org.junit.Test;
 
 import de.htwg.project42.observer.Observer;
 
-public class GameObjectTest {
+public class GameObjectTest extends Observer{
 
 	@Test
 	public void testGameObject() {
@@ -73,22 +73,22 @@ public class GameObjectTest {
 	@Test
 	public void testJump() {
 		Player obj = new Player(600,500,100,200);
-		Observer observer = new Observer(obj, new File("map.lvl"), 100, 12);
+		Level level = new Level(obj, new File("map.lvl"), 100, 12);
 		int y = obj.getY();
 		obj.setJump(false);
-		obj.jump(observer, observer, 10, 10, true);
+		obj.jump(level, this, 10, 10, true);
 		GameObject.pause(100);
 		assertEquals("Result",true,y == obj.getY());
 		obj.setY(400);
 		obj.setX(0);
 		obj.setJump(true);
-		obj.jump(observer, observer, 10, 10, true);
+		obj.jump(level, this, 10, 10, true);
 		GameObject.pause(100);
 		assertEquals("Result",false,y == obj.getY());
 		obj.setY(y);
 		obj.setX(600);
 		obj.setJump(true);
-		obj.jump(observer, observer, 10, 3, true);
+		obj.jump(level, this, 10, 3, true);
 		GameObject.pause(100);
 		assertEquals("Result",false,y == obj.getY());
 	}
@@ -99,4 +99,5 @@ public class GameObjectTest {
 		GameObject.pause(10);
 		assertEquals("Result", false, time == System.currentTimeMillis());
 	}
+
 }

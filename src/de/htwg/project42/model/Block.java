@@ -1,13 +1,12 @@
 package de.htwg.project42.model;
 
-import de.htwg.project42.observer.Observable;
 
 /**
  * Block for JumpNRun
  * @author bjeschle,toofterd
  * @version 1.0
  */
-public class Block extends GameObject  implements Observable{
+public class Block extends GameObject  implements Movable{
 public static final int TYP_AIR = 0;	
 public static final int TYP_GRAS = 1;
 public static final int TYP_ENEMY = 2;

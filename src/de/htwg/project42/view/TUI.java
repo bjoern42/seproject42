@@ -54,7 +54,7 @@ private Landscape landscape = null;
 	 * Prints the landscape.
 	 */
 	@Override
-	public void update(int pChange) {
+	public void update() {
 		List<Block[]> objects = landscape.getVisibleBlocks();
 		Player player = landscape.getPlayer();
 		print("Player: "+player.getX()+" "+player.getY()+"\n");

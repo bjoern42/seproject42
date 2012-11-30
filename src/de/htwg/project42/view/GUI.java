@@ -202,7 +202,7 @@ private GUI gui;
 	 * Paint components.
 	 */
 	@Override
-	public void update(int pChange) {
+	public void update() {
 		repaint();
 	}
 	

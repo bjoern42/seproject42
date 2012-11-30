@@ -136,22 +136,22 @@ private boolean jump = true;
 	 * @param height - Height
 	 * @param player - specify if jump is called by player or enemy
 	 */
-	public void jump(final Observer observer, final Observable observable, final int gravity, final int height,final boolean player){
-		if(jump && !observer.isMovableArea(getX(), getY() + gravity, getWidth(), getHeight(),player)){
+	public void jump(final Level level, final Observer observer, final int gravity, final int height,final boolean player){
+		if(jump && !level.isMovableArea(getX(), getY() + gravity, getWidth(), getHeight(),player)){
 			jump = false;
 			new Thread(){
 				public void run(){
 					for(int j = 0; j < height;j++){
-						if(observer.isMovableArea(getX(), getY() - gravity, getWidth(), getHeight(),player)){
+						if(level.isMovableArea(getX(), getY() - gravity, getWidth(), getHeight(),player)){
 							pause(PAUSE);
 							move(0, -gravity);
-							observable.update(0);
+							observer.notifyObserver();
 						}
 					}
-					while(observer.isMovableArea(getX(), getY() + gravity*2, getWidth(), getHeight(),player)){
+					while(level.isMovableArea(getX(), getY() + gravity*2, getWidth(), getHeight(),player)){
 						pause(PAUSE);
 						move(0, gravity*2);
-						observable.update(0);
+						observer.notifyObserver();
 					}
 					jump = true;
 				}

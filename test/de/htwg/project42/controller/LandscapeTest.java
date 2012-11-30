@@ -12,13 +12,14 @@ import org.junit.Test;
 import de.htwg.project42.model.Block;
 import de.htwg.project42.model.Enemy;
 import de.htwg.project42.model.GameObject;
+import de.htwg.project42.model.Level;
 import de.htwg.project42.model.Player;
 import de.htwg.project42.observer.Observable;
 import de.htwg.project42.observer.Observer;
 
 public class LandscapeTest implements Observable{
 private List<Block[]> objects = new LinkedList<Block[]>();
-private Observer observer;
+private Level level;
 private Landscape landscape;
 
 	@Before
@@ -58,8 +59,8 @@ private Landscape landscape;
 				objects.add(b);
 			}
 			landscape = new Landscape(mapF, this, 400, 400, 4);
-			observer = landscape.getObserver();
-			observer.setBlocks(objects);
+			level = landscape.getObserver();
+			level.setBlocks(objects);
 			Enemy e = landscape.getEnemies().get(0);
 			e.setX(400);
 			e.setY(200);
@@ -207,5 +208,5 @@ private Landscape landscape;
 	}
 
 	@Override
-	public void update(int pChange) {}
+	public void update() {}
 }
