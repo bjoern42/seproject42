@@ -1,4 +1,4 @@
-package project42;
+package de.htwg.project42.observer;
 
 import static org.junit.Assert.*;
 
@@ -10,7 +10,6 @@ import org.junit.Test;
 import de.htwg.project42.controller.Landscape;
 import de.htwg.project42.model.Block;
 import de.htwg.project42.model.Player;
-import de.htwg.project42.observer.Observer;
 
 public class ObserverTest {
 File map = null;

@@ -1,4 +1,4 @@
-package project42;
+package de.htwg.project42.controller;
 
 import static org.junit.Assert.*;
 
@@ -9,7 +9,6 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 
-import de.htwg.project42.controller.Landscape;
 import de.htwg.project42.model.Block;
 import de.htwg.project42.model.Enemy;
 import de.htwg.project42.model.Player;

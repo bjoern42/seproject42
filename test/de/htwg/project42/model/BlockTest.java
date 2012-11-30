@@ -1,11 +1,9 @@
-package project42;
+package de.htwg.project42.model;
 
 import static org.junit.Assert.*;
 
 import org.junit.Before;
 import org.junit.Test;
-
-import de.htwg.project42.model.Block;
 
 public class BlockTest {
 

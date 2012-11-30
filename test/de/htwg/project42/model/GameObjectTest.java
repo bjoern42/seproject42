@@ -1,4 +1,4 @@
-package project42;
+package de.htwg.project42.model;
 
 import static org.junit.Assert.*;
 
@@ -7,9 +7,6 @@ import java.io.File;
 import org.junit.Test;
 
 import de.htwg.project42.controller.Landscape;
-import de.htwg.project42.model.Block;
-import de.htwg.project42.model.GameObject;
-import de.htwg.project42.model.Player;
 import de.htwg.project42.observer.Observer;
 
 public class GameObjectTest {

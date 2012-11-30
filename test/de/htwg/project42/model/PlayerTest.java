@@ -1,11 +1,10 @@
-package project42;
+package de.htwg.project42.model;
 
 import static org.junit.Assert.*;
 
 import org.junit.Test;
 
 import de.htwg.project42.controller.Landscape;
-import de.htwg.project42.model.Player;
 
 public class PlayerTest {
 
