@@ -10,5 +10,5 @@ public interface Observable {
 	 * Called if GameObject position should be changed.
 	 * @param pChange - change
 	 */
-	public void update(int pChange);
+	void update(int pChange);
 }

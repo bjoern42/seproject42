@@ -32,13 +32,13 @@ private GUI gui = null;
 private EditorGUI egui = null;
 private JPanel pMenu, pButtons = new JPanel(),pList = new JPanel(),pCurrent;
 private JButton btStart = new JButton("Starten"), btEditor = new JButton("Level Editor");
-private Image img = null;
 private JList list = null;
 private JScrollPane scroll = null;
 private int width, height, length;
+private static final int landscapeSizeX = 1200, landscapeSizeY = 800, landscapeLength = 12;
 
 	public static void main(String[] args) {
-		new JumpNRun(1200, 800, 12);
+		new JumpNRun(landscapeSizeX, landscapeSizeY, landscapeLength);
 	}
 	
 	/**
@@ -60,7 +60,7 @@ private int width, height, length;
 		btStart.addActionListener(this);
 		btEditor.addActionListener(this);
 		
-		img = Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("images/mainframe.png"));
+		Image img = Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("images/mainframe.png"));
 		pMenu = new ImgPanel(img);
 		
 		egui = new EditorGUI(width, height, length);
@@ -140,7 +140,7 @@ private int width, height, length;
 	 * @version 1.0
 	 */
 	private class ImgPanel extends JPanel{
-		Image img;
+		private Image img;
 		
 		/**
 		 * Creates an ImgPanel

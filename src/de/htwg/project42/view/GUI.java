@@ -27,12 +27,12 @@ import de.htwg.project42.observer.Observable;
  */
 @SuppressWarnings("serial")
 public final class GUI extends JPanel implements KeyListener, Observable{
-private final int ACTION_RIGHT = 0, ACTION_LEFT = 1, ACTION_NORMAL = 2, ACTION_JUMP = 3;
+private static final int ACTION_RIGHT = 0, ACTION_LEFT = 1, ACTION_NORMAL = 2, ACTION_JUMP = 3;
 private List<Block[]> objects = new LinkedList<Block[]>();
 private Landscape landscape = null;
 private Player player = null;
 private boolean up = false, right = false, left = false;
-private Image buffer = null, imgGras, imgPlayer_NORMAL, imgPlayer_JUMP, imgPlayer_RIGHT, imgPlayer_LEFT, imgBackground,imgEnemie,imgEnemieDead,imgWater,imgHealth,imgCoin,imgCoinCount;
+private Image buffer = null, imgGras, imgPlayer_normal, imgPlayer_jump, imgPlayer_right, imgPlayer_left, imgBackground,imgEnemie,imgEnemieDead,imgWater,imgHealth,imgCoin,imgCoinCount;
 private int action = ACTION_NORMAL;
 private JumpNRun main = null;
 private GUI gui;
@@ -53,10 +53,10 @@ private GUI gui;
 		
 		imgBackground = Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("images/background.png"));
 		imgGras = Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("images/gras.jpg"));
-		imgPlayer_NORMAL = Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("images/player_normal.gif"));
-		imgPlayer_JUMP = Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("images/player_jump.gif"));
-		imgPlayer_RIGHT = Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("images/player_right.gif"));
-		imgPlayer_LEFT = Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("images/player_left.gif"));
+		imgPlayer_normal = Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("images/player_normal.gif"));
+		imgPlayer_jump = Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("images/player_jump.gif"));
+		imgPlayer_right = Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("images/player_right.gif"));
+		imgPlayer_left = Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("images/player_left.gif"));
 		imgEnemie = Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("images/enemy.gif"));
 		imgEnemieDead = Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("images/enemy_dead.png"));
 		imgWater = Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("images/water.png"));
@@ -158,19 +158,19 @@ private GUI gui;
 	private void paintPlayer(Graphics g){
 		switch(action){
 			case ACTION_JUMP:{
-				g.drawImage(imgPlayer_JUMP, player.getX(), player.getY(), player.getWidth(), player.getHeight(), this);	
+				g.drawImage(imgPlayer_jump, player.getX(), player.getY(), player.getWidth(), player.getHeight(), this);	
 				break;
 			}
 			case ACTION_NORMAL:{
-				g.drawImage(imgPlayer_NORMAL, player.getX(), player.getY(), player.getWidth(), player.getHeight(), this);	
+				g.drawImage(imgPlayer_normal, player.getX(), player.getY(), player.getWidth(), player.getHeight(), this);	
 				break;
 			}
 			case ACTION_RIGHT:{
-				g.drawImage(imgPlayer_RIGHT, player.getX(), player.getY(), player.getWidth(), player.getHeight(), this);
+				g.drawImage(imgPlayer_right, player.getX(), player.getY(), player.getWidth(), player.getHeight(), this);
 				break;
 			}
 			case ACTION_LEFT:{
-				g.drawImage(imgPlayer_LEFT, player.getX(), player.getY(), player.getWidth(), player.getHeight(), this);
+				g.drawImage(imgPlayer_left, player.getX(), player.getY(), player.getWidth(), player.getHeight(), this);
 				break;
 			}
 		}

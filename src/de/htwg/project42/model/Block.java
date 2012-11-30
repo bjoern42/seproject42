@@ -48,7 +48,7 @@ private int type = TYP_AIR;
 	 */
 	@Override
 	public String toString(){
-		return "["+String.valueOf(type)+"]";
+		return "["+type+"]";
 	}
 
 	/**

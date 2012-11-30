@@ -1,7 +1,6 @@
 package de.htwg.project42.view;
 
 import java.io.File;
-import java.util.LinkedList;
 import java.util.List;
 
 
@@ -16,9 +15,7 @@ import de.htwg.project42.observer.Observable;
  * @version 1.0
  */
 public final class TUI implements Observable {
-private List<Block[]> objects = new LinkedList<Block[]>();
 private Landscape landscape = null;	
-private Player player = null;
 
 	public static void main(String[] args) {
 		new TUI();
@@ -57,8 +54,8 @@ private Player player = null;
 	 */
 	@Override
 	public void update(int pChange) {
-		objects = landscape.getVisibleBlocks();
-		player = landscape.getPlayer();
+		List<Block[]> objects = landscape.getVisibleBlocks();
+		Player player = landscape.getPlayer();
 		System.out.println("Player: "+player.getX()+" "+player.getY());
 		for(int i=0;i<objects.size();i++){
 			int rowX = objects.get(i)[0].getX();

@@ -16,8 +16,9 @@ import de.htwg.project42.observer.Observer;
  * @version 1.0
  */
 public final class Landscape{
-private final int GRAVITY = 10, SPEED = 10, JUMP_HEIGHT = 16;
-private double enemyJumpChances = 0.995;
+private static final int GRAVITY = 10, SPEED = 10, JUMP_HEIGHT = 16, runPause = 20, ENEMY_SPEED_FACTOR = 4;
+private static final double STANDARD_ENEMY_JUMP_CHANCES = 0.995;
+private double enemyJumpChances = STANDARD_ENEMY_JUMP_CHANCES;
 private int width, height;
 private Player player = null;
 private List<Enemy> enemies = null;
@@ -89,7 +90,7 @@ private Observable observable = null;
 		new Thread(){
 			public void run(){
 				while(player.getHealth() > 0){
-					pause(20);
+					pause(runPause);
 					gravity();
 					handleEnemies();
 					observable.update(0);
@@ -121,9 +122,9 @@ private Observable observable = null;
 			}else if(!e.isDead() && e.isInArea(player.getX(), player.getY(), player.getWidth(), player.getHeight())){
 				player.hit();
 			}
-			boolean isMovableArea = objects.isMovableArea(e.getX()+(SPEED/4)*direction, e.getY(), e.getWidth(), e.getHeight(),false);
+			boolean isMovableArea = objects.isMovableArea(e.getX()+(SPEED/ENEMY_SPEED_FACTOR)*direction, e.getY(), e.getWidth(), e.getHeight(),false);
 			if(!e.isDead() && objects.isInFrame(e.getX()) && isMovableArea){
-				e.move(SPEED/4*direction, 0);
+				e.move(SPEED/ENEMY_SPEED_FACTOR*direction, 0);
 				if(Math.random() > enemyJumpChances){
 					e.jump(objects, observable, GRAVITY/2, JUMP_HEIGHT,false);
 				}

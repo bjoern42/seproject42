@@ -8,7 +8,7 @@ import de.htwg.project42.controller.Landscape;
  * @version 1.0
  */
 public final class Player extends GameObject{
-private final int coinsForLife = 50;
+private static final int coinsForLife = 50;
 private int health = 3,coins = 0;
 private boolean lock = false;
 
