@@ -155,6 +155,8 @@ private Player player = null;
 						}else if(playerMoving && block[y+j].getType() == Block.TYP_COIN){
 							player.increaseCoins();
 							block[y+j].setType(Block.TYP_AIR);
+						}else if(block[y+1].getType() == Block.TYP_GOAL){
+							player.setGoal(true);
 						}
 					}
 				}

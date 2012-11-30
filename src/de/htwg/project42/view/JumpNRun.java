@@ -15,6 +15,7 @@ import java.io.FilenameFilter;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JList;
 import javax.swing.JPanel;
@@ -32,10 +33,12 @@ private GUI gui = null;
 private EditorGUI egui = null;
 private JPanel pMenu, pButtons = new JPanel(),pList = new JPanel(),pCurrent;
 private JButton btStart = new JButton("Starten"), btEditor = new JButton("Level Editor");
+private JCheckBox cbTUI = new JCheckBox("Enable TUI output",false);
+@SuppressWarnings("rawtypes")
 private JList list = null;
 private JScrollPane scroll = null;
 private int width, height, length;
-private static final int LANDSCAPE_SIZE_X = 1200, LANDSCAPE_SIZE_Y = 800, LANDSCAPE_LENGTH = 12, GAP = 5, FACTOR_1 = 3, FACTOR_2 = 4, FACTOR_3 = 5, RECT_BORDER = 20, RECT_BORDER_BOTTOM = 100;
+private static final int LANDSCAPE_SIZE_X = 1200, LANDSCAPE_SIZE_Y = 800, LANDSCAPE_LENGTH = 12, GAP = 5, FACTOR_1 = 3, FACTOR_2 = 5, RECT_BORDER = 20, RECT_BORDER_BOTTOM = 100;
 
 	public static void main(String[] args) {
 		new JumpNRun(LANDSCAPE_SIZE_X, LANDSCAPE_SIZE_Y, LANDSCAPE_LENGTH);
@@ -47,6 +50,8 @@ private static final int LANDSCAPE_SIZE_X = 1200, LANDSCAPE_SIZE_Y = 800, LANDSC
 	 * @param pHeight - Height
 	 * @param pLength - Visible blocks
 	 */
+	//JList<File> was not accepted in sonar.
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public JumpNRun(int pWidth, int pHeight, int pLength){
 		super("Jump and Run");
 		width = pWidth;
@@ -66,12 +71,14 @@ private static final int LANDSCAPE_SIZE_X = 1200, LANDSCAPE_SIZE_Y = 800, LANDSC
 		egui = new EditorGUI(width, height, length);
 		
 		pMenu.setLayout(new BorderLayout());
-		GridLayout layout = new GridLayout(2, 1);
+		GridLayout layout = new GridLayout(3, 1);
 		layout.setVgap(GAP);
 		pButtons.setLayout(layout);
-		pButtons.setBorder(BorderFactory.createEmptyBorder(getHeight()*FACTOR_1/FACTOR_3, getWidth()/FACTOR_1, getHeight()/FACTOR_2, getWidth()/FACTOR_1));
+		pButtons.setBorder(BorderFactory.createEmptyBorder(getHeight()*FACTOR_1/FACTOR_2, getWidth()/FACTOR_1, getHeight()/FACTOR_2, getWidth()/FACTOR_1));
+		
 		pButtons.add(btStart);
 		pButtons.add(btEditor);
+		pButtons.add(cbTUI);
 		
 		File[] files = new File(System.getProperty("user.dir")).listFiles(new FilenameFilter() {
 		    public boolean accept(File dir, String name) {
@@ -82,7 +89,7 @@ private static final int LANDSCAPE_SIZE_X = 1200, LANDSCAPE_SIZE_Y = 800, LANDSC
 		list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		list.setSelectedIndex(0);
 		
-		pList.setBorder(BorderFactory.createEmptyBorder(getHeight()/FACTOR_1, getWidth()/FACTOR_1, getHeight()/FACTOR_3, getWidth()/FACTOR_1));
+		pList.setBorder(BorderFactory.createEmptyBorder(getHeight()/FACTOR_1, getWidth()/FACTOR_1, getHeight()/FACTOR_2, getWidth()/FACTOR_1));
 		scroll = new JScrollPane(list);
 		
 		pList.add(scroll);
@@ -107,7 +114,7 @@ private static final int LANDSCAPE_SIZE_X = 1200, LANDSCAPE_SIZE_Y = 800, LANDSC
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
 		if(arg0.getSource() == btStart){
-			gui = new GUI(this, (File)list.getSelectedValue(),width, height, length);
+			gui = new GUI(this, (File)list.getSelectedValue(),width, height, length, cbTUI.isSelected());
 			changePanel(gui);
 			gui.start();
 		}else if(arg0.getSource() == btEditor){
@@ -161,6 +168,7 @@ private static final int LANDSCAPE_SIZE_X = 1200, LANDSCAPE_SIZE_Y = 800, LANDSC
 			g.fillRect(scroll.getX()-RECT_BORDER, scroll.getY()-RECT_BORDER, scroll.getWidth()+RECT_BORDER*2, btEditor.getY()+btEditor.getHeight()-scroll.getY()+RECT_BORDER_BOTTOM);
 			btEditor.repaint();
 			btStart.repaint();
+			cbTUI.repaint();
 			list.repaint();
 		}
 	}

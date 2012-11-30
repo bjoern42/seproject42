@@ -86,7 +86,7 @@ private Level level = null;
 	public void start(){
 		new Thread(){
 			public void run(){
-				while(player.getHealth() > 0){
+				while(player.getHealth() > 0 && !player.isInGoal()){
 					GameObject.pause(RUN_PAUSE);
 					gravity();
 					handleEnemies();

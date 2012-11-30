@@ -12,6 +12,7 @@ public static final int TYP_GRAS = 1;
 public static final int TYP_ENEMY = 2;
 public static final int TYP_WATER = 3;
 public static final int TYP_COIN = 4;
+public static final int TYP_GOAL = 5;
 private int type = TYP_AIR;
 
 	/**

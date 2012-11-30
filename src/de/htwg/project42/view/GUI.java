@@ -33,7 +33,7 @@ private List<Block[]> objects = new LinkedList<Block[]>();
 private Landscape landscape = null;
 private Player player = null;
 private boolean up = false, right = false, left = false;
-private Image buffer = null, imgGras, imgPlayerNormal, imgPlayerJump, imgPlayerRight, imgPlayerLeft, imgBackground,imgEnemie,imgEnemieDead,imgWater,imgHealth,imgCoin,imgCoinCount;
+private Image buffer = null, imgGras, imgPlayerNormal, imgPlayerJump, imgPlayerRight, imgPlayerLeft, imgBackground,imgEnemie,imgEnemieDead,imgWater,imgHealth,imgCoin,imgCoinCount,imgGoal;
 private int action = ACTION_NORMAL;
 private JumpNRun main = null;
 private GUI gui;
@@ -47,9 +47,11 @@ private GUI gui;
 	 * @param pHeight - Height
 	 * @param pLength - Visible blocks
 	 */
-	public GUI(final JumpNRun pMain, File map, int pWidth, int pHeight, int pLength){		
+	public GUI(final JumpNRun pMain, File map, int pWidth, int pHeight, int pLength, boolean pTUI){		
 		landscape = new Landscape(map, this, pWidth, pHeight, pLength);
-		new TUI(landscape);
+		if(pTUI){
+			new TUI(landscape);
+		}
 		player = landscape.getPlayer();
 		main = pMain;
 		gui = this;
@@ -66,6 +68,8 @@ private GUI gui;
 		imgHealth = Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("images/health.png"));
 		imgCoin = Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("images/coin.png"));
 		imgCoinCount = Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("images/coinCount.png"));
+		imgGoal = Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("images/goal.png"));
+		
 		addKeyListener(this);
 	}
 
@@ -79,7 +83,7 @@ private GUI gui;
 		landscape.start();
 		new Thread(){
 			public void run(){
-				while(player.getHealth() > 0){
+				while(player.getHealth() > 0 && !player.isInGoal()){
 					GameObject.pause(PAUSE_SHORT);
 					if(up){
 						action = ACTION_JUMP;
@@ -92,7 +96,11 @@ private GUI gui;
 						landscape.left();
 					}
 				}
-				JOptionPane.showMessageDialog(gui, "Player died!", "Game over!", JOptionPane.OK_OPTION);
+				if(player.isInGoal()){
+					JOptionPane.showMessageDialog(gui, "You won!", "Congratulations!", JOptionPane.INFORMATION_MESSAGE);
+				}else if(player.getHealth() == 0){
+					JOptionPane.showMessageDialog(gui, "Player died!", "Game over!", JOptionPane.OK_OPTION);
+				}
 				main.reset();
 			}
 		}.start();
@@ -140,6 +148,10 @@ private GUI gui;
 							break;
 						}case Block.TYP_COIN:{
 							g.drawImage(imgCoin, block.getX(), block.getY(), block.getWidth(), block.getHeight(), this);
+							break;
+						}
+						case Block.TYP_GOAL:{
+							g.drawImage(imgGoal, block.getX(), block.getY(), block.getWidth(), block.getHeight(), this);
 							break;
 						}
 					}
@@ -225,6 +237,9 @@ private GUI gui;
 			case KeyEvent.VK_RIGHT:{
 				right = true;
 				break;
+			}
+			case KeyEvent.VK_ESCAPE:{
+				player.setHealth(0);
 			}
 		}
 	}

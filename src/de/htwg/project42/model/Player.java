@@ -8,7 +8,7 @@ package de.htwg.project42.model;
 public final class Player extends GameObject{
 private static final int COINS_FOR_LIFE = 50, STD_HEALTH = 3, STD_COINS = 0, INVINCIBLE_LOCK_DURATION = 1000;
 private int health = STD_HEALTH, coins = STD_COINS;
-private boolean lock = false;
+private boolean lock = false, goal = false;
 
 	/**
 	 * Creates Player.
@@ -106,5 +106,21 @@ private boolean lock = false;
 	 */
 	public int getCoinsForLife() {
 		return COINS_FOR_LIFE;
+	}
+
+	/**
+	 * Checks if player has reached the goal.
+	 * @return true if player is in goal, false if not
+	 */
+	public boolean isInGoal() {
+		return goal;
+	}
+
+	/**
+	 * Sets goal.
+	 * @param pGoal - goal
+	 */
+	public void setGoal(boolean pGoal) {
+		goal = pGoal;
 	}
 }
