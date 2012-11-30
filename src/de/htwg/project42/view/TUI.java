@@ -6,6 +6,7 @@ import java.util.List;
 
 import de.htwg.project42.controller.Landscape;
 import de.htwg.project42.model.Block;
+import de.htwg.project42.model.Enemy;
 import de.htwg.project42.model.Player;
 import de.htwg.project42.observer.Observable;
 
@@ -19,14 +20,22 @@ private static final int LANDSCAPE_SIZE = 800, LANDSCAPE_LENGTH = 5, START_PAUSE
 private Landscape landscape = null;	
 
 	public static void main(String[] args) {
-		new TUI();
+		new TUI(new File("mapTUI.lvl"), LANDSCAPE_SIZE, LANDSCAPE_SIZE, LANDSCAPE_LENGTH);
+	}
+	
+	/**
+	 * Creates TUI.
+	 */
+	public TUI(Landscape pLandscape){
+		landscape = pLandscape;
+		landscape.activateTUI(this);
 	}
 	
 	/**
 	 * Creates TUI and starts tests.
 	 */
-	public TUI(){
-		landscape = new Landscape(new File("mapTUI.lvl"),this,LANDSCAPE_SIZE, LANDSCAPE_SIZE,LANDSCAPE_LENGTH);
+	public TUI(File map,int pSizeX, int pSizeY, int pLength){
+		landscape = new Landscape(map, this, pSizeX, pSizeY, pLength);
 		landscape.start();
 		test();
 	}
@@ -57,7 +66,7 @@ private Landscape landscape = null;
 	public void update() {
 		List<Block[]> objects = landscape.getVisibleBlocks();
 		Player player = landscape.getPlayer();
-		print("Player: "+player.getX()+" "+player.getY()+"\n");
+		
 		for(int i=0;i<objects.size();i++){
 			int rowX = objects.get(i)[0].getX();
 			print(rowX+"\t");
@@ -70,6 +79,16 @@ private Landscape landscape = null;
 			print("\n");
 		}
 		print("------------------------------------------\n");
+		print("Player: "+player.getX()+" "+player.getY()+"\n");
+		List<Enemy> list = landscape.getEnemies();
+		for(int i=0; i<list.size() ;i++){
+			Enemy e = list.get(i);
+			if(e.isDead()){
+				print("Enemy "+i+" died at: "+e.getX()+" "+e.getY()+"\n");
+			}else{
+				print("Enemy "+i+" is at: "+e.getX()+" "+e.getY()+"\n");
+			}
+		}
 	}
 	
 	/**

@@ -15,7 +15,6 @@ import de.htwg.project42.model.GameObject;
 import de.htwg.project42.model.Level;
 import de.htwg.project42.model.Player;
 import de.htwg.project42.observer.Observable;
-import de.htwg.project42.observer.Observer;
 
 public class LandscapeTest implements Observable{
 private List<Block[]> objects = new LinkedList<Block[]>();
@@ -59,7 +58,7 @@ private Landscape landscape;
 				objects.add(b);
 			}
 			landscape = new Landscape(mapF, this, 400, 400, 4);
-			level = landscape.getObserver();
+			level = landscape.getLevel();
 			level.setBlocks(objects);
 			Enemy e = landscape.getEnemies().get(0);
 			e.setX(400);

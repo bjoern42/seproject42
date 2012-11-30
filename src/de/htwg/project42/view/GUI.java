@@ -33,10 +33,11 @@ private List<Block[]> objects = new LinkedList<Block[]>();
 private Landscape landscape = null;
 private Player player = null;
 private boolean up = false, right = false, left = false;
-private Image buffer = null, img_gras, img_player_normal, img_player_jump, img_player_right, img_player_left, img_background,img_enemie,img_enemie_dead,img_water,img_health,img_coin,img_coin_count;
+private Image buffer = null, imgGras, imgPlayerNormal, imgPlayerJump, imgPlayerRight, imgPlayerLeft, imgBackground,imgEnemie,imgEnemieDead,imgWater,imgHealth,imgCoin,imgCoinCount;
 private int action = ACTION_NORMAL;
 private JumpNRun main = null;
 private GUI gui;
+
 
 	/**
 	 * Creates GUI.
@@ -46,24 +47,25 @@ private GUI gui;
 	 * @param pHeight - Height
 	 * @param pLength - Visible blocks
 	 */
-	public GUI(final JumpNRun pMain, File map,int pWidth, int pHeight, int pLength){		
-		landscape = new Landscape(map,this,pWidth, pHeight, pLength);
+	public GUI(final JumpNRun pMain, File map, int pWidth, int pHeight, int pLength){		
+		landscape = new Landscape(map, this, pWidth, pHeight, pLength);
+		new TUI(landscape);
 		player = landscape.getPlayer();
 		main = pMain;
 		gui = this;
 		
-		img_background = Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("images/background.png"));
-		img_gras = Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("images/gras.jpg"));
-		img_player_normal = Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("images/player_normal.gif"));
-		img_player_jump = Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("images/player_jump.gif"));
-		img_player_right = Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("images/player_right.gif"));
-		img_player_left = Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("images/player_left.gif"));
-		img_enemie = Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("images/enemy.gif"));
-		img_enemie_dead = Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("images/enemy_dead.png"));
-		img_water = Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("images/water.png"));
-		img_health = Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("images/health.png"));
-		img_coin = Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("images/coin.png"));
-		img_coin_count = Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("images/coinCount.png"));
+		imgBackground = Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("images/background.png"));
+		imgGras = Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("images/gras.jpg"));
+		imgPlayerNormal = Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("images/player_normal.gif"));
+		imgPlayerJump = Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("images/player_jump.gif"));
+		imgPlayerRight = Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("images/player_right.gif"));
+		imgPlayerLeft = Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("images/player_left.gif"));
+		imgEnemie = Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("images/enemy.gif"));
+		imgEnemieDead = Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("images/enemy_dead.png"));
+		imgWater = Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("images/water.png"));
+		imgHealth = Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("images/health.png"));
+		imgCoin = Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("images/coin.png"));
+		imgCoinCount = Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("images/coinCount.png"));
 		addKeyListener(this);
 	}
 
@@ -71,7 +73,7 @@ private GUI gui;
 	 * Starts Game.
 	 */
 	public void start(){
-		getGraphics().drawImage(img_background,0,0, getWidth(), getHeight(),this);
+		getGraphics().drawImage(imgBackground,0,0, getWidth(), getHeight(),this);
 		GameObject.pause(PAUSE_LONG);
 		requestFocus();
 		landscape.start();
@@ -111,7 +113,7 @@ private GUI gui;
 		}
 		Graphics bufG= buffer.getGraphics();
 		objects = landscape.getVisibleBlocks();
-		bufG.drawImage(img_background,0,0, getWidth(), getHeight(),this);
+		bufG.drawImage(imgBackground,0,0, getWidth(), getHeight(),this);
 
 		paintLandscape(bufG);
 		paintEnemies(bufG);
@@ -131,13 +133,13 @@ private GUI gui;
 				if(block != null){
 					switch (block.getType()){
 						case Block.TYP_GRAS:{
-							g.drawImage(img_gras, block.getX(), block.getY(), block.getWidth(), block.getHeight(), this);
+							g.drawImage(imgGras, block.getX(), block.getY(), block.getWidth(), block.getHeight(), this);
 							break;
 						}case Block.TYP_WATER:{
-							g.drawImage(img_water, block.getX(), block.getY(), block.getWidth(), block.getHeight(), this);
+							g.drawImage(imgWater, block.getX(), block.getY(), block.getWidth(), block.getHeight(), this);
 							break;
 						}case Block.TYP_COIN:{
-							g.drawImage(img_coin, block.getX(), block.getY(), block.getWidth(), block.getHeight(), this);
+							g.drawImage(imgCoin, block.getX(), block.getY(), block.getWidth(), block.getHeight(), this);
 							break;
 						}
 					}
@@ -153,9 +155,9 @@ private GUI gui;
 	private void paintEnemies(Graphics g){
 		for(Enemy e:landscape.getEnemies()){
 			if(e.isDead()){
-				g.drawImage(img_enemie_dead, e.getX(), e.getY(), e.getWidth(), e.getHeight(), this);
+				g.drawImage(imgEnemieDead, e.getX(), e.getY(), e.getWidth(), e.getHeight(), this);
 			}else{
-				g.drawImage(img_enemie, e.getX(), e.getY(), e.getWidth(), e.getHeight(), this);
+				g.drawImage(imgEnemie, e.getX(), e.getY(), e.getWidth(), e.getHeight(), this);
 			}
 		}
 	}
@@ -166,9 +168,9 @@ private GUI gui;
 	 */
 	private void paintOverlay(Graphics g){
 		for(int i=0;i<player.getHealth();i++){
-			g.drawImage(img_health, GAP+i*HEALTH_SIZE, GAP, HEALTH_SIZE, HEALTH_SIZE, this);
+			g.drawImage(imgHealth, GAP+i*HEALTH_SIZE, GAP, HEALTH_SIZE, HEALTH_SIZE, this);
 		}
-		g.drawImage(img_coin_count, getWidth()-COIN_SIZE, GAP, COIN_SIZE, COIN_SIZE-GAP, this);
+		g.drawImage(imgCoinCount, getWidth()-COIN_SIZE, GAP, COIN_SIZE, COIN_SIZE-GAP, this);
 		g.setFont(new Font("Verdana", Font.BOLD, FONT_SIZE));
 		g.drawString(""+player.getCoins(),getWidth()-COIN_STRING_POS, COIN_STRING_POS);
 	}
@@ -180,19 +182,19 @@ private GUI gui;
 	private void paintPlayer(Graphics g){
 		switch(action){
 			case ACTION_JUMP:{
-				g.drawImage(img_player_jump, player.getX(), player.getY(), player.getWidth(), player.getHeight(), this);	
+				g.drawImage(imgPlayerJump, player.getX(), player.getY(), player.getWidth(), player.getHeight(), this);	
 				break;
 			}
 			case ACTION_NORMAL:{
-				g.drawImage(img_player_normal, player.getX(), player.getY(), player.getWidth(), player.getHeight(), this);	
+				g.drawImage(imgPlayerNormal, player.getX(), player.getY(), player.getWidth(), player.getHeight(), this);	
 				break;
 			}
 			case ACTION_RIGHT:{
-				g.drawImage(img_player_right, player.getX(), player.getY(), player.getWidth(), player.getHeight(), this);
+				g.drawImage(imgPlayerRight, player.getX(), player.getY(), player.getWidth(), player.getHeight(), this);
 				break;
 			}
 			case ACTION_LEFT:{
-				g.drawImage(img_player_left, player.getX(), player.getY(), player.getWidth(), player.getHeight(), this);
+				g.drawImage(imgPlayerLeft, player.getX(), player.getY(), player.getWidth(), player.getHeight(), this);
 				break;
 			}
 		}

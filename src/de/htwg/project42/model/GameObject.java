@@ -1,6 +1,5 @@
 package de.htwg.project42.model;
 
-import de.htwg.project42.observer.Observable;
 import de.htwg.project42.observer.Observer;
 
 /**
@@ -130,8 +129,8 @@ private boolean jump = true;
 	
 	/**
 	 * Increases Y-Position and decreases it afterwards till its on the ground again.
+	 * @param level - Level
 	 * @param observer - Observer
-	 * @param observable - Observable
 	 * @param gravity - Gravity factor
 	 * @param height - Height
 	 * @param player - specify if jump is called by player or enemy

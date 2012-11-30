@@ -4,10 +4,8 @@ import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
 
-import de.htwg.project42.observer.Observable;
-
 /**
- * Observer for JumpNRun.
+ * Level for JumpNRun.
  * @author bjeschle,toofterd
  * @version 1.0
  */
@@ -18,7 +16,7 @@ private int start, length, size, change = 0;
 private Player player = null;
 
 	/**
-	 * Creates Observer.
+	 * Creates Level.
 	 * @param pPlayer - Player
 	 * @param map - Map
 	 * @param pSize - Blocksize

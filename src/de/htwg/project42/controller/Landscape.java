@@ -44,7 +44,15 @@ private Level level = null;
 		enemies = level.getEnemies();
 	}
 	
-	public Level getObserver(){
+	public void activateTUI(Observable o){
+		addObserver(o);
+	}
+	
+	/**
+	 * Returns the Level
+	 * @return level
+	 */
+	public Level getLevel(){
 		return level;
 	}
 	
