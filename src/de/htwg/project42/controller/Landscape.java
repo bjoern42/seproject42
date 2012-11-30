@@ -16,7 +16,7 @@ import de.htwg.project42.observer.Observer;
  * @version 1.0
  */
 public final class Landscape{
-private static final int GRAVITY = 10, SPEED = 10, JUMP_HEIGHT = 16, runPause = 20, ENEMY_SPEED_FACTOR = 4;
+private static final int GRAVITY = 10, SPEED = 10, JUMP_HEIGHT = 16, RUN_PAUSE = 20, ENEMY_SPEED_FACTOR = 4;
 private static final double STANDARD_ENEMY_JUMP_CHANCES = 0.995;
 private double enemyJumpChances = STANDARD_ENEMY_JUMP_CHANCES;
 private int width, height;
@@ -90,7 +90,7 @@ private Observable observable = null;
 		new Thread(){
 			public void run(){
 				while(player.getHealth() > 0){
-					pause(runPause);
+					pause(RUN_PAUSE);
 					gravity();
 					handleEnemies();
 					observable.update(0);

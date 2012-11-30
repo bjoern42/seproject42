@@ -27,7 +27,7 @@ import de.htwg.project42.observer.Observable;
  */
 @SuppressWarnings("serial")
 public final class GUI extends JPanel implements KeyListener, Observable{
-private static final int ACTION_RIGHT = 0, ACTION_LEFT = 1, ACTION_NORMAL = 2, ACTION_JUMP = 3;
+private static final int ACTION_RIGHT = 0, ACTION_LEFT = 1, ACTION_NORMAL = 2, ACTION_JUMP = 3, PAUSE_LONG = 100, PAUSE_SHORT = 20, HEALTH_SIZE = 30, COIN_SIZE = 50, COIN_STRING_POS =35, GAP = 10, FONT_SIZE = 15;
 private List<Block[]> objects = new LinkedList<Block[]>();
 private Landscape landscape = null;
 private Player player = null;
@@ -71,13 +71,13 @@ private GUI gui;
 	 */
 	public void start(){
 		getGraphics().drawImage(imgBackground,0,0, getWidth(), getHeight(),this);
-		Landscape.pause(100);
+		Landscape.pause(PAUSE_LONG);
 		requestFocus();
 		landscape.start();
 		new Thread(){
 			public void run(){
 				while(player.getHealth() > 0){
-					Landscape.pause(20);
+					Landscape.pause(PAUSE_SHORT);
 					if(up){
 						action = ACTION_JUMP;
 						landscape.jump();
@@ -128,7 +128,6 @@ private GUI gui;
 							break;
 						}
 					}
-//					bufG.drawString(""+block.getX()+" "+block.getY(), block.getX(), block.getY());
 				}				
 			}
 		}
@@ -143,11 +142,11 @@ private GUI gui;
 		//paint player
 		paintPlayer(bufG);
 		for(int i=0;i<player.getHealth();i++){
-			bufG.drawImage(imgHealth, 10+i*30, 10, 30, 30, this);
+			bufG.drawImage(imgHealth, GAP+i*HEALTH_SIZE, GAP, HEALTH_SIZE, HEALTH_SIZE, this);
 		}
-		bufG.drawImage(imgCoinCount, getWidth()-50, 10, 50, 40, this);
-		bufG.setFont(new Font("Verdana", Font.BOLD, 15));
-		bufG.drawString(""+player.getCoins(),getWidth()-35, 35);
+		bufG.drawImage(imgCoinCount, getWidth()-COIN_SIZE, GAP, COIN_SIZE, COIN_SIZE-GAP, this);
+		bufG.setFont(new Font("Verdana", Font.BOLD, FONT_SIZE));
+		bufG.drawString(""+player.getCoins(),getWidth()-COIN_STRING_POS, COIN_STRING_POS);
 		g.drawImage(buffer,0,0,this);
 	}
 

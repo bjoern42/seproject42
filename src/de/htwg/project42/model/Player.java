@@ -8,8 +8,8 @@ import de.htwg.project42.controller.Landscape;
  * @version 1.0
  */
 public final class Player extends GameObject{
-private static final int coinsForLife = 50;
-private int health = 3,coins = 0;
+private static final int COINS_FOR_LIFE = 50, STD_HEALTH = 3, STD_COINS = 0, INVINCIBLE_LOCK_DURATION = 1000;
+private int health = STD_HEALTH, coins = STD_COINS;
 private boolean lock = false;
 
 	/**
@@ -36,7 +36,7 @@ private boolean lock = false;
 		}else{
 			new Thread(){
 				public void run(){
-					Landscape.pause(1000);
+					Landscape.pause(INVINCIBLE_LOCK_DURATION);
 					lock = false;
 				}
 			}.start();
@@ -107,6 +107,6 @@ private boolean lock = false;
 	 * @return coinsForLife
 	 */
 	public int getCoinsForLife() {
-		return coinsForLife;
+		return COINS_FOR_LIFE;
 	}
 }

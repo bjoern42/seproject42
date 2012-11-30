@@ -35,10 +35,10 @@ private JButton btStart = new JButton("Starten"), btEditor = new JButton("Level 
 private JList list = null;
 private JScrollPane scroll = null;
 private int width, height, length;
-private static final int landscapeSizeX = 1200, landscapeSizeY = 800, landscapeLength = 12;
+private static final int LANDSCAPE_SIZE_X = 1200, LANDSCAPE_SIZE_Y = 800, LANDSCAPE_LENGTH = 12, GAP = 5, FACTOR_1 = 3, FACTOR_2 = 4, FACTOR_3 = 5, RECT_BORDER = 20;
 
 	public static void main(String[] args) {
-		new JumpNRun(landscapeSizeX, landscapeSizeY, landscapeLength);
+		new JumpNRun(LANDSCAPE_SIZE_X, LANDSCAPE_SIZE_Y, LANDSCAPE_LENGTH);
 	}
 	
 	/**
@@ -67,9 +67,9 @@ private static final int landscapeSizeX = 1200, landscapeSizeY = 800, landscapeL
 		
 		pMenu.setLayout(new BorderLayout());
 		GridLayout layout = new GridLayout(2, 1);
-		layout.setVgap(5);
+		layout.setVgap(GAP);
 		pButtons.setLayout(layout);
-		pButtons.setBorder(BorderFactory.createEmptyBorder(getHeight()*3/5, getWidth()/3, getHeight()/4, getWidth()/3));
+		pButtons.setBorder(BorderFactory.createEmptyBorder(getHeight()*FACTOR_1/FACTOR_3, getWidth()/FACTOR_1, getHeight()/FACTOR_2, getWidth()/FACTOR_1));
 		pButtons.add(btStart);
 		pButtons.add(btEditor);
 		
@@ -82,7 +82,7 @@ private static final int landscapeSizeX = 1200, landscapeSizeY = 800, landscapeL
 		list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		list.setSelectedIndex(0);
 		
-		pList.setBorder(BorderFactory.createEmptyBorder(getHeight()/3, getWidth()/3, getHeight()/5, getWidth()/3));
+		pList.setBorder(BorderFactory.createEmptyBorder(getHeight()/FACTOR_1, getWidth()/FACTOR_1, getHeight()/FACTOR_3, getWidth()/FACTOR_1));
 		scroll = new JScrollPane(list);
 		
 		pList.add(scroll);
@@ -158,7 +158,7 @@ private static final int landscapeSizeX = 1200, landscapeSizeY = 800, landscapeL
 		public void paint(Graphics g){
 			g.drawImage(img, 0, 0, getWidth(), getHeight(), this);
 			g.setColor(Color.GRAY);
-			g.fillRect(scroll.getX()-20, scroll.getY()-20, scroll.getWidth()+40, btEditor.getY()+btEditor.getHeight()-scroll.getY()+100);
+			g.fillRect(scroll.getX()-RECT_BORDER, scroll.getY()-RECT_BORDER, scroll.getWidth()+RECT_BORDER*2, btEditor.getY()+btEditor.getHeight()-scroll.getY()+RECT_BORDER*4);
 			btEditor.repaint();
 			btStart.repaint();
 			list.repaint();

@@ -10,6 +10,7 @@ import de.htwg.project42.observer.Observer;
  * @version 1.0
  */
 public abstract class GameObject{
+private static final int PAUSE = 20;
 protected int x, y, width, height,change = 0;
 protected boolean jump = true;
 
@@ -131,13 +132,13 @@ protected boolean jump = true;
 				public void run(){
 					for(int j = 0; j < height;j++){
 						if(observer.isMovableArea(getX(), getY() - gravity, getWidth(), getHeight(),player)){
-							Landscape.pause(20);
+							Landscape.pause(PAUSE);
 							move(0, -gravity);
 							observable.update(0);
 						}
 					}
 					while(observer.isMovableArea(getX(), getY() + gravity*2, getWidth(), getHeight(),player)){
-						Landscape.pause(20);
+						Landscape.pause(PAUSE);
 						move(0, gravity*2);
 						observable.update(0);
 					}

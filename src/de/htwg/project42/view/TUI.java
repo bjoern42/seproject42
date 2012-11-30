@@ -15,6 +15,7 @@ import de.htwg.project42.observer.Observable;
  * @version 1.0
  */
 public final class TUI implements Observable {
+private static final int LANDSCAPE_SIZE = 800, LANDSCAPE_LENGTH = 5, START_PAUSE = 2000, WALK_CYCLES = 100;
 private Landscape landscape = null;	
 
 	public static void main(String[] args) {
@@ -25,7 +26,7 @@ private Landscape landscape = null;
 	 * Creates TUI and starts tests.
 	 */
 	public TUI(){
-		landscape = new Landscape(new File("mapTUI.lvl"),this,800, 800,5);
+		landscape = new Landscape(new File("mapTUI.lvl"),this,LANDSCAPE_SIZE, LANDSCAPE_SIZE,LANDSCAPE_LENGTH);
 		landscape.start();
 		test();
 	}
@@ -36,14 +37,14 @@ private Landscape landscape = null;
 	private void test(){
 		landscape.jump();
 		try {
-			Thread.sleep(2000);
+			Thread.sleep(START_PAUSE);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		for(int i=0;i<100;i++){
+		for(int i=0;i<WALK_CYCLES;i++){
 			landscape.right();
 		}
-		for(int i=0;i<100;i++){
+		for(int i=0;i<WALK_CYCLES;i++){
 			landscape.left();
 		}
 		landscape.jump();
