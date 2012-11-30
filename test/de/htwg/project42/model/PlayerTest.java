@@ -4,8 +4,6 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
-import de.htwg.project42.controller.Landscape;
-
 public class PlayerTest {
 
 	@Test
@@ -34,7 +32,7 @@ public class PlayerTest {
 		player.hit();
 		assertEquals("Result",true,player.getLock());
 		player.setHealth(0);
-		Landscape.pause(1100);
+		GameObject.pause(1100);
 		player.hit();
 		assertEquals("Result",0,player.getHealth());
 	}

@@ -35,7 +35,7 @@ private JButton btStart = new JButton("Starten"), btEditor = new JButton("Level 
 private JList list = null;
 private JScrollPane scroll = null;
 private int width, height, length;
-private static final int LANDSCAPE_SIZE_X = 1200, LANDSCAPE_SIZE_Y = 800, LANDSCAPE_LENGTH = 12, GAP = 5, FACTOR_1 = 3, FACTOR_2 = 4, FACTOR_3 = 5, RECT_BORDER = 20;
+private static final int LANDSCAPE_SIZE_X = 1200, LANDSCAPE_SIZE_Y = 800, LANDSCAPE_LENGTH = 12, GAP = 5, FACTOR_1 = 3, FACTOR_2 = 4, FACTOR_3 = 5, RECT_BORDER = 20, RECT_BORDER_BOTTOM = 100;
 
 	public static void main(String[] args) {
 		new JumpNRun(LANDSCAPE_SIZE_X, LANDSCAPE_SIZE_Y, LANDSCAPE_LENGTH);
@@ -158,7 +158,7 @@ private static final int LANDSCAPE_SIZE_X = 1200, LANDSCAPE_SIZE_Y = 800, LANDSC
 		public void paint(Graphics g){
 			g.drawImage(img, 0, 0, getWidth(), getHeight(), this);
 			g.setColor(Color.GRAY);
-			g.fillRect(scroll.getX()-RECT_BORDER, scroll.getY()-RECT_BORDER, scroll.getWidth()+RECT_BORDER*2, btEditor.getY()+btEditor.getHeight()-scroll.getY()+RECT_BORDER*4);
+			g.fillRect(scroll.getX()-RECT_BORDER, scroll.getY()-RECT_BORDER, scroll.getWidth()+RECT_BORDER*2, btEditor.getY()+btEditor.getHeight()-scroll.getY()+RECT_BORDER_BOTTOM);
 			btEditor.repaint();
 			btStart.repaint();
 			list.repaint();

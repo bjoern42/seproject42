@@ -56,6 +56,6 @@ private int type = TYP_AIR;
 	 */
 	@Override
 	public void update(int pChange) {
-		x += pChange;
+		setX(getX()+pChange);
 	}
 }

@@ -1,7 +1,5 @@
 package de.htwg.project42.model;
 
-import de.htwg.project42.controller.Landscape;
-
 /**
  * Player for JumpNRun
  * @author bjeschle,toofterd
@@ -36,7 +34,7 @@ private boolean lock = false;
 		}else{
 			new Thread(){
 				public void run(){
-					Landscape.pause(INVINCIBLE_LOCK_DURATION);
+					pause(INVINCIBLE_LOCK_DURATION);
 					lock = false;
 				}
 			}.start();

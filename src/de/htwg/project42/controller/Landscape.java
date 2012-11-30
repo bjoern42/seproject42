@@ -6,6 +6,7 @@ import java.util.List;
 
 import de.htwg.project42.model.Block;
 import de.htwg.project42.model.Enemy;
+import de.htwg.project42.model.GameObject;
 import de.htwg.project42.model.Player;
 import de.htwg.project42.observer.Observable;
 import de.htwg.project42.observer.Observer;
@@ -72,25 +73,13 @@ private Observable observable = null;
 	}
 	
 	/**
-	 * Sleeps a specified time.
-	 * @param pause - time to sleep
-	 */
-	public static void pause(int pause){
-		try {
-			Thread.sleep(pause);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-	}
-	
-	/**
 	 * Starts the game.
 	 */
 	public void start(){
 		new Thread(){
 			public void run(){
 				while(player.getHealth() > 0){
-					pause(RUN_PAUSE);
+					GameObject.pause(RUN_PAUSE);
 					gravity();
 					handleEnemies();
 					observable.update(0);

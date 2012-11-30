@@ -57,18 +57,26 @@ private Landscape landscape = null;
 	public void update(int pChange) {
 		List<Block[]> objects = landscape.getVisibleBlocks();
 		Player player = landscape.getPlayer();
-		System.out.println("Player: "+player.getX()+" "+player.getY());
+		print("Player: "+player.getX()+" "+player.getY()+"\n");
 		for(int i=0;i<objects.size();i++){
 			int rowX = objects.get(i)[0].getX();
-			System.out.print(rowX+"\t");
+			print(rowX+"\t");
 			for(Block block:objects.get(i)){
-				System.out.print(block);
+				print(block.toString());
 			}
 			if(rowX-player.getX() < player.getWidth() && rowX-player.getX() > -player.getWidth()){
-				System.out.print("<-player");
+				print("<-player");
 			}
-			System.out.println();
+			print("\n");
 		}
-		System.out.println("------------------------------------------");
+		print("------------------------------------------\n");
+	}
+	
+	/**
+	 * Prints given String.
+	 * @param s - String
+	 */
+	private void print(String s){
+		System.out.print(s);
 	}
 }

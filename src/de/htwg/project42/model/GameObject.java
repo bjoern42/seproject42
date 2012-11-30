@@ -1,6 +1,5 @@
 package de.htwg.project42.model;
 
-import de.htwg.project42.controller.Landscape;
 import de.htwg.project42.observer.Observable;
 import de.htwg.project42.observer.Observer;
 
@@ -11,8 +10,8 @@ import de.htwg.project42.observer.Observer;
  */
 public abstract class GameObject{
 private static final int PAUSE = 20;
-protected int x, y, width, height,change = 0;
-protected boolean jump = true;
+private int x, y, width, height;
+private boolean jump = true;
 
 	/**
 	 * Creates GameObect.
@@ -118,6 +117,18 @@ protected boolean jump = true;
 	}
 	
 	/**
+	 * Sleeps a specified time.
+	 * @param pause - time to sleep
+	 */
+	public static void pause(int pause){
+		try {
+			Thread.sleep(pause);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	/**
 	 * Increases Y-Position and decreases it afterwards till its on the ground again.
 	 * @param observer - Observer
 	 * @param observable - Observable
@@ -132,13 +143,13 @@ protected boolean jump = true;
 				public void run(){
 					for(int j = 0; j < height;j++){
 						if(observer.isMovableArea(getX(), getY() - gravity, getWidth(), getHeight(),player)){
-							Landscape.pause(PAUSE);
+							pause(PAUSE);
 							move(0, -gravity);
 							observable.update(0);
 						}
 					}
 					while(observer.isMovableArea(getX(), getY() + gravity*2, getWidth(), getHeight(),player)){
-						Landscape.pause(PAUSE);
+						pause(PAUSE);
 						move(0, gravity*2);
 						observable.update(0);
 					}

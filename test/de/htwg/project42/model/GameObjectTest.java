@@ -6,7 +6,6 @@ import java.io.File;
 
 import org.junit.Test;
 
-import de.htwg.project42.controller.Landscape;
 import de.htwg.project42.observer.Observer;
 
 public class GameObjectTest {
@@ -78,20 +77,26 @@ public class GameObjectTest {
 		int y = obj.getY();
 		obj.setJump(false);
 		obj.jump(observer, observer, 10, 10, true);
-		Landscape.pause(100);
+		GameObject.pause(100);
 		assertEquals("Result",true,y == obj.getY());
 		obj.setY(400);
 		obj.setX(0);
 		obj.setJump(true);
 		obj.jump(observer, observer, 10, 10, true);
-		Landscape.pause(100);
+		GameObject.pause(100);
 		assertEquals("Result",false,y == obj.getY());
 		obj.setY(y);
 		obj.setX(600);
 		obj.setJump(true);
 		obj.jump(observer, observer, 10, 3, true);
-		Landscape.pause(100);
+		GameObject.pause(100);
 		assertEquals("Result",false,y == obj.getY());
 	}
 
+	@Test
+	public void testPause() {
+		long time = System.currentTimeMillis();
+		GameObject.pause(10);
+		assertEquals("Result", false, time == System.currentTimeMillis());
+	}
 }

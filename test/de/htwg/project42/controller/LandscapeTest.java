@@ -11,6 +11,7 @@ import org.junit.Test;
 
 import de.htwg.project42.model.Block;
 import de.htwg.project42.model.Enemy;
+import de.htwg.project42.model.GameObject;
 import de.htwg.project42.model.Player;
 import de.htwg.project42.observer.Observable;
 import de.htwg.project42.observer.Observer;
@@ -181,18 +182,11 @@ private Landscape landscape;
 	}
 
 	@Test
-	public void testPause() {
-		long time = System.currentTimeMillis();
-		Landscape.pause(10);
-		assertEquals("Result", false, time == System.currentTimeMillis());
-	}
-
-	@Test
 	public void testJump() {
 		Player player = landscape.getPlayer();
 		int y = player.getY();
 		landscape.jump();
-		Landscape.pause(100);
+		GameObject.pause(100);
 		assertEquals("Result", true, player.getY() == y);
 	}
 	
@@ -201,14 +195,14 @@ private Landscape landscape;
 		Player player = landscape.getPlayer();
 		int y = player.getY();
 		landscape.start();
-		Landscape.pause(100);
+		GameObject.pause(100);
 		assertEquals("Result", false, y == player.getY());
 		player.setHealth(0);
 		player.setY(100);
 		y = 100;
-		Landscape.pause(100);
+		GameObject.pause(100);
 		landscape.start();
-		Landscape.pause(500);
+		GameObject.pause(500);
 		assertEquals("Result", true, y == player.getY());
 	}
 

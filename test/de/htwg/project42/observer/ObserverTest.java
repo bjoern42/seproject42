@@ -9,6 +9,7 @@ import org.junit.Test;
 
 import de.htwg.project42.controller.Landscape;
 import de.htwg.project42.model.Block;
+import de.htwg.project42.model.GameObject;
 import de.htwg.project42.model.Player;
 
 public class ObserverTest {
@@ -57,7 +58,7 @@ File map = null;
 		player.setJump(true);
 		landscape.jump();
 		assertEquals("Result",false,player.getJump());
-		Landscape.pause(100);
+		GameObject.pause(100);
 		assertEquals("Result",false,y == player.getY());
 	}
 	
