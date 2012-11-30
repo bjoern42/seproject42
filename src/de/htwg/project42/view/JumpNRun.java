@@ -33,7 +33,7 @@ private EditorGUI egui = null;
 private JPanel pMenu, pButtons = new JPanel(),pList = new JPanel(),pCurrent;
 private JButton btStart = new JButton("Starten"), btEditor = new JButton("Level Editor");
 private Image img = null;
-private JList<File> list = null;
+private JList list = null;
 private JScrollPane scroll = null;
 private int width, height, length;
 
@@ -78,7 +78,7 @@ private int width, height, length;
 		        return name.toLowerCase().endsWith(".lvl");
 		    }
 		});
-		list = new JList<File>(files);
+		list = new JList(files);
 		list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		list.setSelectedIndex(0);
 		
@@ -107,7 +107,7 @@ private int width, height, length;
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
 		if(arg0.getSource() == btStart){
-			gui = new GUI(this, list.getSelectedValue(),width, height, length);
+			gui = new GUI(this, (File)list.getSelectedValue(),width, height, length);
 			changePanel(gui);
 			gui.start();
 		}else if(arg0.getSource() == btEditor){
