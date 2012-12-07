@@ -28,7 +28,7 @@ private Landscape landscape = null;
 	 */
 	public TUI(Landscape pLandscape){
 		landscape = pLandscape;
-		landscape.activateTUI(this);
+		landscape.addAnObserver(this);
 	}
 	
 	/**

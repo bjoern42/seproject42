@@ -1,5 +1,7 @@
 package de.htwg.project42.observer;
 
+import java.util.List;
+
 /**
  * Observer interface for JumpNRun.
  * @author bjeschle,toofterd
@@ -12,6 +14,12 @@ public interface ObserverInterface {
 	 * @param o - observable
 	 */
 	void addObserver(Observable o);
+	
+	/**
+	 * Returns a List of all observables.
+	 * @return list of observables
+	 */
+	public List<Observable> getObserver();
 	
 	/**
 	 * Remove all observables from observer.

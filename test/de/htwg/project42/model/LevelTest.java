@@ -3,6 +3,7 @@ package de.htwg.project42.model;
 import static org.junit.Assert.*;
 
 import java.io.File;
+import java.util.LinkedList;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -48,6 +49,8 @@ File map = null;
 		assertEquals("Result",true,level.isMovableArea(8000, 0, 100, 200,false));
 		assertEquals("Result",true,level.isMovableArea(100, 500, 100, 200,false));
 		assertEquals("Result",true,level.isMovableArea(200, 400, 100, 200,true));
+		assertEquals("Result",true,level.isMovableArea(0, 300, 100, 200,true));
+		assertEquals("Result",true,level.isMovableArea(0, 8000, 100, 200,true));
 	}
 	
 	@Test
@@ -103,6 +106,17 @@ File map = null;
 	public void testGetEnemies(){
 		Level level = new Level(null,map,100, 12);
 		assertEquals("Result",level.getEnemies(),level.getEnemies());
+	}
+	
+	@Test
+	public void testBlocks(){
+		Level level = new Level(null,map,100, 12);
+		LinkedList<Block[]> list = new LinkedList<Block[]>();
+		Block tmp[] = new Block[1];
+		tmp[0] = new Block(0, 0, 100, 42);
+		list.add(tmp);
+		level.setBlocks(list);
+		assertEquals("Result",42,level.getVisibleBlocks().get(0)[0].getType());
 	}
 
 	@Override

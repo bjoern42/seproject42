@@ -17,6 +17,11 @@ private List<Observable> observables = new LinkedList<Observable>();
 	}
 
 	@Override
+	public List<Observable> getObserver() {
+		return observables;
+	}
+	
+	@Override
 	public void removeAllObserver() {
 		observables.clear();
 	}

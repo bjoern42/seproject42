@@ -44,7 +44,7 @@ private Landscape landscape;
 			map[2] = row2;
 			int row3[] = {1,1,1,1};
 			map[3] = row3;
-			int row4[] = {0,0,2,1};
+			int row4[] = {0,0,0,1};
 			map[4] = row4;
 			int row5[] = {0,0,0,1};
 			map[5] = row5;
@@ -60,9 +60,8 @@ private Landscape landscape;
 			landscape = new Landscape(mapF, this, 400, 400, 4);
 			level = landscape.getLevel();
 			level.setBlocks(objects);
-			Enemy e = landscape.getEnemies().get(0);
-			e.setX(400);
-			e.setY(200);
+
+			level.addEnemy(new Enemy(400, 200, 100));
 		}
 	}
 
@@ -117,29 +116,41 @@ private Landscape landscape;
 	@Test
 	public void testGravity() {
 		Player player = landscape.getPlayer();
+		Enemy e = landscape.getEnemies().get(0);
 		player.setX(200);
-		int y = player.getY();
+		e.setX(200);
+		e.setY(0);
+		int y1 = player.getY();
+		int y2 = e.getY();
 		landscape.gravity();
-		assertEquals("Result", y + landscape.getGravity() * 2, player.getY());
+		assertEquals("Result", y1 + landscape.getGravity() * 2, player.getY());
+		assertEquals("Result", y2 + landscape.getGravity() / 2, e.getY());
 		player.setY(800);
-		y = player.getY();
+		y1 = player.getY();
 		landscape.gravity();
 		assertEquals("Result", 0, player.getHealth());
 		player.setJump(false);
 		player.setY(0);
-		y = player.getY();
+		e.setJump(false);
+		e.setY(0);
+		y1 = player.getY();
+		y2 = e.getY();
 		landscape.gravity();
-		assertEquals("Result", y, player.getY());
+		assertEquals("Result", y1, player.getY());
+		assertEquals("Result", y2, e.getY());
 		player.setJump(true);
 		player.setY(100);
-		y = player.getY();
+		y1 = player.getY();
 		landscape.gravity();
-		assertEquals("Result", y, player.getY());
+		assertEquals("Result", y1, player.getY());
 		player.setJump(false);
 		player.setY(600);
-		y = player.getY();
+		e.setX(8000);
+		y1 = player.getY();
+		y2 = e.getY();
 		landscape.gravity();
-		assertEquals("Result", y, player.getY());
+		assertEquals("Result", y1, player.getY());
+		assertEquals("Result", y2, e.getY());
 	}
 
 	@Test
@@ -200,12 +211,28 @@ private Landscape landscape;
 		player.setHealth(0);
 		player.setY(100);
 		y = 100;
-		GameObject.pause(100);
+		GameObject.pause(500);
 		landscape.start();
 		GameObject.pause(500);
-		assertEquals("Result", true, y == player.getY());
+		assertEquals("Result", y, player.getY());
+		player.setGoal(true);
+		player.setHealth(1);
+		player.setY(100);
+		y = 100;
+		GameObject.pause(500);
+		landscape.start();
+		GameObject.pause(500);
+		assertEquals("Result", y,  player.getY());
 	}
-
+	
+	@Test
+	public void testAddAnObserver() {
+		landscape.removeAllObserver();
+		assertEquals("Result", 0, landscape.getObserver().size());
+		landscape.addObserver(this);
+		assertEquals("Result", this, landscape.getObserver().get(0));
+	}
+	
 	@Override
 	public void update() {}
 }

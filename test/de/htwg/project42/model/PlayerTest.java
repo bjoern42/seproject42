@@ -48,6 +48,13 @@ public class PlayerTest {
 	}
 	
 	@Test
+	public void testSetLock(){
+		Player player = new Player(0, 0, 10, 20);
+		player.setLock(true);
+		assertEquals("Result",true,player.getLock());
+	}
+	
+	@Test
 	public void testSetHealth(){
 		Player player = new Player(0, 0, 10, 20);
 		player.setHealth(42);
@@ -68,5 +75,12 @@ public class PlayerTest {
 		player.setCoins(player.getCoinsForLife());
 		player.increaseCoins();
 		assertEquals("Result",0,player.getCoins());
+	}
+	
+	@Test
+	public void testSetGoal(){
+		Player player = new Player(0, 0, 10, 20);
+		player.setGoal(true);
+		assertEquals("Result",true,player.isInGoal());
 	}
 }

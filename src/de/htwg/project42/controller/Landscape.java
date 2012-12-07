@@ -38,7 +38,7 @@ private Mutex mutex = new Mutex();
 	 * @param pLength - Visible columns
 	 */
 	public Landscape(File map,Observable pObservable, int pWidth,int pHeight, int pLength){
-		addObserver(pObservable);
+		addAnObserver(pObservable);
 		width = pWidth;
 		height = pHeight;
 		int size = width/pLength;
@@ -47,7 +47,10 @@ private Mutex mutex = new Mutex();
 		enemies = level.getEnemies();
 	}
 	
-	public void activateTUI(Observable o){
+	/**
+	 * Adds an Observer
+	 */
+	public void addAnObserver(Observable o){
 		addObserver(o);
 	}
 	
@@ -137,7 +140,14 @@ private Mutex mutex = new Mutex();
 			}
 			boolean isMovableArea = level.isMovableArea(e.getX()+(SPEED/ENEMY_SPEED_FACTOR)*direction, e.getY(), e.getWidth(), e.getHeight(),false);
 			if(!e.isDead() && level.isInFrame(e.getX()) && isMovableArea){
-				e.move(SPEED/ENEMY_SPEED_FACTOR*direction, 0);
+				try {
+					mutex.acquire();
+					e.move(SPEED/ENEMY_SPEED_FACTOR*direction, 0);
+				} catch (InterruptedException ie) {
+					ie.printStackTrace();
+				}finally{
+					mutex.release();
+				}	
 				if(Math.random() > enemyJumpChances){
 					e.jump(level, this, GRAVITY/2, JUMP_HEIGHT,false);
 				}

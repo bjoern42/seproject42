@@ -37,7 +37,7 @@ private Player player = null;
 			Block block[] = new Block[blockType.length];
 			for(int j=0; j<blockType.length; j++){
 				if(blockType[j] == Block.TYP_ENEMY){
-					enemies.add(new Enemy(size*i, size*j, size));
+					addEnemy(new Enemy(size*i, size*j, size));
 					blockType[j] = Block.TYP_AIR;
 				}
 				block[j] = new Block(size*i, size*j, size,blockType[j]);
@@ -45,6 +45,10 @@ private Player player = null;
 			objects.add(block);
 			i++;
 		}
+	}
+	
+	public void addEnemy(Enemy pEnemy){
+		enemies.add(pEnemy);
 	}
 	
 	/**
