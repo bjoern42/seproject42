@@ -1,4 +1,4 @@
-package de.htwg.project42.model;
+package de.htwg.project42.model.GameObjects;
 
 /**
  * Enemy for JumpNRun.

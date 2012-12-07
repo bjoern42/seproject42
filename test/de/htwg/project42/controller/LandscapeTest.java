@@ -9,11 +9,11 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 
-import de.htwg.project42.model.Block;
-import de.htwg.project42.model.Enemy;
-import de.htwg.project42.model.GameObject;
-import de.htwg.project42.model.Level;
-import de.htwg.project42.model.Player;
+import de.htwg.project42.model.GameObjects.Block;
+import de.htwg.project42.model.GameObjects.Enemy;
+import de.htwg.project42.model.GameObjects.GameObject;
+import de.htwg.project42.model.GameObjects.Level;
+import de.htwg.project42.model.GameObjects.Player;
 import de.htwg.project42.observer.Observable;
 
 public class LandscapeTest implements Observable{

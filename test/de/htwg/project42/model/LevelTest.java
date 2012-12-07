@@ -8,9 +8,10 @@ import org.junit.Before;
 import org.junit.Test;
 
 import de.htwg.project42.controller.Landscape;
-import de.htwg.project42.model.Block;
-import de.htwg.project42.model.GameObject;
-import de.htwg.project42.model.Player;
+import de.htwg.project42.model.GameObjects.Block;
+import de.htwg.project42.model.GameObjects.GameObject;
+import de.htwg.project42.model.GameObjects.Level;
+import de.htwg.project42.model.GameObjects.Player;
 import de.htwg.project42.observer.Observable;
 
 public class LevelTest implements Observable{

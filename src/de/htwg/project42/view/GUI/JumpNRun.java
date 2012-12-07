@@ -1,4 +1,4 @@
-package de.htwg.project42.view;
+package de.htwg.project42.view.GUI;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -21,6 +21,8 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
+
+import de.htwg.project42.view.EditorGUI.EditorGUI;
 
 /**
  * Main class for JumpNRun.

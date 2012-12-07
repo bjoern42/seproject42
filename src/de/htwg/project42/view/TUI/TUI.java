@@ -1,13 +1,13 @@
-package de.htwg.project42.view;
+package de.htwg.project42.view.TUI;
 
 import java.io.File;
 import java.util.List;
 
 
 import de.htwg.project42.controller.Landscape;
-import de.htwg.project42.model.Block;
-import de.htwg.project42.model.Enemy;
-import de.htwg.project42.model.Player;
+import de.htwg.project42.model.GameObjects.Block;
+import de.htwg.project42.model.GameObjects.Enemy;
+import de.htwg.project42.model.GameObjects.Player;
 import de.htwg.project42.observer.Observable;
 
 /**

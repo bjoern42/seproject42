@@ -3,12 +3,14 @@ package de.htwg.project42.controller;
 import java.io.File;
 import java.util.List;
 
+import com.sun.corba.se.impl.orbutil.concurrent.Mutex;
 
-import de.htwg.project42.model.Block;
-import de.htwg.project42.model.Enemy;
-import de.htwg.project42.model.GameObject;
-import de.htwg.project42.model.Level;
-import de.htwg.project42.model.Player;
+
+import de.htwg.project42.model.GameObjects.Block;
+import de.htwg.project42.model.GameObjects.Enemy;
+import de.htwg.project42.model.GameObjects.GameObject;
+import de.htwg.project42.model.GameObjects.Level;
+import de.htwg.project42.model.GameObjects.Player;
 import de.htwg.project42.observer.Observable;
 import de.htwg.project42.observer.Observer;
 
@@ -25,6 +27,7 @@ private int width, height;
 private Player player = null;
 private List<Enemy> enemies = null;
 private Level level = null;
+private Mutex mutex = new Mutex();
 	
 	/**
 	 * Generates Landscape.
@@ -101,11 +104,23 @@ private Level level = null;
 	 * Handles the gravity.
 	 */
 	public void gravity(){
-		if(player.getJump() && level.isMovableArea(player.getX(), player.getY() + GRAVITY*2, player.getWidth(), player.getHeight(),true)){
-			player.move(0, GRAVITY*2);
-			if(player.getY()>height){
-				player.setHealth(0);
+		try {
+			mutex.acquire();
+			if(player.getJump() && level.isMovableArea(player.getX(), player.getY() + GRAVITY*2, player.getWidth(), player.getHeight(),true)){
+				player.move(0, GRAVITY*2);
+				if(player.getY()>height){
+					player.setHealth(0);
+				}
 			}
+			for(Enemy e:enemies){
+				if(level.isInFrame(e.getX()) && e.getJump() && level.isMovableArea(e.getX(), e.getY() + GRAVITY/2, e.getWidth(), e.getHeight(),false)){
+					e.move(0, GRAVITY/2);
+				}
+			}
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}finally{
+			mutex.release();
 		}
 	}
 	
@@ -152,10 +167,17 @@ private Level level = null;
 	 * This is realized by moving all visible blocks to the left.
 	 */
 	public void right(){
-		if(level.isMovableArea(player.getX() + SPEED, player.getY(), player.getWidth(), player.getHeight(),true)){
-			level.update(-SPEED);
-			notifyObserver();
-		}
+		try {
+			mutex.acquire();
+			if(level.isMovableArea(player.getX() + SPEED, player.getY(), player.getWidth(), player.getHeight(),true)){
+				level.update(-SPEED);
+				notifyObserver();
+			}
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}finally{
+			mutex.release();
+		}		
 	}
 	
 	/**
@@ -163,9 +185,16 @@ private Level level = null;
 	 * This is realized by moving all visible blocks to the right.
 	 */
 	public void left(){
-		if(level.isMovableArea(player.getX() - SPEED, player.getY(), player.getWidth(), player.getHeight(),true)){
-			level.update(SPEED);
-			notifyObserver();
+		try {
+			mutex.acquire();
+			if(level.isMovableArea(player.getX() - SPEED, player.getY(), player.getWidth(), player.getHeight(),true)){
+				level.update(SPEED);
+				notifyObserver();
+			}
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}finally{
+			mutex.release();
 		}
 	}
 	

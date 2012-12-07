@@ -1,4 +1,4 @@
-package de.htwg.project42.model;
+package de.htwg.project42.model.GameObjects;
 
 import de.htwg.project42.observer.Observer;
 
@@ -146,11 +146,6 @@ private boolean jump = true;
 							move(0, -gravity);
 							observer.notifyObserver();
 						}
-					}
-					while(level.isMovableArea(getX(), getY() + gravity*2, getWidth(), getHeight(),player)){
-						pause(PAUSE);
-						move(0, gravity*2);
-						observer.notifyObserver();
 					}
 					jump = true;
 				}

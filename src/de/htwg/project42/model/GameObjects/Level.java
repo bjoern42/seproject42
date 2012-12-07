@@ -1,8 +1,11 @@
-package de.htwg.project42.model;
+package de.htwg.project42.model.GameObjects;
 
 import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
+
+import de.htwg.project42.model.GameObjects.Movable.Movable;
+import de.htwg.project42.model.LevelLoader.LevelLoader;
 
 /**
  * Level for JumpNRun.

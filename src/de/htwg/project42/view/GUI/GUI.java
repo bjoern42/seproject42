@@ -1,4 +1,4 @@
-package de.htwg.project42.view;
+package de.htwg.project42.view.GUI;
 
 import java.awt.Font;
 import java.awt.Graphics;
@@ -15,11 +15,12 @@ import javax.swing.JPanel;
 
 
 import de.htwg.project42.controller.Landscape;
-import de.htwg.project42.model.Block;
-import de.htwg.project42.model.Enemy;
-import de.htwg.project42.model.GameObject;
-import de.htwg.project42.model.Player;
+import de.htwg.project42.model.GameObjects.Block;
+import de.htwg.project42.model.GameObjects.Enemy;
+import de.htwg.project42.model.GameObjects.GameObject;
+import de.htwg.project42.model.GameObjects.Player;
 import de.htwg.project42.observer.Observable;
+import de.htwg.project42.view.TUI.TUI;
 
 /**
  * GUI for JumpNRun.

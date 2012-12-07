@@ -1,4 +1,4 @@
-package de.htwg.project42.model;
+package de.htwg.project42.model.LevelLoader;
 
 import java.io.BufferedReader;
 import java.io.File;

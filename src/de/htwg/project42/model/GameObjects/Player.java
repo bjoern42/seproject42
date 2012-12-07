@@ -1,4 +1,4 @@
-package de.htwg.project42.model;
+package de.htwg.project42.model.GameObjects;
 
 /**
  * Player for JumpNRun

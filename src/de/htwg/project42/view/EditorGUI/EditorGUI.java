@@ -1,4 +1,4 @@
-package de.htwg.project42.view;
+package de.htwg.project42.view.EditorGUI;
 
 import javax.swing.JPanel;
 

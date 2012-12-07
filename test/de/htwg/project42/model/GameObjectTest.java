@@ -6,6 +6,10 @@ import java.io.File;
 
 import org.junit.Test;
 
+import de.htwg.project42.model.GameObjects.Block;
+import de.htwg.project42.model.GameObjects.GameObject;
+import de.htwg.project42.model.GameObjects.Level;
+import de.htwg.project42.model.GameObjects.Player;
 import de.htwg.project42.observer.Observer;
 
 public class GameObjectTest extends Observer{
