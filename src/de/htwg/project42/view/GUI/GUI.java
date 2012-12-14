@@ -6,7 +6,6 @@ import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -14,11 +13,10 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 
-import de.htwg.project42.controller.Landscape;
-import de.htwg.project42.model.GameObjects.Block;
-import de.htwg.project42.model.GameObjects.Enemy;
-import de.htwg.project42.model.GameObjects.GameObject;
-import de.htwg.project42.model.GameObjects.Player;
+import de.htwg.project42.controller.iLandscape;
+import de.htwg.project42.model.GameObjects.iBlock;
+import de.htwg.project42.model.GameObjects.iEnemy;
+import de.htwg.project42.model.GameObjects.iPlayer;
 import de.htwg.project42.observer.Observable;
 import de.htwg.project42.view.TUI.TUI;
 
@@ -30,9 +28,9 @@ import de.htwg.project42.view.TUI.TUI;
 @SuppressWarnings("serial")
 public final class GUI extends JPanel implements KeyListener, Observable{
 private static final int ACTION_RIGHT = 0, ACTION_LEFT = 1, ACTION_NORMAL = 2, ACTION_JUMP = 3, PAUSE_LONG = 100, PAUSE_SHORT = 20, HEALTH_SIZE = 30, COIN_SIZE = 50, COIN_STRING_POS =35, GAP = 10, FONT_SIZE = 15;
-private List<Block[]> objects = new LinkedList<Block[]>();
-private Landscape landscape = null;
-private Player player = null;
+private List<iBlock[]> objects = new LinkedList<iBlock[]>();
+private iLandscape landscape = null;
+private iPlayer player = null;
 private boolean up = false, right = false, left = false;
 private Image buffer = null, imgGras, imgPlayerNormal, imgPlayerJump, imgPlayerRight, imgPlayerLeft, imgBackground,imgEnemie,imgEnemieDead,imgWater,imgHealth,imgCoin,imgCoinCount,imgGoal;
 private int action = ACTION_NORMAL;
@@ -42,14 +40,12 @@ private GUI gui;
 
 	/**
 	 * Creates GUI.
-	 * @param pMain - JumpNRun
-	 * @param map - Game map
-	 * @param pWidth - Width
-	 * @param pHeight - Height
-	 * @param pLength - Visible blocks
+	 * @param pMain - Main
+	 * @param pLandscape - Landscape
+	 * @param pTUI - runs parallel TUI if true
 	 */
-	public GUI(final JumpNRun pMain, File map, int pWidth, int pHeight, int pLength, boolean pTUI){		
-		landscape = new Landscape(map, this, pWidth, pHeight, pLength);
+	public GUI(final JumpNRun pMain, iLandscape pLandscape, boolean pTUI){		
+		landscape = pLandscape;
 		if(pTUI){
 			new TUI(landscape);
 		}
@@ -79,13 +75,13 @@ private GUI gui;
 	 */
 	public void start(){
 		getGraphics().drawImage(imgBackground,0,0, getWidth(), getHeight(),this);
-		GameObject.pause(PAUSE_LONG);
+		player.pause(PAUSE_LONG);
 		requestFocus();
 		landscape.start();
 		new Thread(){
 			public void run(){
 				while(player.getHealth() > 0 && !player.isInGoal()){
-					GameObject.pause(PAUSE_SHORT);
+					player.pause(PAUSE_SHORT);
 					if(up){
 						action = ACTION_JUMP;
 						landscape.jump();
@@ -137,22 +133,26 @@ private GUI gui;
 	 * @param g - Graphics
 	 */
 	private void paintLandscape(Graphics g){
-		for(Block column[]:objects){
-			for(Block block:column){
+		for(iBlock column[]:objects){
+			for(iBlock block:column){
 				if(block != null){
 					switch (block.getType()){
-						case Block.TYP_GRAS:{
+						case iBlock.TYP_GRAS:{
 							g.drawImage(imgGras, block.getX(), block.getY(), block.getWidth(), block.getHeight(), this);
 							break;
-						}case Block.TYP_WATER:{
+						}case iBlock.TYP_WATER:{
 							g.drawImage(imgWater, block.getX(), block.getY(), block.getWidth(), block.getHeight(), this);
 							break;
-						}case Block.TYP_COIN:{
+						}case iBlock.TYP_COIN:{
 							g.drawImage(imgCoin, block.getX(), block.getY(), block.getWidth(), block.getHeight(), this);
 							break;
 						}
-						case Block.TYP_GOAL:{
+						case iBlock.TYP_GOAL:{
 							g.drawImage(imgGoal, block.getX(), block.getY(), block.getWidth(), block.getHeight(), this);
+							break;
+						}
+						case iBlock.TYP_CRATE:{
+							g.fillRect(block.getX(), block.getY(), block.getWidth(), block.getHeight());
 							break;
 						}
 					}
@@ -166,7 +166,7 @@ private GUI gui;
 	 * @param g - Graphics
 	 */
 	private void paintEnemies(Graphics g){
-		for(Enemy e:landscape.getEnemies()){
+		for(iEnemy e:landscape.getEnemies()){
 			if(e.isDead()){
 				g.drawImage(imgEnemieDead, e.getX(), e.getY(), e.getWidth(), e.getHeight(), this);
 			}else{

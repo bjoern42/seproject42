@@ -1,13 +1,15 @@
-package de.htwg.project42.model.GameObjects;
+package de.htwg.project42.model.GameObjects.Implementation;
 
-import de.htwg.project42.observer.Observer;
+import de.htwg.project42.model.GameObjects.iGameObjects;
+import de.htwg.project42.model.GameObjects.iLevel;
+import de.htwg.project42.observer.ObserverInterface;
 
 /**
  * Abstract GameObject class for all objects in the landscape.
  * @author bjeschle,toofterd
  * @version 1.0
  */
-public abstract class GameObject{
+public abstract class GameObject implements iGameObjects{
 private static final int PAUSE = 20;
 private int x, y, width, height;
 private boolean jump = true;
@@ -119,7 +121,7 @@ private boolean jump = true;
 	 * Sleeps a specified time.
 	 * @param pause - time to sleep
 	 */
-	public static void pause(int pause){
+	public void pause(int pause){
 		try {
 			Thread.sleep(pause);
 		} catch (InterruptedException e) {
@@ -135,7 +137,7 @@ private boolean jump = true;
 	 * @param height - Height
 	 * @param player - specify if jump is called by player or enemy
 	 */
-	public void jump(final Level level, final Observer observer, final int gravity, final int height,final boolean player){
+	public void jump(final iLevel level, final ObserverInterface observer, final int gravity, final int height,final boolean player){
 		if(jump && !level.isMovableArea(getX(), getY() + gravity, getWidth(), getHeight(),player)){
 			jump = false;
 			new Thread(){

@@ -22,7 +22,16 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
 
+import de.htwg.project42.controller.iLandscape;
+import de.htwg.project42.model.GameObjects.iLevel;
+import de.htwg.project42.model.GameObjects.iLevelLoader;
+import de.htwg.project42.model.GameObjects.iPlayer;
 import de.htwg.project42.view.EditorGUI.EditorGUI;
+
+import de.htwg.project42.model.GameObjects.Implementation.Level;
+import de.htwg.project42.model.GameObjects.Implementation.LevelLoader;
+import de.htwg.project42.model.GameObjects.Implementation.Player;
+import de.htwg.project42.controller.Implementation.Landscape;
 
 /**
  * Main class for JumpNRun.
@@ -104,6 +113,7 @@ private static final int LANDSCAPE_SIZE_X = 1200, LANDSCAPE_SIZE_Y = 800, LANDSC
 		pMenu.add(BorderLayout.SOUTH,tmp);
 		add(BorderLayout.CENTER,pMenu);
 		
+		
 		setVisible(true);
 		
 		pCurrent = pMenu;
@@ -116,7 +126,13 @@ private static final int LANDSCAPE_SIZE_X = 1200, LANDSCAPE_SIZE_Y = 800, LANDSC
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
 		if(arg0.getSource() == btStart){
-			gui = new GUI(this, (File)list.getSelectedValue(),width, height, length, cbTUI.isSelected());
+			iPlayer player = new Player(length*width/length/2, 0, width/length, width/length*2);
+			iLevelLoader loader = new LevelLoader((File)list.getSelectedValue());
+			iLevel level = new Level(loader, player, width/length ,length+2);
+			iLandscape landscape = new Landscape(player, level, width, height);
+			gui = new GUI(this, landscape, cbTUI.isSelected());
+			landscape.addAnObserver(gui);
+			
 			changePanel(gui);
 			gui.start();
 		}else if(arg0.getSource() == btEditor){

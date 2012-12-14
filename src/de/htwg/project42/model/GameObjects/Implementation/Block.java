@@ -1,21 +1,16 @@
-package de.htwg.project42.model.GameObjects;
+package de.htwg.project42.model.GameObjects.Implementation;
 
+import de.htwg.project42.model.GameObjects.iBlock;
 import de.htwg.project42.model.GameObjects.Movable.Movable;
-
 
 /**
  * Block for JumpNRun
  * @author bjeschle,toofterd
  * @version 1.0
  */
-public class Block extends GameObject  implements Movable{
-public static final int TYP_AIR = 0;	
-public static final int TYP_GRAS = 1;
-public static final int TYP_ENEMY = 2;
-public static final int TYP_WATER = 3;
-public static final int TYP_COIN = 4;
-public static final int TYP_GOAL = 5;
-private int type = TYP_AIR;
+public class Block extends GameObject implements iBlock,Movable{
+private int type = iBlock.TYP_AIR;
+private boolean movable = false;
 
 	/**
 	 * Creates a Block.
@@ -27,6 +22,22 @@ private int type = TYP_AIR;
 	public Block(int pX, int pY, int pSize,int pType) {
 		super(pX, pY, pSize, pSize);
 		type = pType;
+	}
+	
+	/**
+	 * Returns if the block is movable.
+	 * @return true if movable, false if not
+	 */
+	public boolean isMovable(){
+		return movable;
+	}
+	
+	/**
+	 * Sets the block movable
+	 * @param pMovable - movable
+	 */
+	public void setMovable(boolean pMovable){
+		movable = pMovable;
 	}
 	
 	/**

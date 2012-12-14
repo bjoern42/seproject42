@@ -1,11 +1,13 @@
-package de.htwg.project42.model.GameObjects;
+package de.htwg.project42.model.GameObjects.Implementation;
+
+import de.htwg.project42.model.GameObjects.iEnemy;
 
 /**
  * Enemy for JumpNRun.
  * @author bjeschle,toofterd
  * @version 1.0
  */
-public final class Enemy extends Block{
+public final class Enemy extends Block implements iEnemy{
 private int direction = 1;
 private boolean dead = false;
 

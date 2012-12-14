@@ -1,4 +1,4 @@
-package de.htwg.project42.model.LevelLoader;
+package de.htwg.project42.model.GameObjects.Implementation;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -6,12 +6,14 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStreamReader;
 
+import de.htwg.project42.model.GameObjects.iLevelLoader;
+
 /**
  * Level loader for JumpNRun.
  * @author bjeschle,toofterd
  * @version 1.0
  */
-public final class LevelLoader {
+public final class LevelLoader implements iLevelLoader {
 private BufferedReader reader = null;
 
 	/**

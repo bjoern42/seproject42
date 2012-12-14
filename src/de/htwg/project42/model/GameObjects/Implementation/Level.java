@@ -1,61 +1,95 @@
-package de.htwg.project42.model.GameObjects;
+package de.htwg.project42.model.GameObjects.Implementation;
 
-import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
 
+import de.htwg.project42.model.GameObjects.iBlock;
+import de.htwg.project42.model.GameObjects.iEnemy;
+import de.htwg.project42.model.GameObjects.iLevel;
+import de.htwg.project42.model.GameObjects.iLevelLoader;
+import de.htwg.project42.model.GameObjects.iPlayer;
 import de.htwg.project42.model.GameObjects.Movable.Movable;
-import de.htwg.project42.model.LevelLoader.LevelLoader;
 
 /**
  * Level for JumpNRun.
  * @author bjeschle,toofterd
  * @version 1.0
  */
-public final class Level implements Movable {
-private List<Block[]> objects = new LinkedList<Block[]>();
-private List<Enemy> enemies = new LinkedList<Enemy>();
+public final class Level implements iLevel,Movable {
+private List<iBlock[]> objects = new LinkedList<iBlock[]>();
+private List<iEnemy> enemies = new LinkedList<iEnemy>();
+private List<iBlock> crates = new LinkedList<iBlock>();
 private int start, length, size, change = 0;
-private Player player = null;
+private iPlayer player = null;
 
 	/**
 	 * Creates Level.
 	 * @param pPlayer - Player
-	 * @param map - Map
 	 * @param pSize - Blocksize
 	 * @param pLength - Visible blocks
 	 */
-	public Level(Player pPlayer, File map, int pSize, int pLength){
+	public Level(iLevelLoader loader, iPlayer pPlayer, int pSize, int pLength){
 		player = pPlayer;
 		start = 0;
 		length = pLength+2;
 		size = pSize;
-		LevelLoader loader = new LevelLoader(map);
 		int blockType[] = null;
 		int i = 0;
 		while((blockType = loader.readNext()) != null){
-			Block block[] = new Block[blockType.length];
+			iBlock block[] = new Block[blockType.length];
 			for(int j=0; j<blockType.length; j++){
-				if(blockType[j] == Block.TYP_ENEMY){
+				if(blockType[j] == iBlock.TYP_ENEMY){
 					addEnemy(new Enemy(size*i, size*j, size));
-					blockType[j] = Block.TYP_AIR;
+					blockType[j] = iBlock.TYP_AIR;
 				}
 				block[j] = new Block(size*i, size*j, size,blockType[j]);
+				if(blockType[j] == iBlock.TYP_CRATE){
+					addCrate(block[j]);
+					block[j].setMovable(true);
+				}
 			}
 			objects.add(block);
 			i++;
 		}
 	}
 	
-	public void addEnemy(Enemy pEnemy){
+	/**
+	 * Adds an enemy.
+	 * @param pEnemy - enemy
+	 */
+	public void addEnemy(iEnemy pEnemy){
 		enemies.add(pEnemy);
+	}
+	
+	/**
+	 * Returns all enemies.
+	 * @return enemies
+	 */
+	public List<iEnemy> getEnemies(){
+		return enemies;
+	}
+	
+	/**
+	 * adds a crate.
+	 * @param block - Crate
+	 */
+	public void addCrate(iBlock block){
+		crates.add(block);
+	}
+	
+	/**
+	 * Returns all crates.
+	 * @return crates
+	 */
+	public List<iBlock> getCrates(){
+		return crates;
 	}
 	
 	/**
 	 * Returns visible blocks.
 	 * @return visible blocks
 	 */
-	public List<Block[]> getVisibleBlocks(){
+	public List<iBlock[]> getVisibleBlocks(){
 		if(getStart()+getLength()>objects.size()){
 			return objects;
 		}
@@ -66,16 +100,8 @@ private Player player = null;
 	 * Sets blocks.
 	 * @param list - blocks
 	 */
-	public void setBlocks(List<Block[]> list){
+	public void setBlocks(List<iBlock[]> list){
 		objects = list;
-	}
-	
-	/**
-	 * Returns all enemies.
-	 * @return enemies
-	 */
-	public List<Enemy> getEnemies(){
-		return enemies;
 	}
 	
 	/**
@@ -84,7 +110,7 @@ private Player player = null;
 	public void removeFirst(){
 		if(getStart()+getLength() < objects.size()){
 			int x = (getLength()-1)*size;
-			for(Block b:objects.get(getStart()+getLength())){
+			for(iBlock b:objects.get(getStart()+getLength())){
 				b.setX(x);
 			}
 			setStart(getStart() + 1);
@@ -97,7 +123,7 @@ private Player player = null;
 	public void removeLast(){
 		if(getStart() > 0){
 			int x = 0;
-			for(Block b:objects.get(getStart())){
+			for(iBlock b:objects.get(getStart())){
 				b.setX(x);
 			}
 			setStart(getStart() - 1);
@@ -128,12 +154,12 @@ private Player player = null;
 			removeLast();
 		}
 		for(int i=getStart(); i < getStart()+getLength();i++){
-			Block block[] = objects.get(i);
+			iBlock block[] = objects.get(i);
 			for(int j=0; j<block.length; j++){
 				block[j].update(pChange);
 			}
 		}
-		for(Enemy e:enemies){
+		for(iEnemy e:enemies){
 			e.update(pChange);
 		}
 		change += pChange*-1;
@@ -150,28 +176,62 @@ private Player player = null;
 	 */
 	public boolean isMovableArea(int pX, int pY, int pWidth, int pHeight,boolean playerMoving){
 		int x = (change+pX) / size, y = pY / size;
+		
+		if(playerMoving && !handleCrateCollision(pX, pY, pWidth, pHeight)){
+			return false;
+		}
 		for(int i=-1;i<=2;i++){
 			if(x+i >= 0 && x+i < objects.size()){
-				Block block[] = objects.get(x+i);
+				iBlock block[] = objects.get(x+i);
 				for(int j=-1;j<=pHeight/size;j++){
 					if(y+j >= 0 && y+j<block.length && block[y+j].isInArea(pX, pY, pWidth, pHeight)){
-						if(block[y+j].getType() == Block.TYP_GRAS){
+						if(block[y+j].getType() == iBlock.TYP_GRAS){
 							return false;
-						}else if(block[y+1].getType() == Block.TYP_WATER){
+						}else if(block[y+1].getType() == iBlock.TYP_WATER){
 							player.setHealth(0);
-						}else if(playerMoving && block[y+j].getType() == Block.TYP_COIN){
+						}else if(playerMoving && block[y+j].getType() == iBlock.TYP_COIN){
 							player.increaseCoins();
-							block[y+j].setType(Block.TYP_AIR);
-						}else if(block[y+1].getType() == Block.TYP_GOAL){
+							block[y+j].setType(iBlock.TYP_AIR);
+						}else if(block[y+1].getType() == iBlock.TYP_GOAL){
 							player.setGoal(true);
 						}
 					}
 				}
 			}
 		}
+
 		return true;
 	}
 
+	/**
+	 * Handles collision with crates.
+	 * @param pX - X-Position
+	 * @param pY - Y-Position
+	 * @param pWidth - Width
+	 * @param pHeight - Height
+	 * @return
+	 */
+	private boolean handleCrateCollision(int pX, int pY, int pWidth, int pHeight){
+		for(iBlock crate:crates){
+			if(crate.isInArea(pX, pY, pWidth, pHeight)){
+				if(crate.getType() == Block.TYP_CRATE){
+					if(pY+pHeight >= crate.getY()+crate.getHeight()/2){
+						if(pX < crate.getX()+crate.getWidth()/4){
+							//collision left
+							crate.move(iLevel.SPEED,0);
+						}else if(pX > crate.getX()+crate.getWidth()*(3/4)){
+							//collision right
+							crate.move(-iLevel.SPEED,0);
+						}
+					}else{
+						return false;
+					}	
+				}
+			}
+		}
+		return true;
+	}
+	
 	/**
 	 * Returns start of visible frame.
 	 * @return start

@@ -9,16 +9,21 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 
-import de.htwg.project42.model.GameObjects.Block;
-import de.htwg.project42.model.GameObjects.Enemy;
-import de.htwg.project42.model.GameObjects.GameObject;
-import de.htwg.project42.model.GameObjects.Level;
-import de.htwg.project42.model.GameObjects.Player;
+import de.htwg.project42.controller.Implementation.Landscape;
+import de.htwg.project42.model.GameObjects.iBlock;
+import de.htwg.project42.model.GameObjects.iEnemy;
+import de.htwg.project42.model.GameObjects.iLevel;
+import de.htwg.project42.model.GameObjects.iPlayer;
+import de.htwg.project42.model.GameObjects.Implementation.Block;
+import de.htwg.project42.model.GameObjects.Implementation.Enemy;
+import de.htwg.project42.model.GameObjects.Implementation.Level;
+import de.htwg.project42.model.GameObjects.Implementation.LevelLoader;
+import de.htwg.project42.model.GameObjects.Implementation.Player;
 import de.htwg.project42.observer.Observable;
 
 public class LandscapeTest implements Observable{
-private List<Block[]> objects = new LinkedList<Block[]>();
-private Level level;
+private List<iBlock[]> objects = new LinkedList<iBlock[]>();
+private iLevel level;
 private Landscape landscape;
 
 	@Before
@@ -57,7 +62,11 @@ private Landscape landscape;
 				}
 				objects.add(b);
 			}
-			landscape = new Landscape(mapF, this, 400, 400, 4);
+			LevelLoader loader = new LevelLoader(mapF);
+			iPlayer player = new Player(200, 0, 100, 200);
+			level = new Level(loader, player, 100 ,4);
+			landscape = new Landscape(player,level, 400, 400);
+			landscape.addAnObserver(this);
 			level = landscape.getLevel();
 			level.setBlocks(objects);
 
@@ -73,9 +82,9 @@ private Landscape landscape;
 
 	@Test
 	public void testLeft() {
-		Block block = landscape.getVisibleBlocks().get(0)[0];
+		iBlock block = landscape.getVisibleBlocks().get(0)[0];
 		int x = block.getX();
-		Player player = landscape.getPlayer();
+		iPlayer player = landscape.getPlayer();
 		player.setY(100);
 		landscape.left();
 		block = landscape.getVisibleBlocks().get(0)[0];
@@ -89,9 +98,9 @@ private Landscape landscape;
 
 	@Test
 	public void testRight() {
-		Block block = landscape.getVisibleBlocks().get(0)[0];
+		iBlock block = landscape.getVisibleBlocks().get(0)[0];
 		int x = block.getX();
-		Player player = landscape.getPlayer();
+		iPlayer player = landscape.getPlayer();
 		player.setY(100);
 		landscape.right();
 		block = landscape.getVisibleBlocks().get(0)[0];
@@ -115,8 +124,8 @@ private Landscape landscape;
 	
 	@Test
 	public void testGravity() {
-		Player player = landscape.getPlayer();
-		Enemy e = landscape.getEnemies().get(0);
+		iPlayer player = landscape.getPlayer();
+		iEnemy e = landscape.getEnemies().get(0);
 		player.setX(200);
 		e.setX(200);
 		e.setY(0);
@@ -156,8 +165,8 @@ private Landscape landscape;
 	@Test
 	public void testHandleEnemies() {
 		landscape.setEnemyJumpChances(0);
-		Player player = landscape.getPlayer();
-		Enemy enemy = landscape.getEnemies().get(0);
+		iPlayer player = landscape.getPlayer();
+		iEnemy enemy = landscape.getEnemies().get(0);
 		int health = player.getHealth();
 		player.setX(enemy.getX());
 		player.setY(enemy.getY());
@@ -194,34 +203,34 @@ private Landscape landscape;
 
 	@Test
 	public void testJump() {
-		Player player = landscape.getPlayer();
+		iPlayer player = landscape.getPlayer();
 		int y = player.getY();
 		landscape.jump();
-		GameObject.pause(100);
+		player.pause(100);
 		assertEquals("Result", true, player.getY() == y);
 	}
 	
 	@Test
 	public void testStart() {
-		Player player = landscape.getPlayer();
+		iPlayer player = landscape.getPlayer();
 		int y = player.getY();
 		landscape.start();
-		GameObject.pause(100);
+		player.pause(100);
 		assertEquals("Result", false, y == player.getY());
 		player.setHealth(0);
 		player.setY(100);
 		y = 100;
-		GameObject.pause(500);
+		player.pause(500);
 		landscape.start();
-		GameObject.pause(500);
+		player.pause(500);
 		assertEquals("Result", y, player.getY());
 		player.setGoal(true);
 		player.setHealth(1);
 		player.setY(100);
 		y = 100;
-		GameObject.pause(500);
+		player.pause(500);
 		landscape.start();
-		GameObject.pause(500);
+		player.pause(500);
 		assertEquals("Result", y,  player.getY());
 	}
 	

@@ -6,7 +6,7 @@ import java.io.File;
 import org.junit.Before;
 import org.junit.Test;
 
-import de.htwg.project42.model.LevelLoader.LevelLoader;
+import de.htwg.project42.model.GameObjects.Implementation.LevelLoader;
 
 public class LevelLoaderTest {
 
