@@ -71,6 +71,7 @@ private Landscape landscape;
 			level.setBlocks(objects);
 
 			level.addEnemy(new Enemy(400, 200, 100));
+			level.addCrate(new Block(600, 0, 100, iBlock.TYP_CRATE));
 		}
 	}
 
@@ -126,6 +127,7 @@ private Landscape landscape;
 	public void testGravity() {
 		iPlayer player = landscape.getPlayer();
 		iEnemy e = landscape.getEnemies().get(0);
+		iBlock crate = level.getCrates().get(0);
 		player.setX(200);
 		e.setX(200);
 		e.setY(0);
@@ -160,6 +162,18 @@ private Landscape landscape;
 		landscape.gravity();
 		assertEquals("Result", y1, player.getY());
 		assertEquals("Result", y2, e.getY());
+		crate.setX(200);
+		y1 = 0;
+		landscape.gravity();
+		assertEquals("Result", y1+iLevel.SPEED/2, crate.getY());
+		crate.setY(300);
+		y1 = 300;
+		landscape.gravity();
+		assertEquals("Result", y1, crate.getY());
+		crate.setY(8000);
+		y1 = 8000;
+		landscape.gravity();
+		assertEquals("Result", y1, crate.getY());
 	}
 
 	@Test
@@ -167,18 +181,27 @@ private Landscape landscape;
 		landscape.setEnemyJumpChances(0);
 		iPlayer player = landscape.getPlayer();
 		iEnemy enemy = landscape.getEnemies().get(0);
+		enemy.setX(200);
+		enemy.setY(200);
+		player.setX(1000);
+		player.setY(1000);
+		int x = 200;
+		landscape.handleEnemies();
+		assertEquals("Result", x, enemy.getX());
+		enemy.setX(300);
+		enemy.setY(600);
 		int health = player.getHealth();
 		player.setX(enemy.getX());
 		player.setY(enemy.getY());
 		landscape.handleEnemies();
 		assertEquals("Result", health - 1, player.getHealth());
 		enemy.setX(500);
-		int x = enemy.getX();
+		x = enemy.getX();
 		landscape.handleEnemies();
 		assertEquals("Result", x, enemy.getX());
 		enemy.setX(400);
 		landscape.handleEnemies();
-		assertEquals("Result", 400, enemy.getX());
+		assertEquals("Result", 398, enemy.getX());
 		player.setX(enemy.getX());
 		player.setY(enemy.getY());
 		player.setLock(false);
@@ -199,6 +222,13 @@ private Landscape landscape;
 		player.setY(enemy.getY());
 		landscape.handleEnemies();
 		assertEquals("Result", health, player.getHealth());
+		enemy.setX(200);
+		enemy.setY(200);
+		player.setX(1000);
+		player.setY(1000);
+		x = 200;
+		landscape.handleEnemies();
+		assertEquals("Result", x, enemy.getX());
 	}
 
 	@Test

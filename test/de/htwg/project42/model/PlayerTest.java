@@ -83,4 +83,11 @@ public class PlayerTest {
 		player.setGoal(true);
 		assertEquals("Result",true,player.isInGoal());
 	}
+	
+	@Test
+	public void testUpdate(){
+		iPlayer player = new Player(0, 0, 10, 20);
+		player.update(42);
+		assertEquals("Result",0,player.getX());
+	}
 }

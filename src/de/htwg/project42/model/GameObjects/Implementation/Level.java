@@ -215,7 +215,7 @@ private iPlayer player = null;
 					if(pX < crate.getX()+crate.getWidth()/4 && isCrateMovable(crate, pX, false)){
 						//collision left
 						crate.move(iLevel.SPEED, 0);
-					}else if(pX > crate.getX()+crate.getWidth()*(3/4)&& isCrateMovable(crate, pX, true)){
+					}else if(pX > crate.getX()+crate.getWidth()*(3/4) && isCrateMovable(crate, pX, true)){
 						//collision right
 						crate.move(-iLevel.SPEED, 0);
 					}else{
@@ -251,7 +251,7 @@ private iPlayer player = null;
 		}
 		iBlock block = objects.get(indexX)[indexY];
 		for(iEnemy e:enemies){
-			if(!e.isDead() && e.isInArea(pCrate.getX()+xOffset, pCrate.getY(), pCrate.getWidth(), pCrate.getHeight())){
+			if(!e.isDead() && isInFrame(e.getX()) && e.isInArea(pCrate.getX()+xOffset, pCrate.getY(), pCrate.getWidth(), pCrate.getHeight())){
 				return false;
 			}
 		}

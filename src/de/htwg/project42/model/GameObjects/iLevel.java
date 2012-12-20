@@ -14,6 +14,7 @@ public interface iLevel {
 	void update(int speed2);
 	List<iEnemy> getEnemies();
 	void addEnemy(iEnemy enemy);
+	void addCrate(iBlock crate);
 	void removeFirst();
 	int getStart();
 	void setStart(int i);

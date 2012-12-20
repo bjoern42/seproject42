@@ -119,7 +119,7 @@ private Mutex mutex = new Mutex();
 				}
 			}
 			for(iBlock c:crates){
-				if(level.isInFrame(c.getX()) && level.isMovableArea(c.getX(), c.getY() + GRAVITY/2, c.getWidth(), c.getHeight(),iLevel.CRATE_MOVING)){
+				if(c.getY() < height && level.isInFrame(c.getX()) && level.isMovableArea(c.getX(), c.getY() + GRAVITY/2, c.getWidth(), c.getHeight(),iLevel.CRATE_MOVING)){
 					c.move(0, GRAVITY/2);
 				}
 			}

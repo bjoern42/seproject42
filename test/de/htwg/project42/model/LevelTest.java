@@ -11,6 +11,7 @@ import org.junit.Test;
 import de.htwg.project42.controller.iLandscape;
 import de.htwg.project42.controller.Implementation.Landscape;
 import de.htwg.project42.model.GameObjects.iBlock;
+import de.htwg.project42.model.GameObjects.iEnemy;
 import de.htwg.project42.model.GameObjects.iLevel;
 import de.htwg.project42.model.GameObjects.iPlayer;
 import de.htwg.project42.model.GameObjects.Implementation.Block;
@@ -23,7 +24,7 @@ File map = null;
 
 	@Before
 	public void setUp() throws Exception {
-		map = new File("map.lvl");
+		map = new File("testmap.lvl");
 	}
 	
 	@Test
@@ -56,8 +57,52 @@ File map = null;
 		assertEquals("Result",true,level.isMovableArea(200, 400, 100, 200,iLevel.PLAYER_MOVING));
 		assertEquals("Result",true,level.isMovableArea(0, 300, 100, 200,iLevel.PLAYER_MOVING));
 		assertEquals("Result",true,level.isMovableArea(0, 8000, 100, 200,iLevel.PLAYER_MOVING));
+		
+		assertEquals("Result",false,level.isMovableArea(610, 500, 100, 200,iLevel.PLAYER_MOVING));
+		assertEquals("Result",true,level.isMovableArea(610, 500, 100, 200,iLevel.CRATE_MOVING));
 	}
 		
+	@Test
+	public void testHandleCrateCollision(){
+		iPlayer player = new Player(0, 0, 10, 20);
+		LevelLoader loader = new LevelLoader(map);
+		iLevel level = new Level(loader, player, 100, 12);
+		iBlock crate = level.getCrates().get(0);
+		player.setX(1000);
+		assertEquals("Result",false,level.isMovableArea(610, 440, 100, 200,iLevel.PLAYER_MOVING));
+		assertEquals("Result",false,level.isMovableArea(610, 500, 100, 200,iLevel.ENEMY_MOVING));
+		
+		assertEquals("Result",false,level.isMovableArea(610, 500, 100, 200,iLevel.PLAYER_MOVING));
+		assertEquals("Result",true,level.isMovableArea(790, 500, 1, 200,iLevel.PLAYER_MOVING));
+		crate.setX(600);
+		assertEquals("Result",false,level.isMovableArea(690, 500, 100, 200,iLevel.PLAYER_MOVING));
+		assertEquals("Result",true,level.isMovableArea(610, 500, 100, 200,iLevel.PLAYER_MOVING));
+	}
+	
+	@Test
+	public void testIsCrateMovable(){
+		iPlayer player = new Player(0, 0, 10, 20);
+		LevelLoader loader = new LevelLoader(map);
+		iLevel level = new Level(loader, player, 100, 12);
+		iBlock crate = level.getCrates().get(0);
+		iEnemy enemy = level.getEnemies().get(0);
+		crate.setX(0);
+		crate.setY(400);
+		assertEquals("Result",true,level.isMovableArea(90, 300, 100, 200,iLevel.PLAYER_MOVING));
+		crate.setX(700);
+		crate.setY(600);
+		enemy.setX(8000);
+		assertEquals("Result",true,level.isMovableArea(790, 500, 1, 200,iLevel.PLAYER_MOVING));
+		crate.setX(700);
+		enemy.setX(600);
+		assertEquals("Result",false,level.isMovableArea(790, 500, 10, 200,iLevel.PLAYER_MOVING));
+		enemy.kill();
+		assertEquals("Result",true,level.isMovableArea(790, 500, 1, 200,iLevel.PLAYER_MOVING));
+		assertEquals("Result",true,level.isMovableArea(600, 500, 100, 200,iLevel.PLAYER_MOVING));
+		level.getCrates().get(0).setX(1000);
+		assertEquals("Result",true,level.isMovableArea(1090, 500, 100, 200,iLevel.PLAYER_MOVING));
+	}
+	
 	@Test
 	public void testJump(){
 		iPlayer player = new Player(600, 0, 100, 200);
