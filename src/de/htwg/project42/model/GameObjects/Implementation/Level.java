@@ -177,7 +177,7 @@ private iPlayer player = null;
 	public boolean isMovableArea(int pX, int pY, int pWidth, int pHeight,boolean playerMoving){
 		int x = (change+pX) / size, y = pY / size;
 		
-		if(playerMoving && !handleCrateCollision(pX, pY, pWidth, pHeight)){
+		if(playerMoving && !handleCrateCollision(pX, pY, pWidth, pHeight,x)){
 			return false;
 		}
 		for(int i=-1;i<=2;i++){
@@ -211,25 +211,32 @@ private iPlayer player = null;
 	 * @param pHeight - Height
 	 * @return
 	 */
-	private boolean handleCrateCollision(int pX, int pY, int pWidth, int pHeight){
+	private boolean handleCrateCollision(int pX, int pY, int pWidth, int pHeight,int pPlayerX){
 		for(iBlock crate:crates){
 			if(crate.isInArea(pX, pY, pWidth, pHeight)){
-				if(crate.getType() == Block.TYP_CRATE){
-					if(pY+pHeight >= crate.getY()+crate.getHeight()/2){
-						if(pX < crate.getX()+crate.getWidth()/4){
-							//collision left
-							crate.move(iLevel.SPEED,0);
-						}else if(pX > crate.getX()+crate.getWidth()*(3/4)){
-							//collision right
-							crate.move(-iLevel.SPEED,0);
-						}
-					}else{
-						return false;
-					}	
-				}
+				if(pY+pHeight >= crate.getY()+crate.getHeight()/2){
+					int index = crate.getY()/size;
+					System.out.println();
+					if(pX < crate.getX()+crate.getWidth()/4){
+						//collision left
+						crate.move(iLevel.SPEED,0);
+					}else if(pX > crate.getX()+crate.getWidth()*(3/4)){
+						//collision right
+						crate.move(-iLevel.SPEED,0);
+					}
+				}else{
+					return false;
+				}	
 			}
 		}
 		return true;
+	}
+	
+	private boolean isCrateMovable(iBlock pCrate, int pIndexY, int pIndexX){
+		iBlock block = objects.get(pIndexX+2)[pIndexY];
+		block.isInArea(pCrate.getX(), pCrate.getY(), size, size);
+		
+		return false;
 	}
 	
 	/**
