@@ -49,13 +49,13 @@ File map = null;
 		iPlayer player = new Player(0, 0, 10, 20);
 		LevelLoader loader = new LevelLoader(map);
 		iLevel level = new Level(loader, player, 100, 12);
-		assertEquals("Result",false,level.isMovableArea(0, 500, 100, 200,false));
-		assertEquals("Result",true,level.isMovableArea(0, 0, 100, 200,false));
-		assertEquals("Result",true,level.isMovableArea(8000, 0, 100, 200,false));
-		assertEquals("Result",true,level.isMovableArea(100, 500, 100, 200,false));
-		assertEquals("Result",true,level.isMovableArea(200, 400, 100, 200,true));
-		assertEquals("Result",true,level.isMovableArea(0, 300, 100, 200,true));
-		assertEquals("Result",true,level.isMovableArea(0, 8000, 100, 200,true));
+		assertEquals("Result",false,level.isMovableArea(0, 500, 100, 200,iLevel.ENEMY_MOVING));
+		assertEquals("Result",true,level.isMovableArea(0, 0, 100, 200,iLevel.ENEMY_MOVING));
+		assertEquals("Result",true,level.isMovableArea(8000, 0, 100, 200,iLevel.ENEMY_MOVING));
+		assertEquals("Result",true,level.isMovableArea(100, 500, 100, 200,iLevel.ENEMY_MOVING));
+		assertEquals("Result",true,level.isMovableArea(200, 400, 100, 200,iLevel.PLAYER_MOVING));
+		assertEquals("Result",true,level.isMovableArea(0, 300, 100, 200,iLevel.PLAYER_MOVING));
+		assertEquals("Result",true,level.isMovableArea(0, 8000, 100, 200,iLevel.PLAYER_MOVING));
 	}
 		
 	@Test

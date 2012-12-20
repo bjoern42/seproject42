@@ -30,11 +30,10 @@ private boolean lock = false, goal = false;
 	 */
 	public void hit(){
 		if(!lock){
+			lock = true;
 			if(health > 0){
 				health--;
-				lock = true;
 			}
-		}else{
 			new Thread(){
 				public void run(){
 					pause(INVINCIBLE_LOCK_DURATION);

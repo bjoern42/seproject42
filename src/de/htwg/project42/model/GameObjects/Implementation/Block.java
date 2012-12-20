@@ -10,7 +10,6 @@ import de.htwg.project42.model.GameObjects.Movable.Movable;
  */
 public class Block extends GameObject implements iBlock,Movable{
 private int type = iBlock.TYP_AIR;
-private boolean movable = false;
 
 	/**
 	 * Creates a Block.
@@ -22,22 +21,6 @@ private boolean movable = false;
 	public Block(int pX, int pY, int pSize,int pType) {
 		super(pX, pY, pSize, pSize);
 		type = pType;
-	}
-	
-	/**
-	 * Returns if the block is movable.
-	 * @return true if movable, false if not
-	 */
-	public boolean isMovable(){
-		return movable;
-	}
-	
-	/**
-	 * Sets the block movable
-	 * @param pMovable - movable
-	 */
-	public void setMovable(boolean pMovable){
-		movable = pMovable;
 	}
 	
 	/**

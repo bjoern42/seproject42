@@ -25,6 +25,7 @@ private double enemyJumpChances = STANDARD_ENEMY_JUMP_CHANCES;
 private int width, height;
 private iPlayer player = null;
 private List<iEnemy> enemies = null;
+private List<iBlock> crates = null;
 private iLevel level = null;
 private Mutex mutex = new Mutex();
 	
@@ -41,6 +42,7 @@ private Mutex mutex = new Mutex();
 		player = pPlayer;
 		level = pLevel;
 		enemies = level.getEnemies();
+		crates = level.getCrates();
 	}
 	
 	/**
@@ -105,15 +107,20 @@ private Mutex mutex = new Mutex();
 	public void gravity(){
 		try {
 			mutex.acquire();
-			if(player.getJump() && level.isMovableArea(player.getX(), player.getY() + GRAVITY*2, player.getWidth(), player.getHeight(),true)){
+			if(player.getJump() && level.isMovableArea(player.getX(), player.getY() + GRAVITY*2, player.getWidth(), player.getHeight(),iLevel.PLAYER_MOVING)){
 				player.move(0, GRAVITY*2);
 				if(player.getY()>height){
 					player.setHealth(0);
 				}
 			}
 			for(iEnemy e:enemies){
-				if(level.isInFrame(e.getX()) && e.getJump() && level.isMovableArea(e.getX(), e.getY() + GRAVITY/2, e.getWidth(), e.getHeight(),false)){
+				if(level.isInFrame(e.getX()) && e.getJump() && level.isMovableArea(e.getX(), e.getY() + GRAVITY/2, e.getWidth(), e.getHeight(),iLevel.ENEMY_MOVING)){
 					e.move(0, GRAVITY/2);
+				}
+			}
+			for(iBlock c:crates){
+				if(level.isInFrame(c.getX()) && level.isMovableArea(c.getX(), c.getY() + GRAVITY/2, c.getWidth(), c.getHeight(),iLevel.CRATE_MOVING)){
+					c.move(0, GRAVITY/2);
 				}
 			}
 		} catch (InterruptedException e) {
@@ -129,12 +136,12 @@ private Mutex mutex = new Mutex();
 	public void handleEnemies(){
 		for(iEnemy e:enemies){
 			int direction = e.getDirection();
-			if(!player.getLock() && level.isMovableArea(player.getX(), player.getY() + 1, player.getWidth(), player.getHeight(),true) && e.isInArea(player.getX(), player.getY()+1, player.getWidth(), player.getHeight()) && !e.isInArea(player.getX(), player.getY(), player.getWidth(), player.getHeight())){
+			if(!player.getLock() && level.isMovableArea(player.getX(), player.getY() + 1, player.getWidth(), player.getHeight(),iLevel.PLAYER_MOVING) && e.isInArea(player.getX(), player.getY()+1, player.getWidth(), player.getHeight()) && !e.isInArea(player.getX(), player.getY(), player.getWidth(), player.getHeight())){
 				e.kill();
 			}else if(!e.isDead() && e.isInArea(player.getX(), player.getY(), player.getWidth(), player.getHeight())){
 				player.hit();
 			}
-			boolean isMovableArea = level.isMovableArea(e.getX()+(iLevel.SPEED/ENEMY_SPEED_FACTOR)*direction, e.getY(), e.getWidth(), e.getHeight(),false);
+			boolean isMovableArea = level.isMovableArea(e.getX()+(iLevel.SPEED/ENEMY_SPEED_FACTOR)*direction, e.getY(), e.getWidth(), e.getHeight(),iLevel.ENEMY_MOVING);
 			if(!e.isDead() && level.isInFrame(e.getX()) && isMovableArea){
 				try {
 					mutex.acquire();
@@ -145,7 +152,7 @@ private Mutex mutex = new Mutex();
 					mutex.release();
 				}	
 				if(Math.random() > enemyJumpChances){
-					e.jump(level, this, GRAVITY/2, JUMP_HEIGHT,false);
+					e.jump(level, this, GRAVITY/2, JUMP_HEIGHT,iLevel.ENEMY_MOVING);
 				}
 			}else if(!isMovableArea){
 				e.changeDirection();
@@ -165,7 +172,7 @@ private Mutex mutex = new Mutex();
 	 * Makes the player jump.
 	 */
 	public void jump(){
-		player.jump(level, this, GRAVITY, JUMP_HEIGHT,true);
+		player.jump(level, this, GRAVITY, JUMP_HEIGHT,iLevel.PLAYER_MOVING);
 	}
 	
 	/**
@@ -175,7 +182,7 @@ private Mutex mutex = new Mutex();
 	public void right(){
 		try {
 			mutex.acquire();
-			if(level.isMovableArea(player.getX() + iLevel.SPEED, player.getY(), player.getWidth(), player.getHeight(),true)){
+			if(level.isMovableArea(player.getX() + iLevel.SPEED, player.getY(), player.getWidth(), player.getHeight(),iLevel.PLAYER_MOVING)){
 				level.update(-iLevel.SPEED);
 				notifyObserver();
 			}
@@ -193,7 +200,7 @@ private Mutex mutex = new Mutex();
 	public void left(){
 		try {
 			mutex.acquire();
-			if(level.isMovableArea(player.getX() - iLevel.SPEED, player.getY(), player.getWidth(), player.getHeight(),true)){
+			if(level.isMovableArea(player.getX() - iLevel.SPEED, player.getY(), player.getWidth(), player.getHeight(),iLevel.PLAYER_MOVING)){
 				level.update(iLevel.SPEED);
 				notifyObserver();
 			}

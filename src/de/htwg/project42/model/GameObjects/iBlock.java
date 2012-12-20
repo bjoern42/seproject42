@@ -10,5 +10,4 @@ public interface iBlock extends iGameObjects{
 	public static final int TYP_CRATE = 6;
 	int getType();
 	void setType(int typAir);
-	void setMovable(boolean b);
 }
