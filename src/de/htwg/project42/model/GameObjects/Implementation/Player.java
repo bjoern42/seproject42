@@ -1,6 +1,6 @@
 package de.htwg.project42.model.GameObjects.Implementation;
 
-import de.htwg.project42.model.GameObjects.iPlayer;
+import de.htwg.project42.model.GameObjects.PlayerInterface;
 
 
 /**
@@ -8,7 +8,7 @@ import de.htwg.project42.model.GameObjects.iPlayer;
  * @author bjeschle,toofterd
  * @version 1.0
  */
-public final class Player extends GameObject implements iPlayer{
+public final class Player extends GameObject implements PlayerInterface{
 private static final int COINS_FOR_LIFE = 50, STD_HEALTH = 3, STD_COINS = 0, INVINCIBLE_LOCK_DURATION = 1000;
 private int health = STD_HEALTH, coins = STD_COINS;
 private boolean lock = false, goal = false;

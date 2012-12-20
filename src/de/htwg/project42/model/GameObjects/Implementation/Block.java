@@ -1,6 +1,6 @@
 package de.htwg.project42.model.GameObjects.Implementation;
 
-import de.htwg.project42.model.GameObjects.iBlock;
+import de.htwg.project42.model.GameObjects.BlockInterface;
 import de.htwg.project42.model.GameObjects.Movable.Movable;
 
 /**
@@ -8,8 +8,8 @@ import de.htwg.project42.model.GameObjects.Movable.Movable;
  * @author bjeschle,toofterd
  * @version 1.0
  */
-public class Block extends GameObject implements iBlock,Movable{
-private int type = iBlock.TYP_AIR;
+public class Block extends GameObject implements BlockInterface,Movable{
+private int type = BlockInterface.TYP_AIR;
 
 	/**
 	 * Creates a Block.

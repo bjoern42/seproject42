@@ -3,7 +3,7 @@ package de.htwg.project42.model.GameObjects;
 import de.htwg.project42.model.GameObjects.Movable.Movable;
 import de.htwg.project42.observer.ObserverInterface;
 
-public interface iGameObjects extends Movable{
+public interface GameObjectsInterface extends Movable{
 	int getX();
 	void setX(int pX);
 	int getY();
@@ -12,7 +12,7 @@ public interface iGameObjects extends Movable{
 	int getHeight();
 	void move(int i, int j);
 	boolean isInArea(int x, int y, int width, int height);
-	void jump(final iLevel level, final ObserverInterface observer, final int gravity, final int height,final int moving);
+	void jump(final LevelInterface level, final ObserverInterface observer, final int gravity, final int height,final int moving);
 	boolean getJump();
 	void setJump(boolean b);
 	void pause(int pause);

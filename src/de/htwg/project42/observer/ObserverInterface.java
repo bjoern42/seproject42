@@ -19,7 +19,7 @@ public interface ObserverInterface {
 	 * Returns a List of all observables.
 	 * @return list of observables
 	 */
-	public List<Observable> getObserver();
+	List<Observable> getObserver();
 	
 	/**
 	 * Remove all observables from observer.

@@ -1,6 +1,6 @@
 package de.htwg.project42.model.GameObjects;
 
-public interface iPlayer extends iGameObjects{
+public interface PlayerInterface extends GameObjectsInterface{
 	int getHealth();
 	void setHealth(int i);
 	void setGoal(boolean b);

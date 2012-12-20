@@ -22,10 +22,10 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
 
-import de.htwg.project42.controller.iLandscape;
-import de.htwg.project42.model.GameObjects.iLevel;
-import de.htwg.project42.model.GameObjects.iLevelLoader;
-import de.htwg.project42.model.GameObjects.iPlayer;
+import de.htwg.project42.controller.LandscapeInterface;
+import de.htwg.project42.model.GameObjects.LevelInterface;
+import de.htwg.project42.model.GameObjects.LevelLoaderInterface;
+import de.htwg.project42.model.GameObjects.PlayerInterface;
 import de.htwg.project42.view.EditorGUI.EditorGUI;
 
 import de.htwg.project42.model.GameObjects.Implementation.Level;
@@ -49,7 +49,7 @@ private JCheckBox cbTUI = new JCheckBox("Enable TUI output",false);
 private JList list = null;
 private JScrollPane scroll = null;
 private int width, height, length;
-private static final int LANDSCAPE_SIZE_X = 1200, LANDSCAPE_SIZE_Y = 800, LANDSCAPE_LENGTH = 12, GAP = 5, FACTOR_1 = 3, FACTOR_2 = 5, RECT_BORDER = 20, RECT_BORDER_BOTTOM = 100;
+private static final int LANDSCAPE_SIZE_X = 1200, LANDSCAPE_SIZE_Y = 800, LANDSCAPE_LENGTH = 12, GAP = 5, FACTOR_1 = 3, FACTOR_2 = 5, RECT_BORDER = 20, RECT_BORDER_BOTTOM = 100, ROWS = 3;
 
 	public static void main(String[] args) {
 		new JumpNRun(LANDSCAPE_SIZE_X, LANDSCAPE_SIZE_Y, LANDSCAPE_LENGTH);
@@ -82,7 +82,7 @@ private static final int LANDSCAPE_SIZE_X = 1200, LANDSCAPE_SIZE_Y = 800, LANDSC
 		egui = new EditorGUI(width, height, length);
 		
 		pMenu.setLayout(new BorderLayout());
-		GridLayout layout = new GridLayout(3, 1);
+		GridLayout layout = new GridLayout(ROWS, 1);
 		layout.setVgap(GAP);
 		pButtons.setLayout(layout);
 		pButtons.setBorder(BorderFactory.createEmptyBorder(getHeight()*FACTOR_1/FACTOR_2, getWidth()/FACTOR_1, getHeight()/FACTOR_2, getWidth()/FACTOR_1));
@@ -126,10 +126,10 @@ private static final int LANDSCAPE_SIZE_X = 1200, LANDSCAPE_SIZE_Y = 800, LANDSC
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
 		if(arg0.getSource() == btStart){
-			iPlayer player = new Player(length*width/length/2, 0, width/length, width/length*2);
-			iLevelLoader loader = new LevelLoader((File)list.getSelectedValue());
-			iLevel level = new Level(loader, player, width/length ,length+2);
-			iLandscape landscape = new Landscape(player, level, width, height);
+			PlayerInterface player = new Player(length*width/length/2, 0, width/length, width/length*2);
+			LevelLoaderInterface loader = new LevelLoader((File)list.getSelectedValue());
+			LevelInterface level = new Level(loader, player, width/length ,length+2);
+			LandscapeInterface landscape = new Landscape(player, level, width, height);
 			gui = new GUI(this, landscape, cbTUI.isSelected());
 			landscape.addAnObserver(gui);
 			

@@ -13,10 +13,10 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 
-import de.htwg.project42.controller.iLandscape;
-import de.htwg.project42.model.GameObjects.iBlock;
-import de.htwg.project42.model.GameObjects.iEnemy;
-import de.htwg.project42.model.GameObjects.iPlayer;
+import de.htwg.project42.controller.LandscapeInterface;
+import de.htwg.project42.model.GameObjects.BlockInterface;
+import de.htwg.project42.model.GameObjects.EnemyInterface;
+import de.htwg.project42.model.GameObjects.PlayerInterface;
 import de.htwg.project42.observer.Observable;
 import de.htwg.project42.view.TUI.TUI;
 
@@ -28,9 +28,9 @@ import de.htwg.project42.view.TUI.TUI;
 @SuppressWarnings("serial")
 public final class GUI extends JPanel implements KeyListener, Observable{
 private static final int ACTION_RIGHT = 0, ACTION_LEFT = 1, ACTION_NORMAL = 2, ACTION_JUMP = 3, PAUSE_LONG = 100, PAUSE_SHORT = 20, HEALTH_SIZE = 30, COIN_SIZE = 50, COIN_STRING_POS =35, GAP = 10, FONT_SIZE = 15;
-private List<iBlock[]> objects = new LinkedList<iBlock[]>();
-private iLandscape landscape = null;
-private iPlayer player = null;
+private List<BlockInterface[]> objects = new LinkedList<BlockInterface[]>();
+private LandscapeInterface landscape = null;
+private PlayerInterface player = null;
 private boolean up = false, right = false, left = false;
 private Image buffer = null, imgGras, imgPlayerNormal, imgPlayerJump, imgPlayerRight, imgPlayerLeft, imgBackground,imgEnemie,imgEnemieDead,imgWater,imgHealth,imgCoin,imgCoinCount,imgGoal;
 private int action = ACTION_NORMAL;
@@ -44,7 +44,7 @@ private GUI gui;
 	 * @param pLandscape - Landscape
 	 * @param pTUI - runs parallel TUI if true
 	 */
-	public GUI(final JumpNRun pMain, iLandscape pLandscape, boolean pTUI){		
+	public GUI(final JumpNRun pMain, LandscapeInterface pLandscape, boolean pTUI){		
 		landscape = pLandscape;
 		if(pTUI){
 			new TUI(landscape);
@@ -133,31 +133,31 @@ private GUI gui;
 	 * @param g - Graphics
 	 */
 	private void paintLandscape(Graphics g){
-		for(iBlock column[]:objects){
-			for(iBlock block:column){
+		for(BlockInterface column[]:objects){
+			for(BlockInterface block:column){
 				if(block != null){
 					switch (block.getType()){
-						case iBlock.TYP_GRAS:{
+						case BlockInterface.TYP_GRAS:{
 							g.drawImage(imgGras, block.getX(), block.getY(), block.getWidth(), block.getHeight(), this);
 							break;
-						}case iBlock.TYP_WATER:{
+						}case BlockInterface.TYP_WATER:{
 							g.drawImage(imgWater, block.getX(), block.getY(), block.getWidth(), block.getHeight(), this);
 							break;
-						}case iBlock.TYP_COIN:{
+						}case BlockInterface.TYP_COIN:{
 							g.drawImage(imgCoin, block.getX(), block.getY(), block.getWidth(), block.getHeight(), this);
 							break;
 						}
-						case iBlock.TYP_GOAL:{
+						case BlockInterface.TYP_GOAL:{
 							g.drawImage(imgGoal, block.getX(), block.getY(), block.getWidth(), block.getHeight(), this);
 							break;
 						}
-						case iBlock.TYP_CRATE:{
+						case BlockInterface.TYP_CRATE:{
 							g.fillRect(block.getX(), block.getY(), block.getWidth(), block.getHeight());
 							break;
 						}
 					}
 				}
-				g.drawString(block.getX()+" "+block.getY(), block.getX(), block.getY());
+//				g.drawString(block.getX()+" "+block.getY(), block.getX(), block.getY());
 			}
 		}
 	}
@@ -167,7 +167,7 @@ private GUI gui;
 	 * @param g - Graphics
 	 */
 	private void paintEnemies(Graphics g){
-		for(iEnemy e:landscape.getEnemies()){
+		for(EnemyInterface e:landscape.getEnemies()){
 			if(e.isDead()){
 				g.drawImage(imgEnemieDead, e.getX(), e.getY(), e.getWidth(), e.getHeight(), this);
 			}else{

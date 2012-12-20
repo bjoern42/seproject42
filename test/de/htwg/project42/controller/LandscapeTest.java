@@ -10,10 +10,10 @@ import org.junit.Before;
 import org.junit.Test;
 
 import de.htwg.project42.controller.Implementation.Landscape;
-import de.htwg.project42.model.GameObjects.iBlock;
-import de.htwg.project42.model.GameObjects.iEnemy;
-import de.htwg.project42.model.GameObjects.iLevel;
-import de.htwg.project42.model.GameObjects.iPlayer;
+import de.htwg.project42.model.GameObjects.BlockInterface;
+import de.htwg.project42.model.GameObjects.EnemyInterface;
+import de.htwg.project42.model.GameObjects.LevelInterface;
+import de.htwg.project42.model.GameObjects.PlayerInterface;
 import de.htwg.project42.model.GameObjects.Implementation.Block;
 import de.htwg.project42.model.GameObjects.Implementation.Enemy;
 import de.htwg.project42.model.GameObjects.Implementation.Level;
@@ -22,8 +22,8 @@ import de.htwg.project42.model.GameObjects.Implementation.Player;
 import de.htwg.project42.observer.Observable;
 
 public class LandscapeTest implements Observable{
-private List<iBlock[]> objects = new LinkedList<iBlock[]>();
-private iLevel level;
+private List<BlockInterface[]> objects = new LinkedList<BlockInterface[]>();
+private LevelInterface level;
 private Landscape landscape;
 
 	@Before
@@ -63,7 +63,7 @@ private Landscape landscape;
 				objects.add(b);
 			}
 			LevelLoader loader = new LevelLoader(mapF);
-			iPlayer player = new Player(200, 0, 100, 200);
+			PlayerInterface player = new Player(200, 0, 100, 200);
 			level = new Level(loader, player, 100 ,4);
 			landscape = new Landscape(player,level, 400, 400);
 			landscape.addAnObserver(this);
@@ -71,7 +71,7 @@ private Landscape landscape;
 			level.setBlocks(objects);
 
 			level.addEnemy(new Enemy(400, 200, 100));
-			level.addCrate(new Block(600, 0, 100, iBlock.TYP_CRATE));
+			level.addCrate(new Block(600, 0, 100, BlockInterface.TYP_CRATE));
 		}
 	}
 
@@ -83,9 +83,9 @@ private Landscape landscape;
 
 	@Test
 	public void testLeft() {
-		iBlock block = landscape.getVisibleBlocks().get(0)[0];
+		BlockInterface block = landscape.getVisibleBlocks().get(0)[0];
 		int x = block.getX();
-		iPlayer player = landscape.getPlayer();
+		PlayerInterface player = landscape.getPlayer();
 		player.setY(100);
 		landscape.left();
 		block = landscape.getVisibleBlocks().get(0)[0];
@@ -99,9 +99,9 @@ private Landscape landscape;
 
 	@Test
 	public void testRight() {
-		iBlock block = landscape.getVisibleBlocks().get(0)[0];
+		BlockInterface block = landscape.getVisibleBlocks().get(0)[0];
 		int x = block.getX();
-		iPlayer player = landscape.getPlayer();
+		PlayerInterface player = landscape.getPlayer();
 		player.setY(100);
 		landscape.right();
 		block = landscape.getVisibleBlocks().get(0)[0];
@@ -125,9 +125,9 @@ private Landscape landscape;
 	
 	@Test
 	public void testGravity() {
-		iPlayer player = landscape.getPlayer();
-		iEnemy e = landscape.getEnemies().get(0);
-		iBlock crate = level.getCrates().get(0);
+		PlayerInterface player = landscape.getPlayer();
+		EnemyInterface e = landscape.getEnemies().get(0);
+		BlockInterface crate = level.getCrates().get(0);
 		player.setX(200);
 		e.setX(200);
 		e.setY(0);
@@ -165,7 +165,7 @@ private Landscape landscape;
 		crate.setX(200);
 		y1 = 0;
 		landscape.gravity();
-		assertEquals("Result", y1+iLevel.SPEED/2, crate.getY());
+		assertEquals("Result", y1+LevelInterface.SPEED/2, crate.getY());
 		crate.setY(300);
 		y1 = 300;
 		landscape.gravity();
@@ -179,8 +179,8 @@ private Landscape landscape;
 	@Test
 	public void testHandleEnemies() {
 		landscape.setEnemyJumpChances(0);
-		iPlayer player = landscape.getPlayer();
-		iEnemy enemy = landscape.getEnemies().get(0);
+		PlayerInterface player = landscape.getPlayer();
+		EnemyInterface enemy = landscape.getEnemies().get(0);
 		enemy.setX(200);
 		enemy.setY(200);
 		player.setX(1000);
@@ -233,7 +233,7 @@ private Landscape landscape;
 
 	@Test
 	public void testJump() {
-		iPlayer player = landscape.getPlayer();
+		PlayerInterface player = landscape.getPlayer();
 		int y = player.getY();
 		landscape.jump();
 		player.pause(100);
@@ -242,7 +242,7 @@ private Landscape landscape;
 	
 	@Test
 	public void testStart() {
-		iPlayer player = landscape.getPlayer();
+		PlayerInterface player = landscape.getPlayer();
 		int y = player.getY();
 		landscape.start();
 		player.pause(100);

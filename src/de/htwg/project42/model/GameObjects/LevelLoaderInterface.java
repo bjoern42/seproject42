@@ -1,5 +1,5 @@
 package de.htwg.project42.model.GameObjects;
 
-public interface iLevelLoader {
+public interface LevelLoaderInterface {
 	int[] readNext();
 }

@@ -5,11 +5,11 @@ import java.util.List;
 import com.sun.corba.se.impl.orbutil.concurrent.Mutex;
 
 
-import de.htwg.project42.controller.iLandscape;
-import de.htwg.project42.model.GameObjects.iBlock;
-import de.htwg.project42.model.GameObjects.iEnemy;
-import de.htwg.project42.model.GameObjects.iLevel;
-import de.htwg.project42.model.GameObjects.iPlayer;
+import de.htwg.project42.controller.LandscapeInterface;
+import de.htwg.project42.model.GameObjects.BlockInterface;
+import de.htwg.project42.model.GameObjects.EnemyInterface;
+import de.htwg.project42.model.GameObjects.LevelInterface;
+import de.htwg.project42.model.GameObjects.PlayerInterface;
 import de.htwg.project42.observer.Observable;
 import de.htwg.project42.observer.Observer;
 
@@ -18,15 +18,15 @@ import de.htwg.project42.observer.Observer;
  * @author bjeschle,toofterd
  * @version 1.0
  */
-public final class Landscape extends Observer implements iLandscape{
+public final class Landscape extends Observer implements LandscapeInterface{
 private static final int GRAVITY = 10, JUMP_HEIGHT = 16, RUN_PAUSE = 20, ENEMY_SPEED_FACTOR = 4;
 private static final double STANDARD_ENEMY_JUMP_CHANCES = 0.995;
 private double enemyJumpChances = STANDARD_ENEMY_JUMP_CHANCES;
 private int width, height;
-private iPlayer player = null;
-private List<iEnemy> enemies = null;
-private List<iBlock> crates = null;
-private iLevel level = null;
+private PlayerInterface player = null;
+private List<EnemyInterface> enemies = null;
+private List<BlockInterface> crates = null;
+private LevelInterface level = null;
 private Mutex mutex = new Mutex();
 	
 	/**
@@ -36,7 +36,7 @@ private Mutex mutex = new Mutex();
 	 * @param pHeight - Height
 	 * @param pLength - Visible columns
 	 */
-	public Landscape(iPlayer pPlayer, iLevel pLevel, int pWidth,int pHeight){
+	public Landscape(PlayerInterface pPlayer, LevelInterface pLevel, int pWidth,int pHeight){
 		width = pWidth;
 		height = pHeight;
 		player = pPlayer;
@@ -56,7 +56,7 @@ private Mutex mutex = new Mutex();
 	 * Returns the Level
 	 * @return level
 	 */
-	public iLevel getLevel(){
+	public LevelInterface getLevel(){
 		return level;
 	}
 		
@@ -64,7 +64,7 @@ private Mutex mutex = new Mutex();
 	 * Returns the player.
 	 * @return Player
 	 */
-	public iPlayer getPlayer(){
+	public PlayerInterface getPlayer(){
 		return player;
 	}
 	
@@ -72,7 +72,7 @@ private Mutex mutex = new Mutex();
 	 * Returns a list of all enemies.
 	 * @return Enemies
 	 */
-	public List<iEnemy> getEnemies(){
+	public List<EnemyInterface> getEnemies(){
 		return enemies;
 	}
 	
@@ -80,7 +80,7 @@ private Mutex mutex = new Mutex();
 	 * Returns a list of all visible blocks.
 	 * @return visible blocks
 	 */
-	public List<iBlock[]> getVisibleBlocks(){
+	public List<BlockInterface[]> getVisibleBlocks(){
 		return level.getVisibleBlocks();
 	}
 	
@@ -107,19 +107,19 @@ private Mutex mutex = new Mutex();
 	public void gravity(){
 		try {
 			mutex.acquire();
-			if(player.getJump() && level.isMovableArea(player.getX(), player.getY() + GRAVITY*2, player.getWidth(), player.getHeight(),iLevel.PLAYER_MOVING)){
+			if(player.getJump() && level.isMovableArea(player.getX(), player.getY() + GRAVITY*2, player.getWidth(), player.getHeight(),LevelInterface.PLAYER_MOVING)){
 				player.move(0, GRAVITY*2);
 				if(player.getY()>height){
 					player.setHealth(0);
 				}
 			}
-			for(iEnemy e:enemies){
-				if(level.isInFrame(e.getX()) && e.getJump() && level.isMovableArea(e.getX(), e.getY() + GRAVITY/2, e.getWidth(), e.getHeight(),iLevel.ENEMY_MOVING)){
+			for(EnemyInterface e:enemies){
+				if(level.isInFrame(e.getX()) && e.getJump() && level.isMovableArea(e.getX(), e.getY() + GRAVITY/2, e.getWidth(), e.getHeight(),LevelInterface.ENEMY_MOVING)){
 					e.move(0, GRAVITY/2);
 				}
 			}
-			for(iBlock c:crates){
-				if(c.getY() < height && level.isInFrame(c.getX()) && level.isMovableArea(c.getX(), c.getY() + GRAVITY/2, c.getWidth(), c.getHeight(),iLevel.CRATE_MOVING)){
+			for(BlockInterface c:crates){
+				if(c.getY() < height && level.isInFrame(c.getX()) && level.isMovableArea(c.getX(), c.getY() + GRAVITY/2, c.getWidth(), c.getHeight(),LevelInterface.CRATE_MOVING)){
 					c.move(0, GRAVITY/2);
 				}
 			}
@@ -134,25 +134,25 @@ private Mutex mutex = new Mutex();
 	 * Handles enemy walking and collisions.
 	 */
 	public void handleEnemies(){
-		for(iEnemy e:enemies){
+		for(EnemyInterface e:enemies){
 			int direction = e.getDirection();
-			if(!player.getLock() && level.isMovableArea(player.getX(), player.getY() + 1, player.getWidth(), player.getHeight(),iLevel.PLAYER_MOVING) && e.isInArea(player.getX(), player.getY()+1, player.getWidth(), player.getHeight()) && !e.isInArea(player.getX(), player.getY(), player.getWidth(), player.getHeight())){
+			if(!player.getLock() && level.isMovableArea(player.getX(), player.getY() + 1, player.getWidth(), player.getHeight(),LevelInterface.PLAYER_MOVING) && e.isInArea(player.getX(), player.getY()+1, player.getWidth(), player.getHeight()) && !e.isInArea(player.getX(), player.getY(), player.getWidth(), player.getHeight())){
 				e.kill();
 			}else if(!e.isDead() && e.isInArea(player.getX(), player.getY(), player.getWidth(), player.getHeight())){
 				player.hit();
 			}
-			boolean isMovableArea = level.isMovableArea(e.getX()+(iLevel.SPEED/ENEMY_SPEED_FACTOR)*direction, e.getY(), e.getWidth(), e.getHeight(),iLevel.ENEMY_MOVING);
+			boolean isMovableArea = level.isMovableArea(e.getX()+(LevelInterface.SPEED/ENEMY_SPEED_FACTOR)*direction, e.getY(), e.getWidth(), e.getHeight(),LevelInterface.ENEMY_MOVING);
 			if(!e.isDead() && level.isInFrame(e.getX()) && isMovableArea){
 				try {
 					mutex.acquire();
-					e.move(iLevel.SPEED/ENEMY_SPEED_FACTOR*direction, 0);
+					e.move(LevelInterface.SPEED/ENEMY_SPEED_FACTOR*direction, 0);
 				} catch (InterruptedException ie) {
 					ie.printStackTrace();
 				}finally{
 					mutex.release();
 				}	
 				if(Math.random() > enemyJumpChances){
-					e.jump(level, this, GRAVITY/2, JUMP_HEIGHT,iLevel.ENEMY_MOVING);
+					e.jump(level, this, GRAVITY/2, JUMP_HEIGHT,LevelInterface.ENEMY_MOVING);
 				}
 			}else if(!isMovableArea){
 				e.changeDirection();
@@ -172,7 +172,7 @@ private Mutex mutex = new Mutex();
 	 * Makes the player jump.
 	 */
 	public void jump(){
-		player.jump(level, this, GRAVITY, JUMP_HEIGHT,iLevel.PLAYER_MOVING);
+		player.jump(level, this, GRAVITY, JUMP_HEIGHT,LevelInterface.PLAYER_MOVING);
 	}
 	
 	/**
@@ -182,8 +182,8 @@ private Mutex mutex = new Mutex();
 	public void right(){
 		try {
 			mutex.acquire();
-			if(level.isMovableArea(player.getX() + iLevel.SPEED, player.getY(), player.getWidth(), player.getHeight(),iLevel.PLAYER_MOVING)){
-				level.update(-iLevel.SPEED);
+			if(level.isMovableArea(player.getX() + LevelInterface.SPEED, player.getY(), player.getWidth(), player.getHeight(),LevelInterface.PLAYER_MOVING)){
+				level.update(-LevelInterface.SPEED);
 				notifyObserver();
 			}
 		} catch (InterruptedException e) {
@@ -200,8 +200,8 @@ private Mutex mutex = new Mutex();
 	public void left(){
 		try {
 			mutex.acquire();
-			if(level.isMovableArea(player.getX() - iLevel.SPEED, player.getY(), player.getWidth(), player.getHeight(),iLevel.PLAYER_MOVING)){
-				level.update(iLevel.SPEED);
+			if(level.isMovableArea(player.getX() - LevelInterface.SPEED, player.getY(), player.getWidth(), player.getHeight(),LevelInterface.PLAYER_MOVING)){
+				level.update(LevelInterface.SPEED);
 				notifyObserver();
 			}
 		} catch (InterruptedException e) {

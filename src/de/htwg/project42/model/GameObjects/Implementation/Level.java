@@ -3,11 +3,11 @@ package de.htwg.project42.model.GameObjects.Implementation;
 import java.util.LinkedList;
 import java.util.List;
 
-import de.htwg.project42.model.GameObjects.iBlock;
-import de.htwg.project42.model.GameObjects.iEnemy;
-import de.htwg.project42.model.GameObjects.iLevel;
-import de.htwg.project42.model.GameObjects.iLevelLoader;
-import de.htwg.project42.model.GameObjects.iPlayer;
+import de.htwg.project42.model.GameObjects.BlockInterface;
+import de.htwg.project42.model.GameObjects.EnemyInterface;
+import de.htwg.project42.model.GameObjects.LevelInterface;
+import de.htwg.project42.model.GameObjects.LevelLoaderInterface;
+import de.htwg.project42.model.GameObjects.PlayerInterface;
 import de.htwg.project42.model.GameObjects.Movable.Movable;
 
 /**
@@ -15,12 +15,13 @@ import de.htwg.project42.model.GameObjects.Movable.Movable;
  * @author bjeschle,toofterd
  * @version 1.0
  */
-public final class Level implements iLevel,Movable {
-private List<iBlock[]> objects = new LinkedList<iBlock[]>();
-private List<iEnemy> enemies = new LinkedList<iEnemy>();
-private List<iBlock> crates = new LinkedList<iBlock>();
+public final class Level implements LevelInterface, Movable {
+private List<BlockInterface[]> objects = new LinkedList<BlockInterface[]>();
+private List<EnemyInterface> enemies = new LinkedList<EnemyInterface>();
+private List<BlockInterface> crates = new LinkedList<BlockInterface>();
 private int start, length, size, change = 0;
-private iPlayer player = null;
+private PlayerInterface player = null;
+private static final double QUARTER = 1/4,THREE_QUARTERS = 3/4;
 
 	/**
 	 * Creates Level.
@@ -28,7 +29,7 @@ private iPlayer player = null;
 	 * @param pSize - Blocksize
 	 * @param pLength - Visible blocks
 	 */
-	public Level(iLevelLoader loader, iPlayer pPlayer, int pSize, int pLength){
+	public Level(LevelLoaderInterface loader, PlayerInterface pPlayer, int pSize, int pLength){
 		player = pPlayer;
 		start = 0;
 		length = pLength+2;
@@ -36,14 +37,14 @@ private iPlayer player = null;
 		int blockType[] = null;
 		int i = 0;
 		while((blockType = loader.readNext()) != null){
-			iBlock block[] = new Block[blockType.length];
+			BlockInterface block[] = new Block[blockType.length];
 			for(int j=0; j<blockType.length; j++){
-				if(blockType[j] == iBlock.TYP_ENEMY){
+				if(blockType[j] == BlockInterface.TYP_ENEMY){
 					addEnemy(new Enemy(size*i, size*j, size));
-					blockType[j] = iBlock.TYP_AIR;
+					blockType[j] = BlockInterface.TYP_AIR;
 				}
 				block[j] = new Block(size*i, size*j, size,blockType[j]);
-				if(blockType[j] == iBlock.TYP_CRATE){
+				if(blockType[j] == BlockInterface.TYP_CRATE){
 					addCrate(block[j]);
 				}
 			}
@@ -56,7 +57,7 @@ private iPlayer player = null;
 	 * Adds an enemy.
 	 * @param pEnemy - enemy
 	 */
-	public void addEnemy(iEnemy pEnemy){
+	public void addEnemy(EnemyInterface pEnemy){
 		enemies.add(pEnemy);
 	}
 	
@@ -64,7 +65,7 @@ private iPlayer player = null;
 	 * Returns all enemies.
 	 * @return enemies
 	 */
-	public List<iEnemy> getEnemies(){
+	public List<EnemyInterface> getEnemies(){
 		return enemies;
 	}
 	
@@ -72,7 +73,7 @@ private iPlayer player = null;
 	 * adds a crate.
 	 * @param block - Crate
 	 */
-	public void addCrate(iBlock block){
+	public void addCrate(BlockInterface block){
 		crates.add(block);
 	}
 	
@@ -80,7 +81,7 @@ private iPlayer player = null;
 	 * Returns all crates.
 	 * @return crates
 	 */
-	public List<iBlock> getCrates(){
+	public List<BlockInterface> getCrates(){
 		return crates;
 	}
 	
@@ -88,7 +89,7 @@ private iPlayer player = null;
 	 * Returns visible blocks.
 	 * @return visible blocks
 	 */
-	public List<iBlock[]> getVisibleBlocks(){
+	public List<BlockInterface[]> getVisibleBlocks(){
 		if(getStart()+getLength()>objects.size()){
 			return objects;
 		}
@@ -99,7 +100,7 @@ private iPlayer player = null;
 	 * Sets blocks.
 	 * @param list - blocks
 	 */
-	public void setBlocks(List<iBlock[]> list){
+	public void setBlocks(List<BlockInterface[]> list){
 		objects = list;
 	}
 	
@@ -109,7 +110,7 @@ private iPlayer player = null;
 	public void removeFirst(){
 		if(getStart()+getLength() < objects.size()){
 			int x = (getLength()-1)*size;
-			for(iBlock b:objects.get(getStart()+getLength())){
+			for(BlockInterface b:objects.get(getStart()+getLength())){
 				b.setX(x);
 			}
 			setStart(getStart() + 1);
@@ -122,7 +123,7 @@ private iPlayer player = null;
 	public void removeLast(){
 		if(getStart() > 0){
 			int x = 0;
-			for(iBlock b:objects.get(getStart())){
+			for(BlockInterface b:objects.get(getStart())){
 				b.setX(x);
 			}
 			setStart(getStart() - 1);
@@ -153,12 +154,12 @@ private iPlayer player = null;
 			removeLast();
 		}
 		for(int i=getStart(); i < getStart()+getLength();i++){
-			iBlock block[] = objects.get(i);
+			BlockInterface block[] = objects.get(i);
 			for(int j=0; j<block.length; j++){
 				block[j].update(pChange);
 			}
 		}
-		for(iEnemy e:enemies){
+		for(EnemyInterface e:enemies){
 			e.update(pChange);
 		}
 		change += pChange*-1;
@@ -175,22 +176,22 @@ private iPlayer player = null;
 	 */
 	public boolean isMovableArea(int pX, int pY, int pWidth, int pHeight, int pMoving){
 		int x = (change+pX) / size, y = pY / size;
-		if(pMoving != iLevel.CRATE_MOVING && !handleCrateCollision(pX, pY, pWidth, pHeight, pMoving)){
+		if(pMoving != LevelInterface.CRATE_MOVING && !handleCrateCollision(pX, pY, pWidth, pHeight, pMoving)){
 			return false;
 		}
 		for(int i=-1;i<=2;i++){
 			if(x+i >= 0 && x+i < objects.size()){
-				iBlock block[] = objects.get(x+i);
+				BlockInterface block[] = objects.get(x+i);
 				for(int j=-1;j<=pHeight/size;j++){
 					if(y+j >= 0 && y+j<block.length && block[y+j].isInArea(pX, pY, pWidth, pHeight)){
-						if(block[y+j].getType() == iBlock.TYP_GRAS){
+						if(block[y+j].getType() == BlockInterface.TYP_GRAS){
 							return false;
-						}else if(block[y+1].getType() == iBlock.TYP_WATER){
+						}else if(block[y+1].getType() == BlockInterface.TYP_WATER){
 							player.setHealth(0);
-						}else if(pMoving == iLevel.PLAYER_MOVING && block[y+j].getType() == iBlock.TYP_COIN){
+						}else if(pMoving == LevelInterface.PLAYER_MOVING && block[y+j].getType() == BlockInterface.TYP_COIN){
 							player.increaseCoins();
-							block[y+j].setType(iBlock.TYP_AIR);
-						}else if(block[y+1].getType() == iBlock.TYP_GOAL){
+							block[y+j].setType(BlockInterface.TYP_AIR);
+						}else if(block[y+1].getType() == BlockInterface.TYP_GOAL){
 							player.setGoal(true);
 						}
 					}
@@ -209,15 +210,15 @@ private iPlayer player = null;
 	 * @return true if player can move to the specified area, false if not.
 	 */
 	private boolean handleCrateCollision(int pX, int pY, int pWidth, int pHeight, int pMoving){
-		for(iBlock crate:crates){
+		for(BlockInterface crate:crates){
 			if(crate.isInArea(pX, pY, pWidth, pHeight)){
-				if(pMoving == iLevel.PLAYER_MOVING && pY+pHeight >= crate.getY()+crate.getHeight()/2){
-					if(pX < crate.getX()+crate.getWidth()/4 && isCrateMovable(crate, pX, false)){
+				if(pMoving == LevelInterface.PLAYER_MOVING && pY+pHeight >= crate.getY()+crate.getHeight()/2){
+					if(pX < crate.getX()+crate.getWidth()*QUARTER && isCrateMovable(crate, pX, false)){
 						//collision left
-						crate.move(iLevel.SPEED, 0);
-					}else if(pX > crate.getX()+crate.getWidth()*(3/4) && isCrateMovable(crate, pX, true)){
+						crate.move(LevelInterface.SPEED, 0);
+					}else if(pX > crate.getX()+crate.getWidth()*THREE_QUARTERS && isCrateMovable(crate, pX, true)){
 						//collision right
-						crate.move(-iLevel.SPEED, 0);
+						crate.move(-LevelInterface.SPEED, 0);
 					}else{
 						return false;
 					}
@@ -236,8 +237,8 @@ private iPlayer player = null;
 	 * @param left - indicates wether the block is being moved left or right.
 	 * @return true if movable false if not
 	 */
-	private boolean isCrateMovable(iBlock pCrate, int pX, boolean left){
-		int xOffset = iLevel.SPEED;
+	private boolean isCrateMovable(BlockInterface pCrate, int pX, boolean left){
+		int xOffset = LevelInterface.SPEED;
 		int indexY = pCrate.getY()/size;
 		int indexX = (change+pX) / size;
 		if(left){
@@ -249,13 +250,13 @@ private iPlayer player = null;
 		if(indexX < 0){
 			return true;
 		}
-		iBlock block = objects.get(indexX)[indexY];
-		for(iEnemy e:enemies){
+		BlockInterface block = objects.get(indexX)[indexY];
+		for(EnemyInterface e:enemies){
 			if(!e.isDead() && isInFrame(e.getX()) && e.isInArea(pCrate.getX()+xOffset, pCrate.getY(), pCrate.getWidth(), pCrate.getHeight())){
 				return false;
 			}
 		}
-		if(block.getType() != iBlock.TYP_AIR && block.getType() != iBlock.TYP_CRATE && block.isInArea(pCrate.getX()+xOffset, pCrate.getY(), size, size)){
+		if(block.getType() != BlockInterface.TYP_AIR && block.getType() != BlockInterface.TYP_CRATE && block.isInArea(pCrate.getX()+xOffset, pCrate.getY(), size, size)){
 			return false;
 		}
 		return true;

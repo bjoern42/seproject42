@@ -1,7 +1,7 @@
 package de.htwg.project42.model.GameObjects.Implementation;
 
-import de.htwg.project42.model.GameObjects.iGameObjects;
-import de.htwg.project42.model.GameObjects.iLevel;
+import de.htwg.project42.model.GameObjects.GameObjectsInterface;
+import de.htwg.project42.model.GameObjects.LevelInterface;
 import de.htwg.project42.observer.ObserverInterface;
 
 /**
@@ -9,7 +9,7 @@ import de.htwg.project42.observer.ObserverInterface;
  * @author bjeschle,toofterd
  * @version 1.0
  */
-public abstract class GameObject implements iGameObjects{
+public abstract class GameObject implements GameObjectsInterface{
 private static final int PAUSE = 20;
 private int x, y, width, height;
 private boolean jump = true;
@@ -137,7 +137,7 @@ private boolean jump = true;
 	 * @param height - Height
 	 * @param player - specify if jump is called by player or enemy
 	 */
-	public void jump(final iLevel level, final ObserverInterface observer, final int gravity, final int height,final int moving){
+	public void jump(final LevelInterface level, final ObserverInterface observer, final int gravity, final int height,final int moving){
 		if(jump && !level.isMovableArea(getX(), getY() + gravity, getWidth(), getHeight(),moving)){
 			jump = false;
 			new Thread(){

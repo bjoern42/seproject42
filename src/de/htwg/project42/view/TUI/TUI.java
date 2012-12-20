@@ -4,12 +4,12 @@ import java.io.File;
 import java.util.List;
 
 
-import de.htwg.project42.controller.iLandscape;
-import de.htwg.project42.model.GameObjects.iBlock;
-import de.htwg.project42.model.GameObjects.iEnemy;
-import de.htwg.project42.model.GameObjects.iLevel;
-import de.htwg.project42.model.GameObjects.iLevelLoader;
-import de.htwg.project42.model.GameObjects.iPlayer;
+import de.htwg.project42.controller.LandscapeInterface;
+import de.htwg.project42.model.GameObjects.BlockInterface;
+import de.htwg.project42.model.GameObjects.EnemyInterface;
+import de.htwg.project42.model.GameObjects.LevelInterface;
+import de.htwg.project42.model.GameObjects.LevelLoaderInterface;
+import de.htwg.project42.model.GameObjects.PlayerInterface;
 import de.htwg.project42.observer.Observable;
 
 import de.htwg.project42.model.GameObjects.Implementation.Level;
@@ -24,8 +24,8 @@ import de.htwg.project42.controller.Implementation.Landscape;
  */
 public final class TUI implements Observable {
 private static final int LANDSCAPE_SIZE = 800, LANDSCAPE_LENGTH = 5, START_PAUSE = 2000, WALK_CYCLES = 100;
-private iLandscape landscape = null;
-private iPlayer player;
+private LandscapeInterface landscape = null;
+private PlayerInterface player;
 
 	public static void main(String[] args) {
 		new TUI(null).test();
@@ -34,12 +34,12 @@ private iPlayer player;
 	/**
 	 * Creates TUI.
 	 */
-	public TUI(iLandscape pLandscape){
+	public TUI(LandscapeInterface pLandscape){
 		if(pLandscape == null){
 			int size = LANDSCAPE_SIZE/LANDSCAPE_LENGTH;
 			player = new Player((LANDSCAPE_LENGTH-1)*size/2, 0, size, size*2);
-			iLevelLoader loader = new LevelLoader(new File("mapTUI.lvl"));
-			iLevel level = new Level(loader, player, size, LANDSCAPE_LENGTH+2);
+			LevelLoaderInterface loader = new LevelLoader(new File("mapTUI.lvl"));
+			LevelInterface level = new Level(loader, player, size, LANDSCAPE_LENGTH+2);
 			landscape = new Landscape(player, level, LANDSCAPE_SIZE, LANDSCAPE_SIZE);
 		}else{
 			landscape = pLandscape;
@@ -66,7 +66,7 @@ private iPlayer player;
 			landscape.left();
 		}
 		try {
-			Thread.sleep(1000000000);
+			Thread.sleep(START_PAUSE);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -78,13 +78,13 @@ private iPlayer player;
 	 */
 	@Override
 	public void update() {
-		List<iBlock[]> objects = landscape.getVisibleBlocks();
-		iPlayer player = landscape.getPlayer();
+		List<BlockInterface[]> objects = landscape.getVisibleBlocks();
+		PlayerInterface player = landscape.getPlayer();
 		
 		for(int i=0;i<objects.size();i++){
 			int rowX = objects.get(i)[0].getX();
 			print(rowX+"\t");
-			for(iBlock block:objects.get(i)){
+			for(BlockInterface block:objects.get(i)){
 				print(block.toString());
 			}
 			if(rowX-player.getX() < player.getWidth() && rowX-player.getX() > -player.getWidth()){
@@ -94,9 +94,9 @@ private iPlayer player;
 		}
 		print("------------------------------------------\n");
 		print("Player: "+player.getX()+" "+player.getY()+"\n");
-		List<iEnemy> list = landscape.getEnemies();
+		List<EnemyInterface> list = landscape.getEnemies();
 		for(int i=0; i<list.size() ;i++){
-			iEnemy e = list.get(i);
+			EnemyInterface e = list.get(i);
 			if(e.isDead()){
 				print("Enemy "+i+" died at: "+e.getX()+" "+e.getY()+"\n");
 			}else{
