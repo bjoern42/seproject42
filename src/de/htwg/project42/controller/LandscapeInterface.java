@@ -15,5 +15,7 @@ public interface LandscapeInterface {
 	void left();
 	List<BlockInterface[]> getVisibleBlocks();
 	List<EnemyInterface> getEnemies();
+	void setEnemies(List<EnemyInterface> enemies);
+	void setCrates(List<BlockInterface> crates);
 	void addAnObserver(Observable observer);
 }

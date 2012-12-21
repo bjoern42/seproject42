@@ -1,5 +1,9 @@
 package de.htwg.project42.model.GameObjects.Implementation;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+import com.google.inject.name.Named;
+
 import de.htwg.project42.model.GameObjects.PlayerInterface;
 
 
@@ -8,9 +12,10 @@ import de.htwg.project42.model.GameObjects.PlayerInterface;
  * @author bjeschle,toofterd
  * @version 1.0
  */
+@Singleton
 public final class Player extends GameObject implements PlayerInterface{
 private static final int COINS_FOR_LIFE = 50, STD_HEALTH = 3, STD_COINS = 0, INVINCIBLE_LOCK_DURATION = 1000;
-private int health = STD_HEALTH, coins = STD_COINS;
+private int health = STD_HEALTH, coins = STD_COINS, startX, startY;
 private boolean lock = false, goal = false;
 
 	/**
@@ -20,8 +25,11 @@ private boolean lock = false, goal = false;
 	 * @param pWidth - Width
 	 * @param pHeight - Height
 	 */
-	public Player(int pX, int pY, int pWidth, int pHeight) {
+	@Inject
+	public Player(@Named("playerX") int pX, @Named("playerY") int pY, @Named("playerWidth") int pWidth, @Named("playerHeight") int pHeight) {
 		super(pX, pY, pWidth, pHeight);
+		startX = pX;
+		startY = pY;
 	}
 	
 	/**
@@ -128,4 +136,12 @@ private boolean lock = false, goal = false;
 
 	@Override
 	public void update(int pChange) {}
+
+	@Override
+	public void reset() {
+		setX(startX);
+		setY(startY);
+		setHealth(3);
+		setCoins(0);
+	}
 }

@@ -17,17 +17,19 @@ public class LevelLoaderTest {
 
 	@Test
 	public void testLevelLoader() {
-		LevelLoader mapNotExist = new LevelLoader(new File("map2.lvl"));
-		LevelLoader mapExist = new LevelLoader(new File("map.lvl"));
+		LevelLoader loader = new LevelLoader();
+		loader.setInputFile(new File("map2.lvl"));
+		assertEquals("Result",null,loader.readNext());
 		
-		assertEquals("Result",null,mapNotExist.readNext());
-		assertEquals("Result",0,mapExist.readNext()[0]);
+		loader.setInputFile(new File("map.lvl"));
+		assertEquals("Result",0,loader.readNext()[0]);
 	}
 
 	@Test
 	public void testReadNext() {
-		LevelLoader mapExist = new LevelLoader(new File("map.lvl"));
-		assertEquals("Result",0,mapExist.readNext()[0]);
+		LevelLoader loader = new LevelLoader();
+		loader.setInputFile(new File("map.lvl"));
+		assertEquals("Result",0,loader.readNext()[0]);
 	}
 
 }

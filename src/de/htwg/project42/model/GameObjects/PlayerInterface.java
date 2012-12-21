@@ -12,4 +12,5 @@ public interface PlayerInterface extends GameObjectsInterface{
 	int getCoins();
 	int getCoinsForLife();
 	void setCoins(int coinsForLife);
+	void reset();
 }

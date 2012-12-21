@@ -1,12 +1,13 @@
 package de.htwg.project42.model.GameObjects;
 
+import java.io.File;
 import java.util.List;
 
 public interface LevelInterface {
-	static int PLAYER_MOVING = 0;
-	static int ENEMY_MOVING = 1;
-	static int CRATE_MOVING = 2;
-	static int SPEED = 10;
+	int PLAYER_MOVING = 0;
+	int ENEMY_MOVING = 1;
+	int CRATE_MOVING = 2;
+	int SPEED = 10;
 	
 	List<BlockInterface[]> getVisibleBlocks();
 	void setBlocks(List<BlockInterface[]> objects);
@@ -22,4 +23,5 @@ public interface LevelInterface {
 	void removeLast();
 	int getLength();
 	List<BlockInterface> getCrates();
+	void loadLevel(File map);
 }

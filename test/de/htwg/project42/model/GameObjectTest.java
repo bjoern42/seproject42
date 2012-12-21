@@ -80,8 +80,8 @@ public class GameObjectTest extends Observer{
 	@Test
 	public void testJump() {
 		PlayerInterface obj = new Player(600,500,100,200);
-		LevelLoader loader = new LevelLoader(new File("map.lvl"));
-		LevelInterface level = new Level(loader, obj, 100, 12);
+		LevelInterface level = new Level(new LevelLoader(), obj, 100, 12);
+		level.loadLevel(new File("map.lvl"));
 		int y = obj.getY();
 		obj.setJump(false);
 		obj.jump(level, this, 10, 10, LevelInterface.PLAYER_MOVING);

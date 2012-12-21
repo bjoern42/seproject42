@@ -62,9 +62,9 @@ private Landscape landscape;
 				}
 				objects.add(b);
 			}
-			LevelLoader loader = new LevelLoader(mapF);
 			PlayerInterface player = new Player(200, 0, 100, 200);
-			level = new Level(loader, player, 100 ,4);
+			level = new Level(new LevelLoader(), player, 100 ,4);
+			level.loadLevel(mapF);
 			landscape = new Landscape(player,level, 400, 400);
 			landscape.addAnObserver(this);
 			level = landscape.getLevel();

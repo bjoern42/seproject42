@@ -16,11 +16,8 @@ import de.htwg.project42.model.GameObjects.LevelLoaderInterface;
 public final class LevelLoader implements LevelLoaderInterface {
 private BufferedReader reader = null;
 
-	/**
-	 * Creates a level loader
-	 * @param file
-	 */
-	public LevelLoader(File file){
+
+	public void setInputFile(File file){
 		try {
 			reader = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
 		} catch (FileNotFoundException e) {

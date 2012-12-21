@@ -22,16 +22,15 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
 
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+
+import de.htwg.project42.JumpNRunModule;
 import de.htwg.project42.controller.LandscapeInterface;
 import de.htwg.project42.model.GameObjects.LevelInterface;
 import de.htwg.project42.model.GameObjects.LevelLoaderInterface;
 import de.htwg.project42.model.GameObjects.PlayerInterface;
 import de.htwg.project42.view.EditorGUI.EditorGUI;
-
-import de.htwg.project42.model.GameObjects.Implementation.Level;
-import de.htwg.project42.model.GameObjects.Implementation.LevelLoader;
-import de.htwg.project42.model.GameObjects.Implementation.Player;
-import de.htwg.project42.controller.Implementation.Landscape;
 
 /**
  * Main class for JumpNRun.
@@ -49,10 +48,14 @@ private JCheckBox cbTUI = new JCheckBox("Enable TUI output",false);
 private JList list = null;
 private JScrollPane scroll = null;
 private int width, height, length;
-private static final int LANDSCAPE_SIZE_X = 1200, LANDSCAPE_SIZE_Y = 800, LANDSCAPE_LENGTH = 12, GAP = 5, FACTOR_1 = 3, FACTOR_2 = 5, RECT_BORDER = 20, RECT_BORDER_BOTTOM = 100, ROWS = 3;
+private static final int GAP = 5, FACTOR_1 = 3, FACTOR_2 = 5, RECT_BORDER = 20, RECT_BORDER_BOTTOM = 100, ROWS = 3;
+//GOOGLE GUICE
+private Injector injector = null;
+private LevelInterface level;
+private LandscapeInterface landscape;
 
 	public static void main(String[] args) {
-		new JumpNRun(LANDSCAPE_SIZE_X, LANDSCAPE_SIZE_Y, LANDSCAPE_LENGTH);
+		new JumpNRun(JumpNRunModule.LANDSCAPE_SIZE_X, JumpNRunModule.LANDSCAPE_SIZE_Y, JumpNRunModule.LANDSCAPE_LENGTH);
 	}
 	
 	/**
@@ -118,6 +121,14 @@ private static final int LANDSCAPE_SIZE_X = 1200, LANDSCAPE_SIZE_Y = 800, LANDSC
 		
 		pCurrent = pMenu;
 		scroll.setPreferredSize(new Dimension(scroll.getWidth(), btStart.getY()-scroll.getY()));
+		
+		//GOOGLE GUICE
+		injector = Guice.createInjector(new JumpNRunModule());
+		
+		injector.getInstance(PlayerInterface.class);
+		injector.getInstance(LevelLoaderInterface.class);
+		level = injector.getInstance(LevelInterface.class);
+		landscape  = injector.getInstance(LandscapeInterface.class);
 	}
 	
 	/**
@@ -126,10 +137,10 @@ private static final int LANDSCAPE_SIZE_X = 1200, LANDSCAPE_SIZE_Y = 800, LANDSC
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
 		if(arg0.getSource() == btStart){
-			PlayerInterface player = new Player(length*width/length/2, 0, width/length, width/length*2);
-			LevelLoaderInterface loader = new LevelLoader((File)list.getSelectedValue());
-			LevelInterface level = new Level(loader, player, width/length ,length+2);
-			LandscapeInterface landscape = new Landscape(player, level, width, height);
+			level.loadLevel((File)list.getSelectedValue());
+			landscape.setEnemies(level.getEnemies());
+			landscape.setCrates(level.getCrates());
+			
 			gui = new GUI(this, landscape, cbTUI.isSelected());
 			landscape.addAnObserver(gui);
 			

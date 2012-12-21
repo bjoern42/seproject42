@@ -1,7 +1,12 @@
 package de.htwg.project42.model.GameObjects.Implementation;
 
+import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
+
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+import com.google.inject.name.Named;
 
 import de.htwg.project42.model.GameObjects.BlockInterface;
 import de.htwg.project42.model.GameObjects.EnemyInterface;
@@ -15,13 +20,15 @@ import de.htwg.project42.model.GameObjects.Movable.Movable;
  * @author bjeschle,toofterd
  * @version 1.0
  */
+@Singleton
 public final class Level implements LevelInterface, Movable {
 private List<BlockInterface[]> objects = new LinkedList<BlockInterface[]>();
 private List<EnemyInterface> enemies = new LinkedList<EnemyInterface>();
 private List<BlockInterface> crates = new LinkedList<BlockInterface>();
 private int start, length, size, change = 0;
 private PlayerInterface player = null;
-private static final double QUARTER = 1/4,THREE_QUARTERS = 3/4;
+private static final double QUARTER = 0.25,THREE_QUARTERS = 0.75;
+private LevelLoaderInterface loader;
 
 	/**
 	 * Creates Level.
@@ -29,13 +36,23 @@ private static final double QUARTER = 1/4,THREE_QUARTERS = 3/4;
 	 * @param pSize - Blocksize
 	 * @param pLength - Visible blocks
 	 */
-	public Level(LevelLoaderInterface loader, PlayerInterface pPlayer, int pSize, int pLength){
+	@Inject
+	public Level(LevelLoaderInterface pLoader, PlayerInterface pPlayer, @Named("blockSize") int pSize, @Named("visibleBlockIndex") int pLength){
 		player = pPlayer;
 		start = 0;
 		length = pLength+2;
 		size = pSize;
+		loader = pLoader;
+	}
+	
+	public void loadLevel(File map){
+		objects.clear();
+		enemies.clear();
+		crates.clear();
+		player.reset();
 		int blockType[] = null;
 		int i = 0;
+		loader.setInputFile(map);
 		while((blockType = loader.readNext()) != null){
 			BlockInterface block[] = new Block[blockType.length];
 			for(int j=0; j<blockType.length; j++){

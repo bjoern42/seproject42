@@ -38,8 +38,9 @@ private PlayerInterface player;
 		if(pLandscape == null){
 			int size = LANDSCAPE_SIZE/LANDSCAPE_LENGTH;
 			player = new Player((LANDSCAPE_LENGTH-1)*size/2, 0, size, size*2);
-			LevelLoaderInterface loader = new LevelLoader(new File("mapTUI.lvl"));
+			LevelLoaderInterface loader = new LevelLoader();
 			LevelInterface level = new Level(loader, player, size, LANDSCAPE_LENGTH+2);
+			level.loadLevel(new File("mapTUI.lvl"));
 			landscape = new Landscape(player, level, LANDSCAPE_SIZE, LANDSCAPE_SIZE);
 		}else{
 			landscape = pLandscape;

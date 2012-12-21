@@ -2,6 +2,9 @@ package de.htwg.project42.controller.Implementation;
 
 import java.util.List;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+import com.google.inject.name.Named;
 import com.sun.corba.se.impl.orbutil.concurrent.Mutex;
 
 
@@ -18,6 +21,7 @@ import de.htwg.project42.observer.Observer;
  * @author bjeschle,toofterd
  * @version 1.0
  */
+@Singleton
 public final class Landscape extends Observer implements LandscapeInterface{
 private static final int GRAVITY = 10, JUMP_HEIGHT = 16, RUN_PAUSE = 20, ENEMY_SPEED_FACTOR = 4;
 private static final double STANDARD_ENEMY_JUMP_CHANCES = 0.995;
@@ -36,13 +40,12 @@ private Mutex mutex = new Mutex();
 	 * @param pHeight - Height
 	 * @param pLength - Visible columns
 	 */
-	public Landscape(PlayerInterface pPlayer, LevelInterface pLevel, int pWidth,int pHeight){
+	@Inject
+	public Landscape(PlayerInterface pPlayer, LevelInterface pLevel, @Named("landscapeWidth") int pWidth, @Named("landscapeHeight") int pHeight){
 		width = pWidth;
 		height = pHeight;
 		player = pPlayer;
 		level = pLevel;
-		enemies = level.getEnemies();
-		crates = level.getCrates();
 	}
 	
 	/**
@@ -76,6 +79,14 @@ private Mutex mutex = new Mutex();
 		return enemies;
 	}
 	
+	public void setEnemies(List<EnemyInterface> pEnemies){
+		enemies = pEnemies;
+	}
+	
+	public void setCrates(List<BlockInterface> pCrates){
+		crates = pCrates;
+	}
+	
 	/**
 	 * Returns a list of all visible blocks.
 	 * @return visible blocks
@@ -90,7 +101,9 @@ private Mutex mutex = new Mutex();
 	public void start(){
 		new Thread(){
 			public void run(){
+				System.out.println(player.getHealth());
 				while(player.getHealth() > 0 && !player.isInGoal()){
+					System.out.println(player.getHealth());
 					player.pause(RUN_PAUSE);
 					gravity();
 					handleEnemies();
