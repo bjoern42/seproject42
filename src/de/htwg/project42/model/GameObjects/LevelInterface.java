@@ -23,5 +23,5 @@ public interface LevelInterface {
 	void removeLast();
 	int getLength();
 	List<BlockInterface> getCrates();
-	void loadLevel(File map);
+	void loadData(File map);
 }

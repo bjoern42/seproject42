@@ -34,7 +34,7 @@ private PlayerInterface player = null;
 private boolean up = false, right = false, left = false;
 private Image buffer = null, imgGras, imgPlayerNormal, imgPlayerJump, imgPlayerRight, imgPlayerLeft, imgBackground,imgEnemie,imgEnemieDead,imgWater,imgHealth,imgCoin,imgCoinCount,imgGoal;
 private int action = ACTION_NORMAL;
-private JumpNRun main = null;
+private MainMenuGUI main = null;
 private GUI gui;
 
 
@@ -44,8 +44,9 @@ private GUI gui;
 	 * @param pLandscape - Landscape
 	 * @param pTUI - runs parallel TUI if true
 	 */
-	public GUI(final JumpNRun pMain, LandscapeInterface pLandscape, boolean pTUI){		
+	public GUI(final MainMenuGUI pMain, LandscapeInterface pLandscape, boolean pTUI){		
 		landscape = pLandscape;
+		landscape.addAnObserver(this);
 		if(pTUI){
 			new TUI(landscape);
 		}
@@ -121,6 +122,7 @@ private GUI gui;
 		bufG.drawImage(imgBackground,0,0, getWidth(), getHeight(),this);
 
 		paintLandscape(bufG);
+		paintCrates(bufG);
 		paintEnemies(bufG);
 		paintPlayer(bufG);
 		paintOverlay(bufG);
@@ -151,10 +153,6 @@ private GUI gui;
 							g.drawImage(imgGoal, block.getX(), block.getY(), block.getWidth(), block.getHeight(), this);
 							break;
 						}
-						case BlockInterface.TYP_CRATE:{
-							g.fillRect(block.getX(), block.getY(), block.getWidth(), block.getHeight());
-							break;
-						}
 					}
 				}
 //				g.drawString(block.getX()+" "+block.getY(), block.getX(), block.getY());
@@ -173,6 +171,13 @@ private GUI gui;
 			}else{
 				g.drawImage(imgEnemie, e.getX(), e.getY(), e.getWidth(), e.getHeight(), this);
 			}
+		}
+	}
+	
+	
+	private void paintCrates(Graphics g){
+		for(BlockInterface c:landscape.getCrates()){
+			g.fillRect(c.getX(), c.getY(), c.getWidth(), c.getHeight());
 		}
 	}
 	

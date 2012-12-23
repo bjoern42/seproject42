@@ -1,5 +1,6 @@
 package de.htwg.project42.controller.Implementation;
 
+import java.io.File;
 import java.util.List;
 
 import com.google.inject.Inject;
@@ -35,10 +36,10 @@ private Mutex mutex = new Mutex();
 	
 	/**
 	 * Generates Landscape.
-	 * @param pObservable - Observer
+	 * @param pPlayer - Player
+	 * @param pLevel - Level
 	 * @param pWidth - Width
 	 * @param pHeight - Height
-	 * @param pLength - Visible columns
 	 */
 	@Inject
 	public Landscape(PlayerInterface pPlayer, LevelInterface pLevel, @Named("landscapeWidth") int pWidth, @Named("landscapeHeight") int pHeight){
@@ -56,43 +57,13 @@ private Mutex mutex = new Mutex();
 	}
 	
 	/**
-	 * Returns the Level
-	 * @return level
+	 * Loads a Level.
 	 */
-	public LevelInterface getLevel(){
-		return level;
-	}
-		
-	/**
-	 * Returns the player.
-	 * @return Player
-	 */
-	public PlayerInterface getPlayer(){
-		return player;
-	}
-	
-	/**
-	 * Returns a list of all enemies.
-	 * @return Enemies
-	 */
-	public List<EnemyInterface> getEnemies(){
-		return enemies;
-	}
-	
-	public void setEnemies(List<EnemyInterface> pEnemies){
-		enemies = pEnemies;
-	}
-	
-	public void setCrates(List<BlockInterface> pCrates){
-		crates = pCrates;
-	}
-	
-	/**
-	 * Returns a list of all visible blocks.
-	 * @return visible blocks
-	 */
-	public List<BlockInterface[]> getVisibleBlocks(){
-		return level.getVisibleBlocks();
+	public void loadLevel(File map){
+		player.reset();
+		level.loadData(map);
+		enemies = level.getEnemies();
+		crates = level.getCrates();
 	}
 	
 	/**
@@ -101,9 +72,7 @@ private Mutex mutex = new Mutex();
 	public void start(){
 		new Thread(){
 			public void run(){
-				System.out.println(player.getHealth());
 				while(player.getHealth() > 0 && !player.isInGoal()){
-					System.out.println(player.getHealth());
 					player.pause(RUN_PAUSE);
 					gravity();
 					handleEnemies();
@@ -174,14 +143,6 @@ private Mutex mutex = new Mutex();
 	}
 	
 	/**
-	 * Sets the chances for an enemy to jump.
-	 * @param chances - chances to jump
-	 */
-	public void setEnemyJumpChances(double chances){
-		enemyJumpChances = chances;
-	}
-	
-	/**
 	 * Makes the player jump.
 	 */
 	public void jump(){
@@ -222,6 +183,54 @@ private Mutex mutex = new Mutex();
 		}finally{
 			mutex.release();
 		}
+	}
+	
+	/**
+	 * Sets the chances for an enemy to jump.
+	 * @param chances - chances to jump
+	 */
+	public void setEnemyJumpChances(double chances){
+		enemyJumpChances = chances;
+	}
+	
+	/**
+	 * Returns the Level
+	 * @return level
+	 */
+	public LevelInterface getLevel(){
+		return level;
+	}
+		
+	/**
+	 * Returns the player.
+	 * @return Player
+	 */
+	public PlayerInterface getPlayer(){
+		return player;
+	}
+	
+	/**
+	 * Returns a list of all enemies.
+	 * @return Enemies
+	 */
+	public List<EnemyInterface> getEnemies(){
+		return enemies;
+	}
+
+	/**
+	 * Returns a list of all crates.
+	 * @return Crates
+	 */
+	public List<BlockInterface> getCrates(){
+		return crates;
+	}
+	
+	/**
+	 * Returns a list of all visible blocks.
+	 * @return visible blocks
+	 */
+	public List<BlockInterface[]> getVisibleBlocks(){
+		return level.getVisibleBlocks();
 	}
 	
 	/**

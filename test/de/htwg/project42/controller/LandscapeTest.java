@@ -17,7 +17,6 @@ import de.htwg.project42.model.GameObjects.PlayerInterface;
 import de.htwg.project42.model.GameObjects.Implementation.Block;
 import de.htwg.project42.model.GameObjects.Implementation.Enemy;
 import de.htwg.project42.model.GameObjects.Implementation.Level;
-import de.htwg.project42.model.GameObjects.Implementation.LevelLoader;
 import de.htwg.project42.model.GameObjects.Implementation.Player;
 import de.htwg.project42.observer.Observable;
 
@@ -63,9 +62,9 @@ private Landscape landscape;
 				objects.add(b);
 			}
 			PlayerInterface player = new Player(200, 0, 100, 200);
-			level = new Level(new LevelLoader(), player, 100 ,4);
-			level.loadLevel(mapF);
+			level = new Level(player, 100 ,4);
 			landscape = new Landscape(player,level, 400, 400);
+			landscape.loadLevel(mapF);
 			landscape.addAnObserver(this);
 			level = landscape.getLevel();
 			level.setBlocks(objects);
@@ -120,7 +119,12 @@ private Landscape landscape;
 
 	@Test
 	public void testGetEnemies() {
-		assertEquals("Result", landscape.getEnemies(), landscape.getEnemies());
+		assertEquals("Result", level.getEnemies(), landscape.getEnemies());
+	}
+	
+	@Test
+	public void testGetCrates() {
+		assertEquals("Result", level.getCrates(), landscape.getCrates());
 	}
 	
 	@Test

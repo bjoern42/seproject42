@@ -25,10 +25,10 @@ public final class Level implements LevelInterface, Movable {
 private List<BlockInterface[]> objects = new LinkedList<BlockInterface[]>();
 private List<EnemyInterface> enemies = new LinkedList<EnemyInterface>();
 private List<BlockInterface> crates = new LinkedList<BlockInterface>();
-private int start, length, size, change = 0;
+private LevelLoaderInterface loader = new LevelLoader();
 private PlayerInterface player = null;
-private static final double QUARTER = 0.25,THREE_QUARTERS = 0.75;
-private LevelLoaderInterface loader;
+private static final double QUARTER = 0.25, THREE_QUARTERS = 0.75;
+private int start, length, size, change = 0;
 
 	/**
 	 * Creates Level.
@@ -37,19 +37,22 @@ private LevelLoaderInterface loader;
 	 * @param pLength - Visible blocks
 	 */
 	@Inject
-	public Level(LevelLoaderInterface pLoader, PlayerInterface pPlayer, @Named("blockSize") int pSize, @Named("visibleBlockIndex") int pLength){
+	public Level(PlayerInterface pPlayer, @Named("blockSize") int pSize, @Named("visibleBlockIndex") int pLength){
 		player = pPlayer;
-		start = 0;
 		length = pLength+2;
 		size = pSize;
-		loader = pLoader;
 	}
 	
-	public void loadLevel(File map){
+	/**
+	 * Loads map data from file.
+	 * @param map - .lvl file
+	 */
+	public void loadData(File map){
+		start = 0;
+		change = 0;
 		objects.clear();
 		enemies.clear();
 		crates.clear();
-		player.reset();
 		int blockType[] = null;
 		int i = 0;
 		loader.setInputFile(map);
@@ -59,11 +62,12 @@ private LevelLoaderInterface loader;
 				if(blockType[j] == BlockInterface.TYP_ENEMY){
 					addEnemy(new Enemy(size*i, size*j, size));
 					blockType[j] = BlockInterface.TYP_AIR;
+				}else if(blockType[j] == BlockInterface.TYP_CRATE){
+					addCrate(new Block(size*i, size*j, size,blockType[j]));
+					blockType[j] = BlockInterface.TYP_AIR;
 				}
 				block[j] = new Block(size*i, size*j, size,blockType[j]);
-				if(blockType[j] == BlockInterface.TYP_CRATE){
-					addCrate(block[j]);
-				}
+				
 			}
 			objects.add(block);
 			i++;
@@ -160,7 +164,7 @@ private LevelLoaderInterface loader;
 	}
 	
 	/**
-	 * Changes the positions of all blocks.
+	 * Changes the positions of all visible blocks.
 	 * @param pChange - change
 	 */
 	@Override
@@ -178,6 +182,9 @@ private LevelLoaderInterface loader;
 		}
 		for(EnemyInterface e:enemies){
 			e.update(pChange);
+		}
+		for(BlockInterface c:crates){
+			c.update(pChange);
 		}
 		change += pChange*-1;
 	}

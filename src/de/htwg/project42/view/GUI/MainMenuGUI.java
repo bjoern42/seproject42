@@ -22,14 +22,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
 
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-
-import de.htwg.project42.JumpNRunModule;
 import de.htwg.project42.controller.LandscapeInterface;
-import de.htwg.project42.model.GameObjects.LevelInterface;
-import de.htwg.project42.model.GameObjects.LevelLoaderInterface;
-import de.htwg.project42.model.GameObjects.PlayerInterface;
 import de.htwg.project42.view.EditorGUI.EditorGUI;
 
 /**
@@ -38,7 +31,7 @@ import de.htwg.project42.view.EditorGUI.EditorGUI;
  * @version 1.0
  */
 @SuppressWarnings("serial")
-public class JumpNRun extends JFrame implements ActionListener{
+public class MainMenuGUI extends JFrame implements ActionListener{
 private GUI gui = null;
 private EditorGUI egui = null;
 private JPanel pMenu, pButtons = new JPanel(),pList = new JPanel(),pCurrent;
@@ -49,14 +42,7 @@ private JList list = null;
 private JScrollPane scroll = null;
 private int width, height, length;
 private static final int GAP = 5, FACTOR_1 = 3, FACTOR_2 = 5, RECT_BORDER = 20, RECT_BORDER_BOTTOM = 100, ROWS = 3;
-//GOOGLE GUICE
-private Injector injector = null;
-private LevelInterface level;
-private LandscapeInterface landscape;
-
-	public static void main(String[] args) {
-		new JumpNRun(JumpNRunModule.LANDSCAPE_SIZE_X, JumpNRunModule.LANDSCAPE_SIZE_Y, JumpNRunModule.LANDSCAPE_LENGTH);
-	}
+private LandscapeInterface landscape = null;
 	
 	/**
 	 * Initialises main screen.
@@ -66,8 +52,9 @@ private LandscapeInterface landscape;
 	 */
 	//JList<File> was not accepted in sonar.
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public JumpNRun(int pWidth, int pHeight, int pLength){
+	public MainMenuGUI(LandscapeInterface pLandscape, int pWidth, int pHeight, int pLength){
 		super("Jump and Run");
+		landscape = pLandscape;
 		width = pWidth;
 		height = pHeight;
 		length = pLength;
@@ -121,14 +108,6 @@ private LandscapeInterface landscape;
 		
 		pCurrent = pMenu;
 		scroll.setPreferredSize(new Dimension(scroll.getWidth(), btStart.getY()-scroll.getY()));
-		
-		//GOOGLE GUICE
-		injector = Guice.createInjector(new JumpNRunModule());
-		
-		injector.getInstance(PlayerInterface.class);
-		injector.getInstance(LevelLoaderInterface.class);
-		level = injector.getInstance(LevelInterface.class);
-		landscape  = injector.getInstance(LandscapeInterface.class);
 	}
 	
 	/**
@@ -137,12 +116,9 @@ private LandscapeInterface landscape;
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
 		if(arg0.getSource() == btStart){
-			level.loadLevel((File)list.getSelectedValue());
-			landscape.setEnemies(level.getEnemies());
-			landscape.setCrates(level.getCrates());
+			landscape.loadLevel((File)list.getSelectedValue());
 			
 			gui = new GUI(this, landscape, cbTUI.isSelected());
-			landscape.addAnObserver(gui);
 			
 			changePanel(gui);
 			gui.start();

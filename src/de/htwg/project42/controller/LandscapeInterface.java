@@ -1,5 +1,6 @@
 package de.htwg.project42.controller;
 
+import java.io.File;
 import java.util.List;
 
 import de.htwg.project42.model.GameObjects.BlockInterface;
@@ -15,7 +16,7 @@ public interface LandscapeInterface {
 	void left();
 	List<BlockInterface[]> getVisibleBlocks();
 	List<EnemyInterface> getEnemies();
-	void setEnemies(List<EnemyInterface> enemies);
-	void setCrates(List<BlockInterface> crates);
+	List<BlockInterface> getCrates();
 	void addAnObserver(Observable observer);
+	void loadLevel(File level);
 }

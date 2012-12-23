@@ -8,12 +8,10 @@ import de.htwg.project42.controller.LandscapeInterface;
 import de.htwg.project42.model.GameObjects.BlockInterface;
 import de.htwg.project42.model.GameObjects.EnemyInterface;
 import de.htwg.project42.model.GameObjects.LevelInterface;
-import de.htwg.project42.model.GameObjects.LevelLoaderInterface;
 import de.htwg.project42.model.GameObjects.PlayerInterface;
 import de.htwg.project42.observer.Observable;
 
 import de.htwg.project42.model.GameObjects.Implementation.Level;
-import de.htwg.project42.model.GameObjects.Implementation.LevelLoader;
 import de.htwg.project42.model.GameObjects.Implementation.Player;
 import de.htwg.project42.controller.Implementation.Landscape;
 
@@ -23,9 +21,8 @@ import de.htwg.project42.controller.Implementation.Landscape;
  * @version 1.0
  */
 public final class TUI implements Observable {
-private static final int LANDSCAPE_SIZE = 800, LANDSCAPE_LENGTH = 5, START_PAUSE = 2000, WALK_CYCLES = 100;
+private static final int LANDSCAPE_SIZE = 800, LANDSCAPE_LENGTH = 5, WALK_CYCLES = 100;
 private LandscapeInterface landscape = null;
-private PlayerInterface player;
 
 	public static void main(String[] args) {
 		new TUI(null).test();
@@ -37,11 +34,11 @@ private PlayerInterface player;
 	public TUI(LandscapeInterface pLandscape){
 		if(pLandscape == null){
 			int size = LANDSCAPE_SIZE/LANDSCAPE_LENGTH;
-			player = new Player((LANDSCAPE_LENGTH-1)*size/2, 0, size, size*2);
-			LevelLoaderInterface loader = new LevelLoader();
-			LevelInterface level = new Level(loader, player, size, LANDSCAPE_LENGTH+2);
-			level.loadLevel(new File("mapTUI.lvl"));
+			PlayerInterface player = new Player((LANDSCAPE_SIZE-size)/2, 0, size, size*2);
+			LevelInterface level = new Level(player, size, LANDSCAPE_LENGTH-2);
+			
 			landscape = new Landscape(player, level, LANDSCAPE_SIZE, LANDSCAPE_SIZE);
+			landscape.loadLevel(new File("mapTUI.lvl"));
 		}else{
 			landscape = pLandscape;
 		}
@@ -52,26 +49,20 @@ private PlayerInterface player;
 	 * Testruns.
 	 */
 	private void test(){
+		int size = LANDSCAPE_SIZE/LANDSCAPE_LENGTH;
 		landscape.start();
 		
+		while(landscape.getPlayer().getY() != size);
 		landscape.jump();
-		try {
-			Thread.sleep(START_PAUSE);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
+		while(landscape.getPlayer().getY() != size);
+		
 		for(int i=0;i<WALK_CYCLES;i++){
 			landscape.right();
 		}
 		for(int i=0;i<WALK_CYCLES;i++){
 			landscape.left();
 		}
-		try {
-			Thread.sleep(START_PAUSE);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-		landscape.jump();
+		landscape.getPlayer().setHealth(0);
 	}
 	
 	/**
@@ -81,6 +72,17 @@ private PlayerInterface player;
 	public void update() {
 		List<BlockInterface[]> objects = landscape.getVisibleBlocks();
 		PlayerInterface player = landscape.getPlayer();
+		
+		print("Player: "+player.getX()+" "+player.getY()+"\n");
+		List<EnemyInterface> list = landscape.getEnemies();
+		for(int i=0; i<list.size() ;i++){
+			EnemyInterface e = list.get(i);
+			if(e.isDead()){
+				print("Enemy "+i+" died at: "+e.getX()+" "+e.getY()+"\n");
+			}else{
+				print("Enemy "+i+" is at: "+e.getX()+" "+e.getY()+"\n");
+			}
+		}
 		
 		for(int i=0;i<objects.size();i++){
 			int rowX = objects.get(i)[0].getX();
@@ -94,16 +96,6 @@ private PlayerInterface player;
 			print("\n");
 		}
 		print("------------------------------------------\n");
-		print("Player: "+player.getX()+" "+player.getY()+"\n");
-		List<EnemyInterface> list = landscape.getEnemies();
-		for(int i=0; i<list.size() ;i++){
-			EnemyInterface e = list.get(i);
-			if(e.isDead()){
-				print("Enemy "+i+" died at: "+e.getX()+" "+e.getY()+"\n");
-			}else{
-				print("Enemy "+i+" is at: "+e.getX()+" "+e.getY()+"\n");
-			}
-		}
 	}
 	
 	/**
