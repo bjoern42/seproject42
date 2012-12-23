@@ -6,6 +6,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStreamReader;
 
+import org.apache.log4j.Logger;
+
 import de.htwg.project42.model.GameObjects.LevelLoaderInterface;
 
 /**
@@ -15,13 +17,14 @@ import de.htwg.project42.model.GameObjects.LevelLoaderInterface;
  */
 public final class LevelLoader implements LevelLoaderInterface {
 private BufferedReader reader = null;
+private Logger logger = Logger.getLogger("de.htwg.project42.view.TUI");
 
 
 	public void setInputFile(File file){
 		try {
 			reader = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
 		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+			logger.error(e);
 		}
 	}
 	

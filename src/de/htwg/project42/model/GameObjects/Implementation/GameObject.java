@@ -1,5 +1,7 @@
 package de.htwg.project42.model.GameObjects.Implementation;
 
+import org.apache.log4j.Logger;
+
 import de.htwg.project42.model.GameObjects.GameObjectsInterface;
 import de.htwg.project42.model.GameObjects.LevelInterface;
 import de.htwg.project42.observer.ObserverInterface;
@@ -13,6 +15,7 @@ public abstract class GameObject implements GameObjectsInterface{
 private static final int PAUSE = 20;
 private int x, y, width, height;
 private boolean jump = true;
+private Logger logger = Logger.getLogger("de.htwg.project42.view.TUI");
 
 	/**
 	 * Creates GameObect.
@@ -125,7 +128,7 @@ private boolean jump = true;
 		try {
 			Thread.sleep(pause);
 		} catch (InterruptedException e) {
-			e.printStackTrace();
+			logger.error(e);
 		}
 	}
 	

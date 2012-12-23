@@ -3,6 +3,8 @@ package de.htwg.project42.controller.Implementation;
 import java.io.File;
 import java.util.List;
 
+import org.apache.log4j.Logger;
+
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
@@ -33,7 +35,8 @@ private List<EnemyInterface> enemies = null;
 private List<BlockInterface> crates = null;
 private LevelInterface level = null;
 private Mutex mutex = new Mutex();
-	
+private Logger logger = Logger.getLogger("de.htwg.project42.view.TUI");
+
 	/**
 	 * Generates Landscape.
 	 * @param pPlayer - Player
@@ -106,7 +109,7 @@ private Mutex mutex = new Mutex();
 				}
 			}
 		} catch (InterruptedException e) {
-			e.printStackTrace();
+			logger.error(e);
 		}finally{
 			mutex.release();
 		}
@@ -129,7 +132,7 @@ private Mutex mutex = new Mutex();
 					mutex.acquire();
 					e.move(LevelInterface.SPEED/ENEMY_SPEED_FACTOR*direction, 0);
 				} catch (InterruptedException ie) {
-					ie.printStackTrace();
+					logger.error(ie);
 				}finally{
 					mutex.release();
 				}	
@@ -161,7 +164,7 @@ private Mutex mutex = new Mutex();
 				notifyObserver();
 			}
 		} catch (InterruptedException e) {
-			e.printStackTrace();
+			logger.error(e);
 		}finally{
 			mutex.release();
 		}		
@@ -179,7 +182,7 @@ private Mutex mutex = new Mutex();
 				notifyObserver();
 			}
 		} catch (InterruptedException e) {
-			e.printStackTrace();
+			logger.error(e);
 		}finally{
 			mutex.release();
 		}

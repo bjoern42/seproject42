@@ -155,7 +155,6 @@ private GUI gui;
 						}
 					}
 				}
-//				g.drawString(block.getX()+" "+block.getY(), block.getX(), block.getY());
 			}
 		}
 	}

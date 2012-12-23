@@ -3,6 +3,9 @@ package de.htwg.project42.view.TUI;
 import java.io.File;
 import java.util.List;
 
+import org.apache.log4j.Logger;
+import org.apache.log4j.PropertyConfigurator;
+
 
 import de.htwg.project42.controller.LandscapeInterface;
 import de.htwg.project42.model.GameObjects.BlockInterface;
@@ -23,6 +26,7 @@ import de.htwg.project42.controller.Implementation.Landscape;
 public final class TUI implements Observable {
 private static final int LANDSCAPE_SIZE = 800, LANDSCAPE_LENGTH = 5, WALK_CYCLES = 100;
 private LandscapeInterface landscape = null;
+private Logger logger = Logger.getLogger("de.htwg.project42.view.TUI");
 
 	public static void main(String[] args) {
 		new TUI(null).test();
@@ -33,6 +37,9 @@ private LandscapeInterface landscape = null;
 	 */
 	public TUI(LandscapeInterface pLandscape){
 		if(pLandscape == null){
+			// Set up logging through log4j
+			PropertyConfigurator.configure("log4j.properties");
+			
 			int size = LANDSCAPE_SIZE/LANDSCAPE_LENGTH;
 			PlayerInterface player = new Player((LANDSCAPE_SIZE-size)/2, 0, size, size*2);
 			LevelInterface level = new Level(player, size, LANDSCAPE_LENGTH-2);
@@ -103,6 +110,7 @@ private LandscapeInterface landscape = null;
 	 * @param s - String
 	 */
 	private void print(String s){
-		System.out.print(s);
+		logger.info(s);
+//		System.out.print(s);
 	}
 }
