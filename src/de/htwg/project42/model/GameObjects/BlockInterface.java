@@ -1,6 +1,8 @@
 package de.htwg.project42.model.GameObjects;
 
-public interface BlockInterface extends GameObjectsInterface{
+import de.htwg.project42.model.GameObjects.Features.Movable;
+
+public interface BlockInterface extends GameObjectsInterface,Movable{
 	int TYP_AIR = 0;	
 	int TYP_GRAS = 1;
 	int TYP_ENEMY = 2;
@@ -8,6 +10,8 @@ public interface BlockInterface extends GameObjectsInterface{
 	int TYP_COIN = 4;
 	int TYP_GOAL = 5;
 	int TYP_CRATE = 6;
+	int TYP_BUTTON = 7;
+	int TYP_GATE = 8;
 	int getType();
 	void setType(int pType);
 }

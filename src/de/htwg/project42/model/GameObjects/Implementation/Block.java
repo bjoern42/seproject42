@@ -1,14 +1,13 @@
 package de.htwg.project42.model.GameObjects.Implementation;
 
 import de.htwg.project42.model.GameObjects.BlockInterface;
-import de.htwg.project42.model.GameObjects.Movable.Movable;
 
 /**
  * Block for JumpNRun
  * @author bjeschle,toofterd
  * @version 1.0
  */
-public class Block extends GameObject implements BlockInterface,Movable{
+public class Block extends GameObject implements BlockInterface{
 private int type = BlockInterface.TYP_AIR;
 
 	/**

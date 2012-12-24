@@ -26,7 +26,7 @@ import de.htwg.project42.observer.Observer;
  */
 @Singleton
 public final class Landscape extends Observer implements LandscapeInterface{
-private static final int GRAVITY = 10, JUMP_HEIGHT = 16, RUN_PAUSE = 20, ENEMY_SPEED_FACTOR = 4;
+private static final int JUMP_HEIGHT = 16, RUN_PAUSE = 20, ENEMY_SPEED_FACTOR = 4;
 private static final double STANDARD_ENEMY_JUMP_CHANCES = 0.995;
 private double enemyJumpChances = STANDARD_ENEMY_JUMP_CHANCES;
 private int width, height;
@@ -81,6 +81,7 @@ private Logger logger = Logger.getLogger("de.htwg.project42.view.TUI");
 					handleEnemies();
 					notifyObserver();
 				}
+				level.releaseButtons();
 				removeAllObserver();
 			}
 		}.start();
@@ -92,20 +93,20 @@ private Logger logger = Logger.getLogger("de.htwg.project42.view.TUI");
 	public void gravity(){
 		try {
 			mutex.acquire();
-			if(player.getJump() && level.isMovableArea(player.getX(), player.getY() + GRAVITY*2, player.getWidth(), player.getHeight(),LevelInterface.PLAYER_MOVING)){
-				player.move(0, GRAVITY*2);
+			if(player.getJump() && level.isMovableArea(player.getX(), player.getY() + LevelInterface.GRAVITY*2, player.getWidth(), player.getHeight(),LevelInterface.PLAYER_MOVING)){
+				player.move(0, LevelInterface.GRAVITY*2);
 				if(player.getY()>height){
 					player.setHealth(0);
 				}
 			}
 			for(EnemyInterface e:enemies){
-				if(level.isInFrame(e.getX()) && e.getJump() && level.isMovableArea(e.getX(), e.getY() + GRAVITY/2, e.getWidth(), e.getHeight(),LevelInterface.ENEMY_MOVING)){
-					e.move(0, GRAVITY/2);
+				if(level.isInFrame(e.getX()) && e.getJump() && level.isMovableArea(e.getX(), e.getY() + LevelInterface.GRAVITY/2, e.getWidth(), e.getHeight(),LevelInterface.ENEMY_MOVING)){
+					e.move(0, LevelInterface.GRAVITY/2);
 				}
 			}
 			for(BlockInterface c:crates){
-				if(c.getY() < height && level.isInFrame(c.getX()) && level.isMovableArea(c.getX(), c.getY() + GRAVITY/2, c.getWidth(), c.getHeight(),LevelInterface.CRATE_MOVING)){
-					c.move(0, GRAVITY/2);
+				if(c.getY() < height && level.isInFrame(c.getX()) && level.isMovableArea(c.getX(), c.getY() + LevelInterface.GRAVITY/2, c.getWidth(), c.getHeight(),LevelInterface.CRATE_MOVING)){
+					c.move(0, LevelInterface.GRAVITY/2);
 				}
 			}
 		} catch (InterruptedException e) {
@@ -137,7 +138,7 @@ private Logger logger = Logger.getLogger("de.htwg.project42.view.TUI");
 					mutex.release();
 				}	
 				if(Math.random() > enemyJumpChances){
-					e.jump(level, this, GRAVITY/2, JUMP_HEIGHT,LevelInterface.ENEMY_MOVING);
+					e.jump(level, this, LevelInterface.GRAVITY/2, JUMP_HEIGHT,LevelInterface.ENEMY_MOVING);
 				}
 			}else if(!isMovableArea){
 				e.changeDirection();
@@ -149,7 +150,7 @@ private Logger logger = Logger.getLogger("de.htwg.project42.view.TUI");
 	 * Makes the player jump.
 	 */
 	public void jump(){
-		player.jump(level, this, GRAVITY, JUMP_HEIGHT,LevelInterface.PLAYER_MOVING);
+		player.jump(level, this, LevelInterface.GRAVITY, JUMP_HEIGHT,LevelInterface.PLAYER_MOVING);
 	}
 	
 	/**
@@ -241,7 +242,7 @@ private Logger logger = Logger.getLogger("de.htwg.project42.view.TUI");
 	 * @return gravity
 	 */
 	public int getGravity(){
-		return GRAVITY;
+		return LevelInterface.GRAVITY;
 	}
 	
 	/**

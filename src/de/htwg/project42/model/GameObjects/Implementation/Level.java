@@ -1,19 +1,24 @@
 package de.htwg.project42.model.GameObjects.Implementation;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 
 import de.htwg.project42.model.GameObjects.BlockInterface;
+import de.htwg.project42.model.GameObjects.ButtonInterface;
 import de.htwg.project42.model.GameObjects.EnemyInterface;
+import de.htwg.project42.model.GameObjects.GateInterface;
 import de.htwg.project42.model.GameObjects.LevelInterface;
 import de.htwg.project42.model.GameObjects.LevelLoaderInterface;
 import de.htwg.project42.model.GameObjects.PlayerInterface;
-import de.htwg.project42.model.GameObjects.Movable.Movable;
+import de.htwg.project42.model.GameObjects.Features.Movable;
 
 /**
  * Level for JumpNRun.
@@ -25,6 +30,8 @@ public final class Level implements LevelInterface, Movable {
 private List<BlockInterface[]> objects = new LinkedList<BlockInterface[]>();
 private List<EnemyInterface> enemies = new LinkedList<EnemyInterface>();
 private List<BlockInterface> crates = new LinkedList<BlockInterface>();
+private Map<Integer, ButtonInterface> buttons = new HashMap<Integer, ButtonInterface>();
+private Map<Integer, GateInterface> gates = new HashMap<Integer, GateInterface>();
 private LevelLoaderInterface loader = new LevelLoader();
 private PlayerInterface player = null;
 private static final double QUARTER = 0.25, THREE_QUARTERS = 0.75;
@@ -50,28 +57,57 @@ private int start, length, size, change = 0;
 	public void loadData(File map){
 		start = 0;
 		change = 0;
-		objects.clear();
 		enemies.clear();
 		crates.clear();
+		objects.clear();
 		int blockType[] = null;
 		int i = 0;
 		loader.setInputFile(map);
 		while((blockType = loader.readNext()) != null){
-			BlockInterface block[] = new Block[blockType.length];
+			LinkedList<BlockInterface> blocks = new LinkedList<BlockInterface>();
 			for(int j=0; j<blockType.length; j++){
 				if(blockType[j] == BlockInterface.TYP_ENEMY){
-					addEnemy(new Enemy(size*i, size*j, size));
+					addEnemy(new Enemy(size*i, size*blocks.size(), size));
 					blockType[j] = BlockInterface.TYP_AIR;
 				}else if(blockType[j] == BlockInterface.TYP_CRATE){
-					addCrate(new Block(size*i, size*j, size,blockType[j]));
+					addCrate(new Block(size*i, size*blocks.size(), size, blockType[j]));
 					blockType[j] = BlockInterface.TYP_AIR;
+				}else if(blockType[j] == BlockInterface.TYP_BUTTON){
+					blocks.add(new Button(this, size*i, size*blocks.size(), size, blockType[j]));
+					buttons.put(blockType[++j], (ButtonInterface) blocks.getLast());
+					GateInterface gate = gates.get(blockType[j]);
+					if (gate != null){
+						buttons.get(blockType[j]).registerSwitchable(gate);
+					}
+					continue;
+				}else if(blockType[j] == BlockInterface.TYP_GATE){
+					blocks.add(new Gate(size*i, size*blocks.size(), size, blockType[j]));
+					ButtonInterface button = buttons.get(blockType[++j]);
+					if(button != null){
+						button.registerSwitchable((GateInterface)blocks.getLast());
+					}else{
+						gates.put(blockType[j],(GateInterface) blocks.getLast());
+					}
+					continue;
 				}
-				block[j] = new Block(size*i, size*j, size,blockType[j]);
 				
+				blocks.add(new Block(size*i, size*blocks.size(), size, blockType[j]));
 			}
-			objects.add(block);
+			objects.add(blocks.toArray(new BlockInterface[blocks.size()]));
 			i++;
 		}
+		
+	}
+	
+	/**
+	 * Releases all Buttons.
+	 */
+	public void releaseButtons(){
+		for(Entry<Integer, ButtonInterface> entry: buttons.entrySet()){
+			entry.getValue().release();
+		}
+		buttons.clear();
+		gates.clear();
 	}
 	
 	/**
@@ -200,7 +236,7 @@ private int start, length, size, change = 0;
 	 */
 	public boolean isMovableArea(int pX, int pY, int pWidth, int pHeight, int pMoving){
 		int x = (change+pX) / size, y = pY / size;
-		if(pMoving != LevelInterface.CRATE_MOVING && !handleCrateCollision(pX, pY, pWidth, pHeight, pMoving)){
+		if(!handleCrateCollision(pX, pY, pWidth, pHeight, pMoving)){
 			return false;
 		}
 		for(int i=-1;i<=2;i++){
@@ -210,6 +246,8 @@ private int start, length, size, change = 0;
 					if(y+j >= 0 && y+j<block.length && block[y+j].isInArea(pX, pY, pWidth, pHeight)){
 						if(block[y+j].getType() == BlockInterface.TYP_GRAS){
 							return false;
+						}else if(block[y+j].getType() == BlockInterface.TYP_GATE && !((GateInterface)block[y+j]).isOn()){
+							return false;
 						}else if(block[y+1].getType() == BlockInterface.TYP_WATER){
 							player.setHealth(0);
 						}else if(pMoving == LevelInterface.PLAYER_MOVING && block[y+j].getType() == BlockInterface.TYP_COIN){
@@ -217,6 +255,8 @@ private int start, length, size, change = 0;
 							block[y+j].setType(BlockInterface.TYP_AIR);
 						}else if(block[y+1].getType() == BlockInterface.TYP_GOAL){
 							player.setGoal(true);
+						}else if(pMoving == LevelInterface.PLAYER_MOVING && block[y+1].getType() == BlockInterface.TYP_BUTTON){
+							((ButtonInterface)block[y+1]).press(player);
 						}
 					}
 				}
@@ -234,17 +274,30 @@ private int start, length, size, change = 0;
 	 * @return true if player can move to the specified area, false if not.
 	 */
 	private boolean handleCrateCollision(int pX, int pY, int pWidth, int pHeight, int pMoving){
+		if(pMoving == LevelInterface.CRATE_MOVING){
+			//check collision with enemies
+			for(EnemyInterface e:enemies){
+				if(e.isInArea(pX, pY, pWidth, pHeight)){
+					e.kill();
+				}
+			}
+		}
+		
 		for(BlockInterface crate:crates){
 			if(crate.isInArea(pX, pY, pWidth, pHeight)){
-				if(pMoving == LevelInterface.PLAYER_MOVING && pY+pHeight >= crate.getY()+crate.getHeight()/2){
+				if(pMoving == LevelInterface.CRATE_MOVING){
+					//check collision with other crate
+					if(crate.getY() != (pY-LevelInterface.GRAVITY/2)){
+						return false;
+					}
+				}else if(pMoving == LevelInterface.PLAYER_MOVING && pY+pHeight >= crate.getY()+crate.getHeight()/2){
+					//check collision with player
 					if(pX < crate.getX()+crate.getWidth()*QUARTER && isCrateMovable(crate, pX, false)){
 						//collision left
 						crate.move(LevelInterface.SPEED, 0);
 					}else if(pX > crate.getX()+crate.getWidth()*THREE_QUARTERS && isCrateMovable(crate, pX, true)){
 						//collision right
 						crate.move(-LevelInterface.SPEED, 0);
-					}else{
-						return false;
 					}
 				}else{
 					return false;
@@ -275,11 +328,24 @@ private int start, length, size, change = 0;
 			return true;
 		}
 		BlockInterface block = objects.get(indexX)[indexY];
+		if(block.getType() == BlockInterface.TYP_BUTTON){
+			((ButtonInterface)block).press(pCrate);
+			return true;
+		}else if(block.getType() == BlockInterface.TYP_GATE && ((GateInterface)block).isOn()){
+			return true;
+		}
+		
 		for(EnemyInterface e:enemies){
 			if(!e.isDead() && isInFrame(e.getX()) && e.isInArea(pCrate.getX()+xOffset, pCrate.getY(), pCrate.getWidth(), pCrate.getHeight())){
 				return false;
 			}
 		}
+		for(BlockInterface c:crates){
+			if(c != pCrate && isInFrame(c.getX()) && c.isInArea(pCrate.getX()+xOffset, pCrate.getY(), pCrate.getWidth(), pCrate.getHeight())){
+				return false;
+			}
+		}
+		
 		if(block.getType() != BlockInterface.TYP_AIR && block.getType() != BlockInterface.TYP_CRATE && block.isInArea(pCrate.getX()+xOffset, pCrate.getY(), size, size)){
 			return false;
 		}

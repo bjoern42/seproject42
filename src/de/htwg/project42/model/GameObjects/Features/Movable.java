@@ -1,4 +1,4 @@
-package de.htwg.project42.model.GameObjects.Movable;
+package de.htwg.project42.model.GameObjects.Features;
 
 /**
  * Movable interface for JumpNRun.

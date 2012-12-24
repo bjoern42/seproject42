@@ -15,7 +15,9 @@ import javax.swing.JPanel;
 
 import de.htwg.project42.controller.LandscapeInterface;
 import de.htwg.project42.model.GameObjects.BlockInterface;
+import de.htwg.project42.model.GameObjects.ButtonInterface;
 import de.htwg.project42.model.GameObjects.EnemyInterface;
+import de.htwg.project42.model.GameObjects.GateInterface;
 import de.htwg.project42.model.GameObjects.PlayerInterface;
 import de.htwg.project42.observer.Observable;
 import de.htwg.project42.view.TUI.TUI;
@@ -32,7 +34,11 @@ private List<BlockInterface[]> objects = new LinkedList<BlockInterface[]>();
 private LandscapeInterface landscape = null;
 private PlayerInterface player = null;
 private boolean up = false, right = false, left = false;
-private Image buffer = null, imgGras, imgPlayerNormal, imgPlayerJump, imgPlayerRight, imgPlayerLeft, imgBackground,imgEnemie,imgEnemieDead,imgWater,imgHealth,imgCoin,imgCoinCount,imgGoal;
+private Image buffer = null;
+private Image imgPlayerNormal, imgPlayerJump, imgPlayerRight, imgPlayerLeft;
+private Image imgBackground ,imgHealth, imgCoin, imgCoinCount;
+private Image imgEnemie,imgEnemieDead;
+private Image imgGras, imgWater, imgGoal, imgCrate, imgButtonPressed, imgButtonReleased,imgGateClosed, imgGateOpened;
 private int action = ACTION_NORMAL;
 private MainMenuGUI main = null;
 private GUI gui;
@@ -67,6 +73,11 @@ private GUI gui;
 		imgCoin = Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("images/coin.png"));
 		imgCoinCount = Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("images/coinCount.png"));
 		imgGoal = Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("images/goal.png"));
+		imgCrate = Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("images/crate.png"));
+		imgButtonPressed = Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("images/buttonPressed.png"));
+		imgButtonReleased = Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("images/buttonReleased.png"));
+		imgGateClosed = Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("images/gateClosed.png"));
+		imgGateOpened = Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("images/gateOpened.png"));
 		
 		addKeyListener(this);
 	}
@@ -122,8 +133,8 @@ private GUI gui;
 		bufG.drawImage(imgBackground,0,0, getWidth(), getHeight(),this);
 
 		paintLandscape(bufG);
-		paintCrates(bufG);
 		paintEnemies(bufG);
+		paintCrates(bufG);
 		paintPlayer(bufG);
 		paintOverlay(bufG);
 		
@@ -153,6 +164,22 @@ private GUI gui;
 							g.drawImage(imgGoal, block.getX(), block.getY(), block.getWidth(), block.getHeight(), this);
 							break;
 						}
+						case BlockInterface.TYP_GATE:{
+							if(((GateInterface)block).isOn()){
+								g.drawImage(imgGateOpened, block.getX(), block.getY(), block.getWidth(), block.getHeight(), this);
+							}else{
+								g.drawImage(imgGateClosed, block.getX(), block.getY(), block.getWidth(), block.getHeight(), this);
+							}
+							break;
+						}
+						case BlockInterface.TYP_BUTTON:{
+							if(((ButtonInterface)block).isPressed()){
+								g.drawImage(imgButtonPressed, block.getX(), block.getY(), block.getWidth(), block.getHeight(), this);
+							}else{
+								g.drawImage(imgButtonReleased, block.getX(), block.getY(), block.getWidth(), block.getHeight(), this);
+							}
+							break;
+						}
 					}
 				}
 			}
@@ -176,7 +203,7 @@ private GUI gui;
 	
 	private void paintCrates(Graphics g){
 		for(BlockInterface c:landscape.getCrates()){
-			g.fillRect(c.getX(), c.getY(), c.getWidth(), c.getHeight());
+			g.drawImage(imgCrate, c.getX(), c.getY(), c.getWidth(), c.getHeight(), this);
 		}
 	}
 	

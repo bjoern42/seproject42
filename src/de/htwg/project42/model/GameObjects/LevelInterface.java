@@ -8,6 +8,7 @@ public interface LevelInterface {
 	int ENEMY_MOVING = 1;
 	int CRATE_MOVING = 2;
 	int SPEED = 10;
+	int GRAVITY = 10;
 	
 	List<BlockInterface[]> getVisibleBlocks();
 	void setBlocks(List<BlockInterface[]> objects);
@@ -24,4 +25,5 @@ public interface LevelInterface {
 	int getLength();
 	List<BlockInterface> getCrates();
 	void loadData(File map);
+	void releaseButtons();
 }
