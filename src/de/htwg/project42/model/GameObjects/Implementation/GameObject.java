@@ -3,8 +3,6 @@ package de.htwg.project42.model.GameObjects.Implementation;
 import org.apache.log4j.Logger;
 
 import de.htwg.project42.model.GameObjects.GameObjectsInterface;
-import de.htwg.project42.model.GameObjects.LevelInterface;
-import de.htwg.project42.observer.ObserverInterface;
 
 /**
  * Abstract GameObject class for all objects in the landscape.
@@ -12,7 +10,6 @@ import de.htwg.project42.observer.ObserverInterface;
  * @version 1.0
  */
 public abstract class GameObject implements GameObjectsInterface{
-private static final int PAUSE = 20;
 private int x, y, width, height;
 private boolean jump = true;
 private Logger logger = Logger.getLogger("de.htwg.project42.view.TUI");
@@ -39,6 +36,7 @@ private Logger logger = Logger.getLogger("de.htwg.project42.view.TUI");
 	 * @param pHeight - Height
 	 * @return true if it is in the area, false if not.
 	 */
+	@Override
 	public boolean isInArea(int pX, int pY, int pWidth, int pHeight){
 		if(pX + pWidth > x && pX < x + width && pY + pHeight > y && pY < y + height){
 			return true;
@@ -50,6 +48,7 @@ private Logger logger = Logger.getLogger("de.htwg.project42.view.TUI");
 	 * Returns X-Position
 	 * @return X-Position
 	 */
+	@Override
 	public int getX(){
 		return x;
 	}
@@ -58,6 +57,7 @@ private Logger logger = Logger.getLogger("de.htwg.project42.view.TUI");
 	 * Sets X-Position.
 	 * @param pX - X-Position
 	 */
+	@Override
 	public void setX(int pX){
 		x = pX;
 	}
@@ -66,6 +66,7 @@ private Logger logger = Logger.getLogger("de.htwg.project42.view.TUI");
 	 * Returns Y-Position
 	 * @return Y-Position
 	 */
+	@Override
 	public int getY(){
 		return y;
 	}
@@ -74,6 +75,7 @@ private Logger logger = Logger.getLogger("de.htwg.project42.view.TUI");
 	 * Sets Y-Position.
 	 * @param pY - Y-Position
 	 */
+	@Override
 	public void setY(int pY){
 		y = pY;
 	}
@@ -82,6 +84,7 @@ private Logger logger = Logger.getLogger("de.htwg.project42.view.TUI");
 	 * Returns width
 	 * @return Width
 	 */
+	@Override
 	public int getWidth(){
 		return width;
 	}
@@ -90,6 +93,7 @@ private Logger logger = Logger.getLogger("de.htwg.project42.view.TUI");
 	 * Returns height
 	 * @return Height
 	 */
+	@Override
 	public int getHeight(){
 		return height;
 	}
@@ -98,6 +102,7 @@ private Logger logger = Logger.getLogger("de.htwg.project42.view.TUI");
 	 * Returns if the GameObject is on the ground or not.
 	 * @return true if it is on the ground, false if not.
 	 */
+	@Override
 	public boolean getJump(){
 		return jump;
 	}
@@ -106,6 +111,7 @@ private Logger logger = Logger.getLogger("de.htwg.project42.view.TUI");
 	 * Sets jump.
 	 * @param pJump - jump
 	 */
+	@Override
 	public void setJump(boolean pJump){
 		jump = pJump;
 	}
@@ -115,6 +121,7 @@ private Logger logger = Logger.getLogger("de.htwg.project42.view.TUI");
 	 * @param pX - X-Position
 	 * @param pY - Y-Position
 	 */
+	@Override
 	public void move(int pX, int pY){
 		x += pX;
 		y += pY;
@@ -124,37 +131,12 @@ private Logger logger = Logger.getLogger("de.htwg.project42.view.TUI");
 	 * Sleeps a specified time.
 	 * @param pause - time to sleep
 	 */
+	@Override
 	public void pause(int pause){
 		try {
 			Thread.sleep(pause);
 		} catch (InterruptedException e) {
 			logger.error(e);
-		}
-	}
-	
-	/**
-	 * Increases Y-Position and decreases it afterwards till its on the ground again.
-	 * @param level - Level
-	 * @param observer - Observer
-	 * @param gravity - Gravity factor
-	 * @param height - Height
-	 * @param player - specify if jump is called by player or enemy
-	 */
-	public void jump(final LevelInterface level, final ObserverInterface observer, final int gravity, final int height,final int moving){
-		if(jump && !level.isMovableArea(getX(), getY() + gravity, getWidth(), getHeight(),moving)){
-			jump = false;
-			new Thread(){
-				public void run(){
-					for(int j = 0; j < height;j++){
-						if(level.isMovableArea(getX(), getY() - gravity, getWidth(), getHeight(),moving)){
-							pause(PAUSE);
-							move(0, -gravity);
-							observer.notifyObserver();
-						}
-					}
-					jump = true;
-				}
-			}.start();
 		}
 	}
 }

@@ -42,7 +42,7 @@ private Logger logger = Logger.getLogger("de.htwg.project42.view.TUI");
 			
 			int size = LANDSCAPE_SIZE/LANDSCAPE_LENGTH;
 			PlayerInterface player = new Player((LANDSCAPE_SIZE-size)/2, 0, size, size*2);
-			LevelInterface level = new Level(player, size, LANDSCAPE_LENGTH-2);
+			LevelInterface level = new Level(size, LANDSCAPE_LENGTH-2);
 			
 			landscape = new Landscape(player, level, LANDSCAPE_SIZE, LANDSCAPE_SIZE);
 			landscape.loadLevel(new File("mapTUI.lvl"));

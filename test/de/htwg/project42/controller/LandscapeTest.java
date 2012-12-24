@@ -3,8 +3,6 @@ package de.htwg.project42.controller;
 import static org.junit.Assert.*;
 
 import java.io.File;
-import java.util.LinkedList;
-import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -14,70 +12,30 @@ import de.htwg.project42.model.GameObjects.BlockInterface;
 import de.htwg.project42.model.GameObjects.EnemyInterface;
 import de.htwg.project42.model.GameObjects.LevelInterface;
 import de.htwg.project42.model.GameObjects.PlayerInterface;
-import de.htwg.project42.model.GameObjects.Implementation.Block;
-import de.htwg.project42.model.GameObjects.Implementation.Enemy;
 import de.htwg.project42.model.GameObjects.Implementation.Level;
 import de.htwg.project42.model.GameObjects.Implementation.Player;
 import de.htwg.project42.observer.Observable;
 
 public class LandscapeTest implements Observable{
-private List<BlockInterface[]> objects = new LinkedList<BlockInterface[]>();
 private LevelInterface level;
 private Landscape landscape;
+private File map = null;
 
 	@Before
 	public void setUp() throws Exception {
-		initialise();
-	}
-
-	private void initialise(){
-		if(landscape == null){
-			File mapF = null;
-			for(File f: new File(".").listFiles()){
-				if(f.getName().endsWith(".lvl")){
-					mapF = f;
-					break;
-				}
-			}
-			int map[][] = new int[7][];
-			int row[] = {1,1,1,1};
-			map[0] = row;
-			int row1[] = {1,0,3,1};
-			map[1] = row1;
-			int row2[] = {4,0,0,1};
-			map[2] = row2;
-			int row3[] = {1,1,1,1};
-			map[3] = row3;
-			int row4[] = {0,0,0,1};
-			map[4] = row4;
-			int row5[] = {0,0,0,1};
-			map[5] = row5;
-			int row6[] = {1,1,1,1};
-			map[6] = row6;
-			for(int i=0; i<map.length;i++){
-				Block b[] = new Block[map[i].length];
-				for(int j=0; j<map[i].length;j++){
-					b[j] = new Block(100*i, 100*j, 100, map[i][j]);
-				}
-				objects.add(b);
-			}
-			PlayerInterface player = new Player(200, 0, 100, 200);
-			level = new Level(player, 100 ,4);
-			landscape = new Landscape(player,level, 400, 400);
-			landscape.loadLevel(mapF);
-			landscape.addAnObserver(this);
-			level = landscape.getLevel();
-			level.setBlocks(objects);
-
-			level.addEnemy(new Enemy(400, 200, 100));
-			level.addCrate(new Block(600, 0, 100, BlockInterface.TYP_CRATE));
-		}
+		map = new File("testmap.lvl");
+		level = new Level(100, 12);
+		PlayerInterface player = new Player(0, 0, 100, 200);
+		landscape = new Landscape(player, level, 1200, 800);
+		landscape.loadLevel(map);
+		landscape.addAnObserver(this);
+		level = landscape.getLevel();
 	}
 
 	@Test
 	public void testLandscape() {
-		assertEquals("Result", 400, landscape.getWidth());
-		assertEquals("Result", 400, landscape.getHeight());
+		assertEquals("Result", 1200, landscape.getWidth());
+		assertEquals("Result", 800, landscape.getHeight());
 	}
 
 	@Test
@@ -85,11 +43,13 @@ private Landscape landscape;
 		BlockInterface block = landscape.getVisibleBlocks().get(0)[0];
 		int x = block.getX();
 		PlayerInterface player = landscape.getPlayer();
-		player.setY(100);
+		player.setY(0);
+		player.setX(0);
 		landscape.left();
 		block = landscape.getVisibleBlocks().get(0)[0];
 		assertEquals("Result", x+10, block.getX());
-		player.setX(100);
+		player.setY(600);
+		player.setX(200);
 		x = block.getX();
 		landscape.left();
 		block = landscape.getVisibleBlocks().get(0)[0];
@@ -101,16 +61,18 @@ private Landscape landscape;
 		BlockInterface block = landscape.getVisibleBlocks().get(0)[0];
 		int x = block.getX();
 		PlayerInterface player = landscape.getPlayer();
-		player.setY(100);
+		player.setY(0);
+		player.setX(0);
+		landscape.right();
+		block = landscape.getVisibleBlocks().get(0)[0];
+		assertEquals("Result", x-10, block.getX());
+		player.setX(600);
+		player.setY(500);
+		x = block.getX();
 		landscape.right();
 		block = landscape.getVisibleBlocks().get(0)[0];
 		assertEquals("Result", x, block.getX());
-		player.setX(100);
-		landscape.right();
-		block = landscape.getVisibleBlocks().get(0)[0];
-		assertEquals("Result", x - 10, block.getX());
 	}
-
 
 	@Test
 	public void testGetPlayer() {
@@ -132,8 +94,9 @@ private Landscape landscape;
 		PlayerInterface player = landscape.getPlayer();
 		EnemyInterface e = landscape.getEnemies().get(0);
 		BlockInterface crate = level.getCrates().get(0);
-		player.setX(200);
-		e.setX(200);
+		player.setX(0);
+		player.setY(0);
+		e.setX(0);
 		e.setY(0);
 		int y1 = player.getY();
 		int y2 = e.getY();
@@ -154,7 +117,7 @@ private Landscape landscape;
 		assertEquals("Result", y1, player.getY());
 		assertEquals("Result", y2, e.getY());
 		player.setJump(true);
-		player.setY(100);
+		player.setY(500);
 		y1 = player.getY();
 		landscape.gravity();
 		assertEquals("Result", y1, player.getY());
@@ -166,16 +129,23 @@ private Landscape landscape;
 		landscape.gravity();
 		assertEquals("Result", y1, player.getY());
 		assertEquals("Result", y2, e.getY());
-		crate.setX(200);
-		y1 = 0;
+		crate.setX(0);
+		crate.setY(0);
+		y1 = crate.getY();
 		landscape.gravity();
-		assertEquals("Result", y1+LevelInterface.SPEED/2, crate.getY());
-		crate.setY(300);
-		y1 = 300;
+		assertEquals("Result", y1+LandscapeInterface.SPEED/2, crate.getY());
+		crate.setY(600);
+		crate.setX(700);
+		y1 = crate.getY();
 		landscape.gravity();
 		assertEquals("Result", y1, crate.getY());
 		crate.setY(8000);
-		y1 = 8000;
+		y1 = crate.getY();
+		landscape.gravity();
+		assertEquals("Result", y1, crate.getY());
+		crate.setX(1300);
+		crate.setY(600);
+		y1 = crate.getY();
 		landscape.gravity();
 		assertEquals("Result", y1, crate.getY());
 	}
@@ -185,34 +155,42 @@ private Landscape landscape;
 		landscape.setEnemyJumpChances(0);
 		PlayerInterface player = landscape.getPlayer();
 		EnemyInterface enemy = landscape.getEnemies().get(0);
-		enemy.setX(200);
-		enemy.setY(200);
+		enemy.setX(400);
+		enemy.setY(600);
 		player.setX(1000);
 		player.setY(1000);
-		int x = 200;
+		int x = enemy.getX();
 		landscape.handleEnemies();
 		assertEquals("Result", x, enemy.getX());
-		enemy.setX(300);
-		enemy.setY(600);
+		enemy.setX(8000);
+		x = enemy.getX();
+		landscape.handleEnemies();
+		assertEquals("Result", x, enemy.getX());
+		enemy.setX(0);
+		enemy.setY(0);
 		int health = player.getHealth();
 		player.setX(enemy.getX());
 		player.setY(enemy.getY());
 		landscape.handleEnemies();
 		assertEquals("Result", health - 1, player.getHealth());
-		enemy.setX(500);
+		enemy.setX(300);
+		enemy.setY(600);
 		x = enemy.getX();
 		landscape.handleEnemies();
 		assertEquals("Result", x, enemy.getX());
-		enemy.setX(400);
+		enemy.setX(300);
+		enemy.setY(600);
+		x = enemy.getX();
 		landscape.handleEnemies();
-		assertEquals("Result", 398, enemy.getX());
+		assertEquals("Result", x+LandscapeInterface.SPEED/LandscapeInterface.ENEMY_SPEED_FACTOR, enemy.getX());
+		enemy.setX(400);
+		enemy.setY(600);
+		enemy.changeDirection();
+		x = enemy.getX();
+		landscape.handleEnemies();
+		assertEquals("Result", x-LandscapeInterface.SPEED/LandscapeInterface.ENEMY_SPEED_FACTOR, enemy.getX());
 		player.setX(enemy.getX());
 		player.setY(enemy.getY());
-		player.setLock(false);
-		landscape.handleEnemies();
-		assertEquals("Result", false, enemy.isDead());
-		player.setX(enemy.getX());
-		player.setY(enemy.getY() - player.getHeight()+10);
 		player.setLock(false);
 		landscape.handleEnemies();
 		assertEquals("Result", false, enemy.isDead());
@@ -224,24 +202,16 @@ private Landscape landscape;
 		health = player.getHealth();
 		player.setX(enemy.getX());
 		player.setY(enemy.getY());
+		player.setLock(false);
 		landscape.handleEnemies();
 		assertEquals("Result", health, player.getHealth());
-		enemy.setX(200);
-		enemy.setY(200);
+		enemy.setX(0);
+		enemy.setY(0);
 		player.setX(1000);
 		player.setY(1000);
-		x = 200;
+		x = enemy.getX();
 		landscape.handleEnemies();
 		assertEquals("Result", x, enemy.getX());
-	}
-
-	@Test
-	public void testJump() {
-		PlayerInterface player = landscape.getPlayer();
-		int y = player.getY();
-		landscape.jump();
-		player.pause(100);
-		assertEquals("Result", true, player.getY() == y);
 	}
 	
 	@Test
@@ -254,10 +224,9 @@ private Landscape landscape;
 		player.setHealth(0);
 		player.setY(100);
 		y = 100;
-		player.pause(500);
 		landscape.start();
-		player.pause(500);
-		assertEquals("Result", y, player.getY());
+		player.pause(1000);
+		assertEquals("Result", 0, landscape.getObserver().size());
 		player.setGoal(true);
 		player.setHealth(1);
 		player.setY(100);
@@ -265,7 +234,7 @@ private Landscape landscape;
 		player.pause(500);
 		landscape.start();
 		player.pause(500);
-		assertEquals("Result", y,  player.getY());
+		assertEquals("Result", 0, landscape.getObserver().size());
 	}
 	
 	@Test
@@ -274,6 +243,122 @@ private Landscape landscape;
 		assertEquals("Result", 0, landscape.getObserver().size());
 		landscape.addObserver(this);
 		assertEquals("Result", this, landscape.getObserver().get(0));
+	}
+	
+	@Test
+	public void testJump() {
+		PlayerInterface player = landscape.getPlayer();
+		int y = player.getY();
+		player.setJump(false);
+		landscape.jump(player, 10, 10, LevelInterface.PLAYER_MOVING);
+		player.pause(100);
+		assertEquals("Result",true,y == player.getY());
+		player.setY(500);
+		player.setJump(true);
+		landscape.jump(player, 10, 10, LevelInterface.PLAYER_MOVING);
+		player.pause(100);
+		assertEquals("Result",false,y == player.getY());
+		player.setY(400);
+		player.setJump(true);
+		landscape.jump(player, 10, 10, LevelInterface.PLAYER_MOVING);
+		player.pause(100);
+		assertEquals("Result",false,y == player.getY());
+		player.setY(400);
+		player.setJump(false);
+		landscape.jump(player, 10, 10, LevelInterface.PLAYER_MOVING);
+		player.pause(100);
+		assertEquals("Result",false,y == player.getY());
+		player.setY(400);
+		player.setX(0);
+		player.setJump(true);
+		landscape.jump(player, 10, 10, LevelInterface.PLAYER_MOVING);
+		player.pause(100);
+		assertEquals("Result",false,y == player.getY());
+		
+		player.setX(600);
+		player.setY(500);
+		player.setJump(true);
+		y = player.getY();
+		landscape.jump();
+		player.pause(100);
+		assertEquals("Result", false, player.getY() == y);
+	}
+	
+	@Test
+	public void testIsMovableArea(){
+		assertEquals("Result",false,landscape.isMovableArea(0, 500, 100, 200,LevelInterface.ENEMY_MOVING));
+		assertEquals("Result",true,landscape.isMovableArea(0, 0, 100, 200,LevelInterface.ENEMY_MOVING));
+		assertEquals("Result",true,landscape.isMovableArea(8000, 0, 100, 200,LevelInterface.ENEMY_MOVING));
+		assertEquals("Result",true,landscape.isMovableArea(100, 500, 100, 200,LevelInterface.ENEMY_MOVING));
+		assertEquals("Result",true,landscape.isMovableArea(200, 400, 100, 200,LevelInterface.PLAYER_MOVING));
+		assertEquals("Result",true,landscape.isMovableArea(0, 300, 100, 200,LevelInterface.PLAYER_MOVING));
+		assertEquals("Result",true,landscape.isMovableArea(0, 8000, 100, 200,LevelInterface.PLAYER_MOVING));
+		
+		assertEquals("Result",false,landscape.isMovableArea(610, 500, 100, 200,LevelInterface.PLAYER_MOVING));
+		assertEquals("Result",false,landscape.isMovableArea(610, 500, 100, 200,LevelInterface.CRATE_MOVING));
+		
+		assertEquals("Result",false,landscape.isMovableArea(1310, 0, 100, 200,LevelInterface.PLAYER_MOVING));
+		assertEquals("Result",true,landscape.isMovableArea(1400, 500, 100, 200,LevelInterface.PLAYER_MOVING));
+		assertEquals("Result",true,landscape.isMovableArea(1310, 0, 100, 200,LevelInterface.PLAYER_MOVING));
+	}
+		
+	@Test
+	public void testHandleCrateCollision(){
+		BlockInterface crate = level.getCrates().get(0);
+		EnemyInterface enemy = level.getEnemies().get(0);
+		PlayerInterface player = landscape.getPlayer();
+		player.setX(1000);
+		assertEquals("Result",false,landscape.isMovableArea(610, 440, 100, 200,LevelInterface.PLAYER_MOVING));
+		assertEquals("Result",false,landscape.isMovableArea(610, 500, 100, 200,LevelInterface.ENEMY_MOVING));
+		
+		assertEquals("Result",false,landscape.isMovableArea(610, 500, 100, 200,LevelInterface.PLAYER_MOVING));
+		assertEquals("Result",true,landscape.isMovableArea(790, 500, 1, 200,LevelInterface.PLAYER_MOVING));
+		crate.setX(600);
+		assertEquals("Result",false,landscape.isMovableArea(690, 500, 100, 200,LevelInterface.PLAYER_MOVING));
+		assertEquals("Result",true,landscape.isMovableArea(610, 500, 100, 200,LevelInterface.PLAYER_MOVING));
+		enemy.setX(600);
+		enemy.setY(500);
+		landscape.isMovableArea(600, 500, 100, 100,LevelInterface.CRATE_MOVING);
+		assertEquals("Result",true,enemy.isDead());
+	}
+	
+	@Test
+	public void testIsCrateMovable(){
+		BlockInterface crate = landscape.getCrates().get(0);
+		EnemyInterface enemy = landscape.getEnemies().get(0);
+		crate.setX(0);
+		crate.setY(400);
+		assertEquals("Result",true,landscape.isMovableArea(90, 300, 100, 200, LevelInterface.PLAYER_MOVING));
+		crate.setX(700);
+		crate.setY(600);
+		enemy.setX(8000);
+		assertEquals("Result",true,landscape.isMovableArea(790, 500, 1, 200, LevelInterface.PLAYER_MOVING));
+		crate.setX(700);
+		enemy.setX(600);
+		assertEquals("Result",false,landscape.isMovableArea(790, 500, 10, 200, LevelInterface.PLAYER_MOVING));
+		enemy.kill();
+		assertEquals("Result",true,landscape.isMovableArea(790, 500, 1, 200, LevelInterface.PLAYER_MOVING));
+		assertEquals("Result",true,landscape.isMovableArea(600, 500, 100, 200, LevelInterface.PLAYER_MOVING));
+		level.getCrates().get(0).setX(1000);
+		assertEquals("Result",false,landscape.isMovableArea(1090, 500, 100, 200, LevelInterface.PLAYER_MOVING));
+	
+		crate.setX(1200);
+		crate.setY(0);
+		assertEquals("Result",false,landscape.isMovableArea(1110, 0, 100, 200, LevelInterface.PLAYER_MOVING));
+		
+		crate.setX(1300);
+		crate.setY(600);
+		landscape.isMovableArea(1310, 500, 100, 200, LevelInterface.PLAYER_MOVING);
+		assertEquals("Result",true,level.getButtons().iterator().next().getValue().isPressed());
+		
+		BlockInterface crateTwo = landscape.getCrates().get(1);
+		crateTwo.setX(1000);
+		crateTwo.setY(600);
+		assertEquals("Result",true,landscape.isMovableArea(1090, 500, 100, 200, LevelInterface.PLAYER_MOVING));
+		
+		crate.setX(1200);
+		crate.setY(0);
+		assertEquals("Result",true,landscape.isMovableArea(1110, 0, 100, 200, LevelInterface.PLAYER_MOVING));
 	}
 	
 	@Override

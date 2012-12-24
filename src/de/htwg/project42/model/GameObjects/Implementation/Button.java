@@ -33,10 +33,10 @@ private boolean pressed = false;
 	
 	@Override
 	public void release() {
+		pressed = false;
 		for(Switchable s:switchables){
 			s.off();
 		}
-		pressed = false;
 	}
 	
 	@Override

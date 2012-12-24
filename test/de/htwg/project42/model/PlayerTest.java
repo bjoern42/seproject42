@@ -90,4 +90,18 @@ public class PlayerTest {
 		player.update(42);
 		assertEquals("Result",0,player.getX());
 	}
+	
+	@Test
+	public void testReset(){
+		PlayerInterface player = new Player(0, 0, 10, 20);
+		player.setX(100);
+		player.setY(100);
+		player.setHealth(42);
+		player.setCoins(42);
+		player.reset();
+		assertEquals("Result",0,player.getX());
+		assertEquals("Result",0,player.getY());
+		assertEquals("Result",3,player.getHealth());
+		assertEquals("Result",0,player.getCoins());
+	}
 }

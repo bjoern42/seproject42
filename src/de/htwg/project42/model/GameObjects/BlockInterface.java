@@ -1,8 +1,7 @@
 package de.htwg.project42.model.GameObjects;
 
-import de.htwg.project42.model.GameObjects.Features.Movable;
 
-public interface BlockInterface extends GameObjectsInterface,Movable{
+public interface BlockInterface extends GameObjectsInterface{
 	int TYP_AIR = 0;	
 	int TYP_GRAS = 1;
 	int TYP_ENEMY = 2;

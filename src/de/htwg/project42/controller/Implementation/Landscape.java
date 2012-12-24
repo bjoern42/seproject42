@@ -13,7 +13,10 @@ import com.sun.corba.se.impl.orbutil.concurrent.Mutex;
 
 import de.htwg.project42.controller.LandscapeInterface;
 import de.htwg.project42.model.GameObjects.BlockInterface;
+import de.htwg.project42.model.GameObjects.ButtonInterface;
 import de.htwg.project42.model.GameObjects.EnemyInterface;
+import de.htwg.project42.model.GameObjects.GameObjectsInterface;
+import de.htwg.project42.model.GameObjects.GateInterface;
 import de.htwg.project42.model.GameObjects.LevelInterface;
 import de.htwg.project42.model.GameObjects.PlayerInterface;
 import de.htwg.project42.observer.Observable;
@@ -26,13 +29,12 @@ import de.htwg.project42.observer.Observer;
  */
 @Singleton
 public final class Landscape extends Observer implements LandscapeInterface{
-private static final int JUMP_HEIGHT = 16, RUN_PAUSE = 20, ENEMY_SPEED_FACTOR = 4;
-private static final double STANDARD_ENEMY_JUMP_CHANCES = 0.995;
 private double enemyJumpChances = STANDARD_ENEMY_JUMP_CHANCES;
 private int width, height;
 private PlayerInterface player = null;
 private List<EnemyInterface> enemies = null;
 private List<BlockInterface> crates = null;
+private List<BlockInterface[]> objects = null;
 private LevelInterface level = null;
 private Mutex mutex = new Mutex();
 private Logger logger = Logger.getLogger("de.htwg.project42.view.TUI");
@@ -55,6 +57,7 @@ private Logger logger = Logger.getLogger("de.htwg.project42.view.TUI");
 	/**
 	 * Adds an Observer
 	 */
+	@Override
 	public void addAnObserver(Observable o){
 		addObserver(o);
 	}
@@ -62,9 +65,11 @@ private Logger logger = Logger.getLogger("de.htwg.project42.view.TUI");
 	/**
 	 * Loads a Level.
 	 */
+	@Override
 	public void loadLevel(File map){
 		player.reset();
 		level.loadData(map);
+		objects = level.getBlocks();
 		enemies = level.getEnemies();
 		crates = level.getCrates();
 	}
@@ -72,6 +77,7 @@ private Logger logger = Logger.getLogger("de.htwg.project42.view.TUI");
 	/**
 	 * Starts the game.
 	 */
+	@Override
 	public void start(){
 		new Thread(){
 			public void run(){
@@ -93,20 +99,20 @@ private Logger logger = Logger.getLogger("de.htwg.project42.view.TUI");
 	public void gravity(){
 		try {
 			mutex.acquire();
-			if(player.getJump() && level.isMovableArea(player.getX(), player.getY() + LevelInterface.GRAVITY*2, player.getWidth(), player.getHeight(),LevelInterface.PLAYER_MOVING)){
-				player.move(0, LevelInterface.GRAVITY*2);
+			if(player.getJump() && isMovableArea(player.getX(), player.getY() + GRAVITY*2, player.getWidth(), player.getHeight(),LevelInterface.PLAYER_MOVING)){
+				player.move(0, GRAVITY*2);
 				if(player.getY()>height){
 					player.setHealth(0);
 				}
 			}
 			for(EnemyInterface e:enemies){
-				if(level.isInFrame(e.getX()) && e.getJump() && level.isMovableArea(e.getX(), e.getY() + LevelInterface.GRAVITY/2, e.getWidth(), e.getHeight(),LevelInterface.ENEMY_MOVING)){
-					e.move(0, LevelInterface.GRAVITY/2);
+				if(level.isInFrame(e.getX()) && e.getJump() && isMovableArea(e.getX(), e.getY() + GRAVITY/2, e.getWidth(), e.getHeight(),LevelInterface.ENEMY_MOVING)){
+					e.move(0, GRAVITY/2);
 				}
 			}
 			for(BlockInterface c:crates){
-				if(c.getY() < height && level.isInFrame(c.getX()) && level.isMovableArea(c.getX(), c.getY() + LevelInterface.GRAVITY/2, c.getWidth(), c.getHeight(),LevelInterface.CRATE_MOVING)){
-					c.move(0, LevelInterface.GRAVITY/2);
+				if(c.getY() < height && level.isInFrame(c.getX()) && isMovableArea(c.getX(), c.getY() + GRAVITY/2, c.getWidth(), c.getHeight(),LevelInterface.CRATE_MOVING)){
+					c.move(0, GRAVITY/2);
 				}
 			}
 		} catch (InterruptedException e) {
@@ -122,23 +128,23 @@ private Logger logger = Logger.getLogger("de.htwg.project42.view.TUI");
 	public void handleEnemies(){
 		for(EnemyInterface e:enemies){
 			int direction = e.getDirection();
-			if(!player.getLock() && level.isMovableArea(player.getX(), player.getY() + 1, player.getWidth(), player.getHeight(),LevelInterface.PLAYER_MOVING) && e.isInArea(player.getX(), player.getY()+1, player.getWidth(), player.getHeight()) && !e.isInArea(player.getX(), player.getY(), player.getWidth(), player.getHeight())){
+			if(!player.getLock() && isMovableArea(player.getX(), player.getY() + 1, player.getWidth(), player.getHeight(),LevelInterface.PLAYER_MOVING) && e.isInArea(player.getX(), player.getY()+1, player.getWidth(), player.getHeight()) && !e.isInArea(player.getX(), player.getY(), player.getWidth(), player.getHeight())){
 				e.kill();
 			}else if(!e.isDead() && e.isInArea(player.getX(), player.getY(), player.getWidth(), player.getHeight())){
 				player.hit();
 			}
-			boolean isMovableArea = level.isMovableArea(e.getX()+(LevelInterface.SPEED/ENEMY_SPEED_FACTOR)*direction, e.getY(), e.getWidth(), e.getHeight(),LevelInterface.ENEMY_MOVING);
+			boolean isMovableArea = isMovableArea(e.getX()+(SPEED/ENEMY_SPEED_FACTOR)*direction, e.getY(), e.getWidth(), e.getHeight(),LevelInterface.ENEMY_MOVING);
 			if(!e.isDead() && level.isInFrame(e.getX()) && isMovableArea){
 				try {
 					mutex.acquire();
-					e.move(LevelInterface.SPEED/ENEMY_SPEED_FACTOR*direction, 0);
+					e.move(SPEED/ENEMY_SPEED_FACTOR*direction, 0);
 				} catch (InterruptedException ie) {
 					logger.error(ie);
 				}finally{
 					mutex.release();
 				}	
 				if(Math.random() > enemyJumpChances){
-					e.jump(level, this, LevelInterface.GRAVITY/2, JUMP_HEIGHT,LevelInterface.ENEMY_MOVING);
+					jump(e, GRAVITY/2, JUMP_HEIGHT,LevelInterface.ENEMY_MOVING);
 				}
 			}else if(!isMovableArea){
 				e.changeDirection();
@@ -147,21 +153,179 @@ private Logger logger = Logger.getLogger("de.htwg.project42.view.TUI");
 	}
 	
 	/**
+	 * Increases Y-Position and decreases it afterwards till its on the ground again.
+	 * @param object - GameObject that is going to jump
+	 * @param gravity - Gravity factor
+	 * @param height - Height
+	 * @param player - specify if jump is called by player or enemy
+	 */
+	public void jump(final GameObjectsInterface object, final int gravity, final int height, final int moving){
+		if(object.getJump() && !isMovableArea(object.getX(), object.getY() + gravity, object.getWidth(), object.getHeight(),moving)){
+			object.setJump(false);
+			new Thread(){
+				public void run(){
+					for(int j = 0; j < height;j++){
+						if(isMovableArea(object.getX(), object.getY() - gravity, object.getWidth(), object.getHeight(),moving)){
+							object.pause(GameObjectsInterface.PAUSE);
+							object.move(0, -gravity);
+							notifyObserver();
+						}
+					}
+					object.setJump(true);
+				}
+			}.start();
+		}
+	}
+	
+	/**
+	 * Checks if there is any block in the specified area.
+	 * @param pX - X-Position
+	 * @param pY - Y-Position
+	 * @param pWidth - Width
+	 * @param pHeight - Height
+	 * @param playerMoving - specify if isMovableArea is called by player
+	 * @return true if player can move to the specified area, false if not.
+	 */
+	public boolean isMovableArea(int pX, int pY, int pWidth, int pHeight, int pMoving){
+		int size = level.getBlockSize();
+		int x = (level.getChange()+pX) / size, y = pY / size;
+		if(!handleCrateCollision(pX, pY, pWidth, pHeight, pMoving)){
+			return false;
+		}
+		for(int i=-1;i<=2;i++){
+			if(x+i >= 0 && x+i < objects.size()){
+				BlockInterface block[] = objects.get(x+i);
+				for(int j=-1;j<=pHeight/size;j++){
+					if(y+j >= 0 && y+j<block.length && block[y+j].isInArea(pX, pY, pWidth, pHeight)){
+						if(block[y+j].getType() == BlockInterface.TYP_GRAS){
+							return false;
+						}else if(block[y+j].getType() == BlockInterface.TYP_GATE && !((GateInterface)block[y+j]).isOn()){
+							return false;
+						}else if(block[y+1].getType() == BlockInterface.TYP_WATER){
+							player.setHealth(0);
+						}else if(pMoving == LevelInterface.PLAYER_MOVING && block[y+j].getType() == BlockInterface.TYP_COIN){
+							player.increaseCoins();
+							block[y+j].setType(BlockInterface.TYP_AIR);
+						}else if(block[y+1].getType() == BlockInterface.TYP_GOAL){
+							player.setGoal(true);
+						}else if(pMoving == LevelInterface.PLAYER_MOVING && block[y+1].getType() == BlockInterface.TYP_BUTTON){
+							((ButtonInterface)block[y+1]).press(player);
+						}
+					}
+				}
+			}
+		}
+		return true;
+	}
+
+	/**
+	 * Handles collision with crates.
+	 * @param pX - X-Position
+	 * @param pY - Y-Position
+	 * @param pWidth - Width
+	 * @param pHeight - Height
+	 * @return true if player can move to the specified area, false if not.
+	 */
+	private boolean handleCrateCollision(int pX, int pY, int pWidth, int pHeight, int pMoving){
+		if(pMoving == LevelInterface.CRATE_MOVING){
+			//check collision with enemies
+			for(EnemyInterface e:enemies){
+				if(e.isInArea(pX, pY, pWidth, pHeight)){
+					e.kill();
+				}
+			}
+		}
+		
+		for(BlockInterface crate:crates){
+			if(crate.isInArea(pX, pY, pWidth, pHeight)){
+				if(pMoving == LevelInterface.CRATE_MOVING){
+					//check collision with other crate
+					if(crate.getY() != (pY-GRAVITY/2)){
+						return false;
+					}
+				}else if(pMoving == LevelInterface.PLAYER_MOVING && pY+pHeight >= crate.getY()+crate.getHeight()/2){
+					//check collision with player
+					if(pX < crate.getX()+crate.getWidth()*QUARTER && isCrateMovable(crate, pX, false)){
+						//collision left
+						crate.move(SPEED, 0);
+					}else if(pX > crate.getX()+crate.getWidth()*THREE_QUARTERS && isCrateMovable(crate, pX, true)){
+						//collision right
+						crate.move(-SPEED, 0);
+					}else{
+						return false;
+					}
+				}else{
+					return false;
+				}	
+			}
+		}
+		return true;
+	}
+	
+	/**
+	 * Checks if there is enough space to move the crate to the specified area.
+	 * @param pCrate - crate
+	 * @param pX - X-Position
+	 * @param left - indicates whether the block is being moved left or right.
+	 * @return true if movable false if not
+	 */
+	private boolean isCrateMovable(BlockInterface pCrate, int pX, boolean left){
+		int size = level.getBlockSize();
+		int xOffset = SPEED;
+		int indexY = pCrate.getY()/size;
+		int indexX = (level.getChange()+pX) / size;
+		if(left){
+			indexX += -1;
+			xOffset *= -1;
+		}else{
+			indexX += 2;
+		}
+		if(indexX < 0){
+			return true;
+		}
+		BlockInterface block = objects.get(indexX)[indexY];
+		
+		for(EnemyInterface e:enemies){
+			if(!e.isDead() && level.isInFrame(e.getX()) && e.isInArea(pCrate.getX()+xOffset, pCrate.getY(), pCrate.getWidth(), pCrate.getHeight())){
+				return false;
+			}
+		}
+		for(BlockInterface c:crates){
+			if(c != pCrate && level.isInFrame(c.getX()) && c.isInArea(pCrate.getX()+xOffset, pCrate.getY(), pCrate.getWidth(), pCrate.getHeight())){
+				return false;
+			}
+		}
+		if(block.getType() == BlockInterface.TYP_BUTTON){
+			((ButtonInterface)block).press(pCrate);
+			return true;
+		}else if(block.getType() == BlockInterface.TYP_GATE && ((GateInterface)block).isOn()){
+			return true;
+		}
+		
+		if(block.getType() != BlockInterface.TYP_AIR && block.isInArea(pCrate.getX()+xOffset, pCrate.getY(), size, size)){
+			return false;
+		}
+		return true;
+	}
+	
+	/**
 	 * Makes the player jump.
 	 */
+	@Override
 	public void jump(){
-		player.jump(level, this, LevelInterface.GRAVITY, JUMP_HEIGHT,LevelInterface.PLAYER_MOVING);
+		jump(player, GRAVITY, JUMP_HEIGHT,LevelInterface.PLAYER_MOVING);
 	}
 	
 	/**
 	 * Moves the player to the right.
 	 * This is realized by moving all visible blocks to the left.
 	 */
+	@Override
 	public void right(){
 		try {
 			mutex.acquire();
-			if(level.isMovableArea(player.getX() + LevelInterface.SPEED, player.getY(), player.getWidth(), player.getHeight(),LevelInterface.PLAYER_MOVING)){
-				level.update(-LevelInterface.SPEED);
+			if(isMovableArea(player.getX() + SPEED, player.getY(), player.getWidth(), player.getHeight(),LevelInterface.PLAYER_MOVING)){
+				level.update(-SPEED);
 				notifyObserver();
 			}
 		} catch (InterruptedException e) {
@@ -175,11 +339,12 @@ private Logger logger = Logger.getLogger("de.htwg.project42.view.TUI");
 	 * Moves the player to the left.
 	 * This is realized by moving all visible blocks to the right.
 	 */
+	@Override
 	public void left(){
 		try {
 			mutex.acquire();
-			if(level.isMovableArea(player.getX() - LevelInterface.SPEED, player.getY(), player.getWidth(), player.getHeight(),LevelInterface.PLAYER_MOVING)){
-				level.update(LevelInterface.SPEED);
+			if(isMovableArea(player.getX() - SPEED, player.getY(), player.getWidth(), player.getHeight(),LevelInterface.PLAYER_MOVING)){
+				level.update(SPEED);
 				notifyObserver();
 			}
 		} catch (InterruptedException e) {
@@ -209,6 +374,7 @@ private Logger logger = Logger.getLogger("de.htwg.project42.view.TUI");
 	 * Returns the player.
 	 * @return Player
 	 */
+	@Override
 	public PlayerInterface getPlayer(){
 		return player;
 	}
@@ -217,6 +383,7 @@ private Logger logger = Logger.getLogger("de.htwg.project42.view.TUI");
 	 * Returns a list of all enemies.
 	 * @return Enemies
 	 */
+	@Override
 	public List<EnemyInterface> getEnemies(){
 		return enemies;
 	}
@@ -225,6 +392,7 @@ private Logger logger = Logger.getLogger("de.htwg.project42.view.TUI");
 	 * Returns a list of all crates.
 	 * @return Crates
 	 */
+	@Override
 	public List<BlockInterface> getCrates(){
 		return crates;
 	}
@@ -233,6 +401,7 @@ private Logger logger = Logger.getLogger("de.htwg.project42.view.TUI");
 	 * Returns a list of all visible blocks.
 	 * @return visible blocks
 	 */
+	@Override
 	public List<BlockInterface[]> getVisibleBlocks(){
 		return level.getVisibleBlocks();
 	}
@@ -242,7 +411,7 @@ private Logger logger = Logger.getLogger("de.htwg.project42.view.TUI");
 	 * @return gravity
 	 */
 	public int getGravity(){
-		return LevelInterface.GRAVITY;
+		return GRAVITY;
 	}
 	
 	/**

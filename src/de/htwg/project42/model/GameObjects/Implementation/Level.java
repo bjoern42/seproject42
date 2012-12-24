@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -17,7 +18,6 @@ import de.htwg.project42.model.GameObjects.EnemyInterface;
 import de.htwg.project42.model.GameObjects.GateInterface;
 import de.htwg.project42.model.GameObjects.LevelInterface;
 import de.htwg.project42.model.GameObjects.LevelLoaderInterface;
-import de.htwg.project42.model.GameObjects.PlayerInterface;
 import de.htwg.project42.model.GameObjects.Features.Movable;
 
 /**
@@ -33,19 +33,15 @@ private List<BlockInterface> crates = new LinkedList<BlockInterface>();
 private Map<Integer, ButtonInterface> buttons = new HashMap<Integer, ButtonInterface>();
 private Map<Integer, GateInterface> gates = new HashMap<Integer, GateInterface>();
 private LevelLoaderInterface loader = new LevelLoader();
-private PlayerInterface player = null;
-private static final double QUARTER = 0.25, THREE_QUARTERS = 0.75;
 private int start, length, size, change = 0;
 
 	/**
 	 * Creates Level.
-	 * @param pPlayer - Player
 	 * @param pSize - Blocksize
 	 * @param pLength - Visible blocks
 	 */
 	@Inject
-	public Level(PlayerInterface pPlayer, @Named("blockSize") int pSize, @Named("visibleBlockIndex") int pLength){
-		player = pPlayer;
+	public Level(@Named("blockSize") int pSize, @Named("visibleBlockIndex") int pLength){
 		length = pLength+2;
 		size = pSize;
 	}
@@ -110,56 +106,6 @@ private int start, length, size, change = 0;
 		gates.clear();
 	}
 	
-	/**
-	 * Adds an enemy.
-	 * @param pEnemy - enemy
-	 */
-	public void addEnemy(EnemyInterface pEnemy){
-		enemies.add(pEnemy);
-	}
-	
-	/**
-	 * Returns all enemies.
-	 * @return enemies
-	 */
-	public List<EnemyInterface> getEnemies(){
-		return enemies;
-	}
-	
-	/**
-	 * adds a crate.
-	 * @param block - Crate
-	 */
-	public void addCrate(BlockInterface block){
-		crates.add(block);
-	}
-	
-	/**
-	 * Returns all crates.
-	 * @return crates
-	 */
-	public List<BlockInterface> getCrates(){
-		return crates;
-	}
-	
-	/**
-	 * Returns visible blocks.
-	 * @return visible blocks
-	 */
-	public List<BlockInterface[]> getVisibleBlocks(){
-		if(getStart()+getLength()>objects.size()){
-			return objects;
-		}
-		return objects.subList(getStart(), getStart()+getLength());
-	}
-	
-	/**
-	 * Sets blocks.
-	 * @param list - blocks
-	 */
-	public void setBlocks(List<BlockInterface[]> list){
-		objects = list;
-	}
 	
 	/**
 	 * Removes first block column if there are blocks left.
@@ -226,130 +172,70 @@ private int start, length, size, change = 0;
 	}
 	
 	/**
-	 * Checks if there is any block in the specified area.
-	 * @param pX - X-Position
-	 * @param pY - Y-Position
-	 * @param pWidth - Width
-	 * @param pHeight - Height
-	 * @param playerMoving - specify if isMovableArea is called by player
-	 * @return true if player can move to the specified area, false if not.
+	 * Adds an enemy.
+	 * @param pEnemy - enemy
 	 */
-	public boolean isMovableArea(int pX, int pY, int pWidth, int pHeight, int pMoving){
-		int x = (change+pX) / size, y = pY / size;
-		if(!handleCrateCollision(pX, pY, pWidth, pHeight, pMoving)){
-			return false;
-		}
-		for(int i=-1;i<=2;i++){
-			if(x+i >= 0 && x+i < objects.size()){
-				BlockInterface block[] = objects.get(x+i);
-				for(int j=-1;j<=pHeight/size;j++){
-					if(y+j >= 0 && y+j<block.length && block[y+j].isInArea(pX, pY, pWidth, pHeight)){
-						if(block[y+j].getType() == BlockInterface.TYP_GRAS){
-							return false;
-						}else if(block[y+j].getType() == BlockInterface.TYP_GATE && !((GateInterface)block[y+j]).isOn()){
-							return false;
-						}else if(block[y+1].getType() == BlockInterface.TYP_WATER){
-							player.setHealth(0);
-						}else if(pMoving == LevelInterface.PLAYER_MOVING && block[y+j].getType() == BlockInterface.TYP_COIN){
-							player.increaseCoins();
-							block[y+j].setType(BlockInterface.TYP_AIR);
-						}else if(block[y+1].getType() == BlockInterface.TYP_GOAL){
-							player.setGoal(true);
-						}else if(pMoving == LevelInterface.PLAYER_MOVING && block[y+1].getType() == BlockInterface.TYP_BUTTON){
-							((ButtonInterface)block[y+1]).press(player);
-						}
-					}
-				}
-			}
-		}
-		return true;
-	}
-
-	/**
-	 * Handles collision with crates.
-	 * @param pX - X-Position
-	 * @param pY - Y-Position
-	 * @param pWidth - Width
-	 * @param pHeight - Height
-	 * @return true if player can move to the specified area, false if not.
-	 */
-	private boolean handleCrateCollision(int pX, int pY, int pWidth, int pHeight, int pMoving){
-		if(pMoving == LevelInterface.CRATE_MOVING){
-			//check collision with enemies
-			for(EnemyInterface e:enemies){
-				if(e.isInArea(pX, pY, pWidth, pHeight)){
-					e.kill();
-				}
-			}
-		}
-		
-		for(BlockInterface crate:crates){
-			if(crate.isInArea(pX, pY, pWidth, pHeight)){
-				if(pMoving == LevelInterface.CRATE_MOVING){
-					//check collision with other crate
-					if(crate.getY() != (pY-LevelInterface.GRAVITY/2)){
-						return false;
-					}
-				}else if(pMoving == LevelInterface.PLAYER_MOVING && pY+pHeight >= crate.getY()+crate.getHeight()/2){
-					//check collision with player
-					if(pX < crate.getX()+crate.getWidth()*QUARTER && isCrateMovable(crate, pX, false)){
-						//collision left
-						crate.move(LevelInterface.SPEED, 0);
-					}else if(pX > crate.getX()+crate.getWidth()*THREE_QUARTERS && isCrateMovable(crate, pX, true)){
-						//collision right
-						crate.move(-LevelInterface.SPEED, 0);
-					}
-				}else{
-					return false;
-				}	
-			}
-		}
-		return true;
+	public void addEnemy(EnemyInterface pEnemy){
+		enemies.add(pEnemy);
 	}
 	
 	/**
-	 * Checks if there is enough space to move the crate to the specified area.
-	 * @param pCrate - crate
-	 * @param pX - X-Position
-	 * @param left - indicates wether the block is being moved left or right.
-	 * @return true if movable false if not
+	 * Returns all enemies.
+	 * @return enemies
 	 */
-	private boolean isCrateMovable(BlockInterface pCrate, int pX, boolean left){
-		int xOffset = LevelInterface.SPEED;
-		int indexY = pCrate.getY()/size;
-		int indexX = (change+pX) / size;
-		if(left){
-			indexX += -1;
-			xOffset *= -1;
-		}else{
-			indexX += 2;
+	public List<EnemyInterface> getEnemies(){
+		return enemies;
+	}
+	
+	/**
+	 * adds a crate.
+	 * @param block - Crate
+	 */
+	public void addCrate(BlockInterface block){
+		crates.add(block);
+	}
+	
+	/**
+	 * Returns all crates.
+	 * @return crates
+	 */
+	public List<BlockInterface> getCrates(){
+		return crates;
+	}
+	
+	/**
+	 * Returns all blocks.
+	 * @return crates
+	 */
+	public List<BlockInterface[]> getBlocks(){
+		return objects;
+	}
+	
+	/**
+	 * Returns all buttons
+	 * @return buttons
+	 */
+	public Set<Entry<Integer, ButtonInterface>> getButtons(){
+		return buttons.entrySet();
+
+	}
+	/**
+	 * Returns visible blocks.
+	 * @return visible blocks
+	 */
+	public List<BlockInterface[]> getVisibleBlocks(){
+		if(getStart()+getLength()>objects.size()){
+			return objects;
 		}
-		if(indexX < 0){
-			return true;
-		}
-		BlockInterface block = objects.get(indexX)[indexY];
-		if(block.getType() == BlockInterface.TYP_BUTTON){
-			((ButtonInterface)block).press(pCrate);
-			return true;
-		}else if(block.getType() == BlockInterface.TYP_GATE && ((GateInterface)block).isOn()){
-			return true;
-		}
-		
-		for(EnemyInterface e:enemies){
-			if(!e.isDead() && isInFrame(e.getX()) && e.isInArea(pCrate.getX()+xOffset, pCrate.getY(), pCrate.getWidth(), pCrate.getHeight())){
-				return false;
-			}
-		}
-		for(BlockInterface c:crates){
-			if(c != pCrate && isInFrame(c.getX()) && c.isInArea(pCrate.getX()+xOffset, pCrate.getY(), pCrate.getWidth(), pCrate.getHeight())){
-				return false;
-			}
-		}
-		
-		if(block.getType() != BlockInterface.TYP_AIR && block.getType() != BlockInterface.TYP_CRATE && block.isInArea(pCrate.getX()+xOffset, pCrate.getY(), size, size)){
-			return false;
-		}
-		return true;
+		return objects.subList(getStart(), getStart()+getLength());
+	}
+	
+	/**
+	 * Sets blocks.
+	 * @param list - blocks
+	 */
+	public void setBlocks(List<BlockInterface[]> list){
+		objects = list;
 	}
 	
 	/**
@@ -374,5 +260,21 @@ private int start, length, size, change = 0;
 	 */
 	public int getLength() {
 		return length;
+	}
+	
+	/**
+	 * Returns the x-offset.
+	 * @return change
+	 */
+	public int getChange(){
+		return change;
+	}
+	
+	/**
+	 * Returns the size of a block.
+	 * @return size
+	 */
+	public int getBlockSize(){
+		return size;
 	}
 }

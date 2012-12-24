@@ -2,15 +2,12 @@ package de.htwg.project42.model;
 
 import static org.junit.Assert.*;
 
-import java.io.File;
 
 import org.junit.Test;
 
 import de.htwg.project42.model.GameObjects.BlockInterface;
-import de.htwg.project42.model.GameObjects.LevelInterface;
 import de.htwg.project42.model.GameObjects.PlayerInterface;
 import de.htwg.project42.model.GameObjects.Implementation.Block;
-import de.htwg.project42.model.GameObjects.Implementation.Level;
 import de.htwg.project42.model.GameObjects.Implementation.Player;
 import de.htwg.project42.observer.Observer;
 
@@ -42,6 +39,13 @@ public class GameObjectTest extends Observer{
 		PlayerInterface obj = new Player(0,0,100,200);
 		assertEquals("Result",0,obj.getX());
 	}
+	
+	@Test
+	public void testSetX() {
+		PlayerInterface obj = new Player(0,0,100,200);
+		obj.setX(10);
+		assertEquals("Result",10,obj.getX());
+	}
 
 	@Test
 	public void testGetY() {
@@ -49,6 +53,13 @@ public class GameObjectTest extends Observer{
 		assertEquals("Result",0,obj.getY());
 	}
 
+	@Test
+	public void testSetY() {
+		PlayerInterface obj = new Player(0,0,100,200);
+		obj.setY(10);
+		assertEquals("Result",10,obj.getY());
+	}
+	
 	@Test
 	public void testGetWidth() {
 		PlayerInterface obj = new Player(0,0,100,200);
@@ -74,39 +85,6 @@ public class GameObjectTest extends Observer{
 		PlayerInterface obj = new Player(0,0,100,200);
 		obj.move(5,0);
 		assertEquals("Result",5,obj.getX());
-	}
-
-	@Test
-	public void testJump() {
-		PlayerInterface obj = new Player(600,500,100,200);
-		LevelInterface level = new Level(obj, 100, 12);
-		level.loadData(new File("map.lvl"));
-		int y = obj.getY();
-		obj.setJump(false);
-		obj.jump(level, this, 10, 10, LevelInterface.PLAYER_MOVING);
-		obj.pause(100);
-		assertEquals("Result",true,y == obj.getY());
-		obj.setY(500);
-		obj.setJump(true);
-		obj.jump(level, this, 10, 10, LevelInterface.PLAYER_MOVING);
-		obj.pause(100);
-		assertEquals("Result",false,y == obj.getY());
-		obj.setY(400);
-		obj.setJump(true);
-		obj.jump(level, this, 10, 10, LevelInterface.PLAYER_MOVING);
-		obj.pause(100);
-		assertEquals("Result",false,y == obj.getY());
-		obj.setY(400);
-		obj.setJump(false);
-		obj.jump(level, this, 10, 10, LevelInterface.PLAYER_MOVING);
-		obj.pause(100);
-		assertEquals("Result",false,y == obj.getY());
-		obj.setY(400);
-		obj.setX(0);
-		obj.setJump(true);
-		obj.jump(level, this, 10, 10, LevelInterface.PLAYER_MOVING);
-		obj.pause(100);
-		assertEquals("Result",false,y == obj.getY());
 	}
 
 	@Test
