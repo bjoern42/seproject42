@@ -14,16 +14,17 @@ import java.io.File;
 import java.io.FilenameFilter;
 
 import javax.swing.BorderFactory;
+import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
 
 import de.htwg.project42.controller.LandscapeInterface;
-import de.htwg.project42.view.EditorGUI.EditorGUI;
 
 /**
  * Main class for JumpNRun.
@@ -37,8 +38,9 @@ private EditorGUI egui = null;
 private JPanel pMenu, pButtons = new JPanel(),pList = new JPanel(),pCurrent;
 private JButton btStart = new JButton("Starten"), btEditor = new JButton("Level Editor");
 private JCheckBox cbTUI = new JCheckBox("Enable TUI output",false);
-@SuppressWarnings("rawtypes")
-private JList list = null;
+
+private DefaultListModel<File> model = new DefaultListModel<File>();
+private JList<File> list = new JList<File>(model);
 private JScrollPane scroll = null;
 private int width, height, length;
 private static final int GAP = 5, FACTOR_1 = 3, FACTOR_2 = 5, RECT_BORDER = 20, RECT_BORDER_BOTTOM = 100, ROWS = 3;
@@ -50,8 +52,6 @@ private LandscapeInterface landscape = null;
 	 * @param pHeight - Height
 	 * @param pLength - Visible blocks
 	 */
-	//JList<File> was not accepted in sonar.
-	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public MainMenuGUI(LandscapeInterface pLandscape, int pWidth, int pHeight, int pLength){
 		super("Jump and Run");
 		landscape = pLandscape;
@@ -69,7 +69,7 @@ private LandscapeInterface landscape = null;
 		Image img = Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("images/mainframe.png"));
 		pMenu = new ImgPanel(img);
 		
-		egui = new EditorGUI(width, height, length);
+		egui = new EditorGUI(this, width, height, length);
 		
 		pMenu.setLayout(new BorderLayout());
 		GridLayout layout = new GridLayout(ROWS, 1);
@@ -81,14 +81,8 @@ private LandscapeInterface landscape = null;
 		pButtons.add(btEditor);
 		pButtons.add(cbTUI);
 		
-		File[] files = new File(System.getProperty("user.dir")).listFiles(new FilenameFilter() {
-		    public boolean accept(File dir, String name) {
-		        return name.toLowerCase().endsWith(".lvl");
-		    }
-		});
-		list = new JList(files);
 		list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		list.setSelectedIndex(0);
+		listMaps();
 		
 		pList.setBorder(BorderFactory.createEmptyBorder(getHeight()/FACTOR_1, getWidth()/FACTOR_1, getHeight()/FACTOR_2, getWidth()/FACTOR_1));
 		scroll = new JScrollPane(list);
@@ -111,19 +105,38 @@ private LandscapeInterface landscape = null;
 	}
 	
 	/**
+	 * Lists maps in current directory.
+	 */
+	private void listMaps(){
+		model.clear();
+		File[] files = new File(System.getProperty("user.dir")).listFiles(new FilenameFilter() {
+		    public boolean accept(File dir, String name) {
+		        return name.toLowerCase().endsWith(".lvl");
+		    }
+		});
+		for(int i=0; i<files.length; i++){
+			model.add(i,files[i]);
+		}
+		list.setSelectedIndex(0);
+	}
+	
+	/**
 	 * Button handling.
 	 */
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
 		if(arg0.getSource() == btStart){
-			landscape.loadLevel((File)list.getSelectedValue());
-			
-			gui = new GUI(this, landscape, cbTUI.isSelected());
-			
-			changePanel(gui);
-			gui.start();
+			if(landscape.loadLevel((File)list.getSelectedValue())){
+				gui = new GUI(this, landscape, cbTUI.isSelected());
+				
+				changePanel(gui);
+				gui.start();
+			}else{
+				JOptionPane.showMessageDialog(this, "Selected map has failures!", "Error loading map", JOptionPane.ERROR_MESSAGE);
+			}
 		}else if(arg0.getSource() == btEditor){
 			changePanel(egui);
+			egui.init();
 		}
 	}
 	
@@ -132,6 +145,7 @@ private LandscapeInterface landscape = null;
 	 */
 	public void reset(){
 		changePanel(pMenu);
+		listMaps();
 	}
 	
 	/**

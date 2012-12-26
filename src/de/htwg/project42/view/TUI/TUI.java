@@ -79,38 +79,46 @@ private Logger logger = Logger.getLogger("de.htwg.project42.view.TUI");
 	public void update() {
 		List<BlockInterface[]> objects = landscape.getVisibleBlocks();
 		PlayerInterface player = landscape.getPlayer();
-		
-		print("Player: "+player.getX()+" "+player.getY()+"\n");
+		StringBuilder builder = new StringBuilder();
+		print(builder, "Player: "+player.getX()+" "+player.getY()+"\n");
 		List<EnemyInterface> list = landscape.getEnemies();
 		for(int i=0; i<list.size() ;i++){
 			EnemyInterface e = list.get(i);
 			if(e.isDead()){
-				print("Enemy "+i+" died at: "+e.getX()+" "+e.getY()+"\n");
+				print(builder, "Enemy "+i+" died at: "+e.getX()+" "+e.getY()+"\n");
 			}else{
-				print("Enemy "+i+" is at: "+e.getX()+" "+e.getY()+"\n");
+				print(builder, "Enemy "+i+" is at: "+e.getX()+" "+e.getY()+"\n");
 			}
 		}
 		
 		for(int i=0;i<objects.size();i++){
 			int rowX = objects.get(i)[0].getX();
-			print(rowX+"\t");
+			print(builder, rowX+"\t");
 			for(BlockInterface block:objects.get(i)){
-				print(block.toString());
+				print(builder, block.toString());
 			}
 			if(rowX-player.getX() < player.getWidth() && rowX-player.getX() > -player.getWidth()){
-				print("<-player");
+				print(builder, "<-player");
 			}
-			print("\n");
+			print(builder, "\n");
 		}
-		print("------------------------------------------\n");
+		print(builder,"------------------------------------------\n");
+		print(builder);
 	}
 	
 	/**
 	 * Prints given String.
 	 * @param s - String
 	 */
-	private void print(String s){
+	private void print(StringBuilder builder, String s){
+		builder.append(s);
+	}
+	
+	/**
+	 * Prints given String.
+	 * @param s - String
+	 */
+	private void print(StringBuilder s){
 		logger.info(s);
-//		System.out.print(s);
 	}
 }

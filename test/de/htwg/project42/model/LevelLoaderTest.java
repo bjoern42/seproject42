@@ -16,9 +16,10 @@ public class LevelLoaderTest {
 	}
 
 	@Test
-	public void testLevelLoader() {
+	public void testSetInputFile() {
 		LevelLoader loader = new LevelLoader();
 		loader.setInputFile(new File("map2.lvl"));
+		System.out.println(loader);
 		assertEquals("Result",null,loader.readNext());
 		
 		loader.setInputFile(new File("map.lvl"));
@@ -29,7 +30,38 @@ public class LevelLoaderTest {
 	public void testReadNext() {
 		LevelLoader loader = new LevelLoader();
 		loader.setInputFile(new File("map.lvl"));
+		System.out.println(loader);
 		assertEquals("Result",0,loader.readNext()[0]);
+		loader.closeStreams();
 	}
 
+	@Test
+	public void testSetOutputFile() {
+		File file = new File("output.lvl");
+		LevelLoader loader = new LevelLoader();
+		loader.setOutputFile(file);
+		loader.setInputFile(file);
+		Integer dummy[] = new Integer[2];
+		dummy[0] = 42;
+		dummy[1] = 42;
+		loader.writeNext(dummy);
+		assertEquals("Result",42,loader.readNext()[0]);
+		file.delete();
+		loader.closeStreams();
+	}
+
+	
+	@Test
+	public void testCloseStreams() {
+		File file = new File("output.lvl");
+		LevelLoader loader = new LevelLoader();
+		loader.setInputFile(file);
+		loader.closeStreams();
+		loader.setOutputFile(file);
+		loader.closeStreams();
+		Integer dummy[] = new Integer[1];
+		dummy[0] = 42;
+		loader.writeNext(dummy);
+		assertEquals("Result",null,loader.readNext());
+	}
 }

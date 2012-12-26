@@ -141,6 +141,7 @@ private boolean lock = false, goal = false;
 		setX(startX);
 		setY(startY);
 		setHealth(3);
+		setGoal(false);
 		setCoins(0);
 	}
 }

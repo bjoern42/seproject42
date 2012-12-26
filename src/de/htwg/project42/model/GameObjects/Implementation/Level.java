@@ -18,7 +18,6 @@ import de.htwg.project42.model.GameObjects.EnemyInterface;
 import de.htwg.project42.model.GameObjects.GateInterface;
 import de.htwg.project42.model.GameObjects.LevelInterface;
 import de.htwg.project42.model.GameObjects.LevelLoaderInterface;
-import de.htwg.project42.model.GameObjects.Features.Movable;
 
 /**
  * Level for JumpNRun.
@@ -26,7 +25,7 @@ import de.htwg.project42.model.GameObjects.Features.Movable;
  * @version 1.0
  */
 @Singleton
-public final class Level implements LevelInterface, Movable {
+public final class Level implements LevelInterface {
 private List<BlockInterface[]> objects = new LinkedList<BlockInterface[]>();
 private List<EnemyInterface> enemies = new LinkedList<EnemyInterface>();
 private List<BlockInterface> crates = new LinkedList<BlockInterface>();
@@ -50,7 +49,7 @@ private int start, length, size, change = 0;
 	 * Loads map data from file.
 	 * @param map - .lvl file
 	 */
-	public void loadData(File map){
+	public boolean loadData(File map){
 		start = 0;
 		change = 0;
 		enemies.clear();
@@ -92,7 +91,11 @@ private int start, length, size, change = 0;
 			objects.add(blocks.toArray(new BlockInterface[blocks.size()]));
 			i++;
 		}
-		
+		loader.closeStreams();
+		if(objects.size() < length){
+			return false;
+		}
+		return true;
 	}
 	
 	/**

@@ -27,7 +27,7 @@ public interface LevelInterface {
 	int getChange();
 	int getBlockSize();
 	List<BlockInterface> getCrates();
-	void loadData(File map);
+	boolean loadData(File map);
 	void releaseButtons();
 	Set<Entry<Integer, ButtonInterface>> getButtons();
 }

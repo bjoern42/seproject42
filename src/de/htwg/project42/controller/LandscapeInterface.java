@@ -27,5 +27,5 @@ public interface LandscapeInterface {
 	List<EnemyInterface> getEnemies();
 	List<BlockInterface> getCrates();
 	void addAnObserver(Observable observer);
-	void loadLevel(File level);
+	boolean loadLevel(File level);
 }

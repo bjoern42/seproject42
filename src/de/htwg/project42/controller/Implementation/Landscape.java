@@ -66,12 +66,15 @@ private Logger logger = Logger.getLogger("de.htwg.project42.view.TUI");
 	 * Loads a Level.
 	 */
 	@Override
-	public void loadLevel(File map){
+	public boolean loadLevel(File map){
+		if(!level.loadData(map)){
+			return false;
+		}
 		player.reset();
-		level.loadData(map);
 		objects = level.getBlocks();
 		enemies = level.getEnemies();
 		crates = level.getCrates();
+		return true;
 	}
 	
 	/**
@@ -201,12 +204,12 @@ private Logger logger = Logger.getLogger("de.htwg.project42.view.TUI");
 							return false;
 						}else if(block[y+j].getType() == BlockInterface.TYP_GATE && !((GateInterface)block[y+j]).isOn()){
 							return false;
-						}else if(block[y+1].getType() == BlockInterface.TYP_WATER){
+						}else if(pMoving == LevelInterface.PLAYER_MOVING && block[y+1].getType() == BlockInterface.TYP_WATER){
 							player.setHealth(0);
 						}else if(pMoving == LevelInterface.PLAYER_MOVING && block[y+j].getType() == BlockInterface.TYP_COIN){
 							player.increaseCoins();
 							block[y+j].setType(BlockInterface.TYP_AIR);
-						}else if(block[y+1].getType() == BlockInterface.TYP_GOAL){
+						}else if(pMoving == LevelInterface.PLAYER_MOVING && block[y+1].getType() == BlockInterface.TYP_GOAL){
 							player.setGoal(true);
 						}else if(pMoving == LevelInterface.PLAYER_MOVING && block[y+1].getType() == BlockInterface.TYP_BUTTON){
 							((ButtonInterface)block[y+1]).press(player);
@@ -302,7 +305,7 @@ private Logger logger = Logger.getLogger("de.htwg.project42.view.TUI");
 			return true;
 		}
 		
-		if(block.getType() != BlockInterface.TYP_AIR && block.isInArea(pCrate.getX()+xOffset, pCrate.getY(), size, size)){
+		if(block.getType() != BlockInterface.TYP_AIR && block.getType() != BlockInterface.TYP_COIN && block.isInArea(pCrate.getX()+xOffset, pCrate.getY(), size, size)){
 			return false;
 		}
 		return true;
