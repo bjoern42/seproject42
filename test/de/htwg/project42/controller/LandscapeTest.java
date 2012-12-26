@@ -300,6 +300,9 @@ private File map = null;
 		assertEquals("Result",false,landscape.isMovableArea(1310, 0, 100, 200,LevelInterface.PLAYER_MOVING));
 		assertEquals("Result",true,landscape.isMovableArea(1400, 500, 100, 200,LevelInterface.PLAYER_MOVING));
 		assertEquals("Result",true,landscape.isMovableArea(1310, 0, 100, 200,LevelInterface.PLAYER_MOVING));
+		
+		landscape.isMovableArea(100, 500, 100, 200,LevelInterface.PLAYER_MOVING);
+		assertEquals("Result",0,landscape.getPlayer().getHealth());
 	}
 		
 	@Test
@@ -359,6 +362,12 @@ private File map = null;
 		crate.setX(1200);
 		crate.setY(0);
 		assertEquals("Result",true,landscape.isMovableArea(1110, 0, 100, 200, LevelInterface.PLAYER_MOVING));
+	}
+	
+	@Test
+	public void testLoadLevel(){
+		assertEquals("Result",false,landscape.loadLevel(new File("pom.xml")));
+		assertEquals("Result",true,landscape.loadLevel(map));
 	}
 	
 	@Override

@@ -1,13 +1,17 @@
 package de.htwg.project42.view.GUI;
 
+import java.awt.BasicStroke;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.GridLayout;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.io.File;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -18,7 +22,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.filechooser.FileFilter;
@@ -34,44 +37,46 @@ import de.htwg.project42.model.GameObjects.Implementation.LevelLoader;
  */
 @SuppressWarnings("serial")
 public class EditorGUI extends JPanel implements ActionListener{
+private static final int INDEX_START = 100, OVAL_SIZE = 20, INDEX_X = 5, INDEX_Y = 15, STROKE_SIZE = 5;
 private List<BlockButton[]> objects = new LinkedList<BlockButton[]>();
 private HashMap<Integer, BlockButton> blocks = new HashMap<Integer, BlockButton>();
 private JPanel pLandscape = new JPanel(), pBlocks = new JPanel(), pSelectableBlocks = new JPanel(), pSettings = new JPanel();
 private JLabel lbSelected = new JLabel();
 private JButton btRight = new JButton(">"), btLeft = new JButton("<"), btSave, btLoad, btQuit;
 private LevelLoaderInterface levelLoader = new LevelLoader();
-private int size, selected, columns, rows, start, index=-1;
-private EditorGUI instance = null;
 private MainMenuGUI main = null;
+private EditorGUI instance = null;
 private JScrollPane scrollPane = new JScrollPane(pSelectableBlocks,JScrollPane.VERTICAL_SCROLLBAR_NEVER,JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 private JFileChooser fileChooser = null;
+private int size, selected, columns, rows, start, globalIndex = -1, indexCounter = INDEX_START, xStart, yStart, xEnd, yEnd;
+
 
 	public EditorGUI(MainMenuGUI pMain, int pWidth, int pHeight, int pLength){
 		size = pWidth / pLength;
-		instance = this;
 		main = pMain;
+		instance = this;
 		setLayout(new BorderLayout());
 		add(BorderLayout.SOUTH,pBlocks);
 		add(BorderLayout.CENTER,pLandscape);
 		
 		selected = BlockInterface.TYP_GRAS;
-		blocks.put(BlockInterface.TYP_ENEMY, new BlockButton(BlockInterface.TYP_ENEMY));
+		blocks.put(BlockInterface.TYP_ENEMY, new BlockButton(BlockInterface.TYP_ENEMY, false));
 		blocks.get(BlockInterface.TYP_ENEMY).setIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("images/enemy.gif"))));
-		blocks.put(BlockInterface.TYP_GRAS, new BlockButton(BlockInterface.TYP_GRAS));
+		blocks.put(BlockInterface.TYP_GRAS, new BlockButton(BlockInterface.TYP_GRAS, false));
 		blocks.get(BlockInterface.TYP_GRAS).setIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("images/gras.jpg"))));
-		blocks.put(BlockInterface.TYP_WATER, new BlockButton(BlockInterface.TYP_WATER));
+		blocks.put(BlockInterface.TYP_WATER, new BlockButton(BlockInterface.TYP_WATER, false));
 		blocks.get(BlockInterface.TYP_WATER).setIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("images/water.png"))));
-		blocks.put(BlockInterface.TYP_COIN, new BlockButton(BlockInterface.TYP_COIN));
+		blocks.put(BlockInterface.TYP_COIN, new BlockButton(BlockInterface.TYP_COIN, false));
 		blocks.get(BlockInterface.TYP_COIN).setIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("images/coin.png"))));
-		blocks.put(BlockInterface.TYP_GOAL, new BlockButton(BlockInterface.TYP_GOAL));
+		blocks.put(BlockInterface.TYP_GOAL, new BlockButton(BlockInterface.TYP_GOAL, false));
 		blocks.get(BlockInterface.TYP_GOAL).setIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("images/goal.png"))));
-		blocks.put(BlockInterface.TYP_CRATE, new BlockButton(BlockInterface.TYP_CRATE));
+		blocks.put(BlockInterface.TYP_CRATE, new BlockButton(BlockInterface.TYP_CRATE, false));
 		blocks.get(BlockInterface.TYP_CRATE).setIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("images/crate.png"))));
-		blocks.put(BlockInterface.TYP_BUTTON, new BlockButton(BlockInterface.TYP_BUTTON));
+		blocks.put(BlockInterface.TYP_BUTTON, new BlockButton(BlockInterface.TYP_BUTTON, false));
 		blocks.get(BlockInterface.TYP_BUTTON).setIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("images/buttonReleased.png"))));
-		blocks.put(BlockInterface.TYP_GATE, new BlockButton(BlockInterface.TYP_GATE));
+		blocks.put(BlockInterface.TYP_GATE, new BlockButton(BlockInterface.TYP_GATE, false));
 		blocks.get(BlockInterface.TYP_GATE).setIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("images/gateClosed.png"))));
-		blocks.put(BlockInterface.TYP_AIR, new BlockButton(BlockInterface.TYP_AIR));
+		blocks.put(BlockInterface.TYP_AIR, new BlockButton(BlockInterface.TYP_AIR, false));
 		blocks.get(BlockInterface.TYP_AIR).setIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("images/delete.png"))));
 		btSave = new JButton(new ImageIcon(Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("images/save.png"))));
 		btLoad = new JButton(new ImageIcon(Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("images/load.png"))));
@@ -82,15 +87,6 @@ private JFileChooser fileChooser = null;
 			public void actionPerformed(ActionEvent e) {
 				BlockButton button = (BlockButton)e.getSource();
 				selected = button.getType();
-				if(selected == BlockInterface.TYP_BUTTON || selected == BlockInterface.TYP_GATE){
-					try{
-						index = Integer.parseInt(JOptionPane.showInputDialog(instance,"Please enter an index","Enter index", JOptionPane.OK_OPTION));
-					}catch(Exception e1){
-						index = -1;
-					}
-				}else{
-					index = -1;
-				}
 				lbSelected.setIcon(button.getIcon());
 			}
 		};
@@ -144,6 +140,7 @@ private JFileChooser fileChooser = null;
 	 * Initializes the level editor.
 	 */
 	public void init(){
+		indexCounter = INDEX_START;
 		objects.clear();
 		rows = pLandscape.getHeight()/size+2;
 		columns = pLandscape.getWidth()/size+1;
@@ -164,7 +161,7 @@ private JFileChooser fileChooser = null;
 	private void addEmptyRow(){
 		BlockButton blocks[] = new BlockButton[rows];
 		for(int j=0; j<rows; j++){
-			blocks[j] = new BlockButton(BlockInterface.TYP_AIR);
+			blocks[j] = new BlockButton(BlockInterface.TYP_AIR,true);
 			blocks[j].setPreferredSize(new Dimension(size, size));
 			blocks[j].addActionListener(this);
 		}
@@ -190,6 +187,7 @@ private JFileChooser fileChooser = null;
 	 * Loads a map.
 	 */
 	private void loadMap(){
+		indexCounter = INDEX_START;
 		fileChooser.showOpenDialog(this);
 		File file = fileChooser.getSelectedFile();
 		if(file != null){
@@ -199,7 +197,7 @@ private JFileChooser fileChooser = null;
 			while((buffer = levelLoader.readNext()) != null){
 				LinkedList<BlockButton> buttons = new LinkedList<BlockButton>();
 				for(int i=0; i<buffer.length; i++){
-					buttons.add(new BlockButton(buffer[i]));
+					buttons.add(new BlockButton(buffer[i],true));
 					if(buffer[i] != BlockInterface.TYP_AIR){
 						buttons.getLast().setIcon(blocks.get(buffer[i]).getIcon());
 					}
@@ -207,6 +205,9 @@ private JFileChooser fileChooser = null;
 					buttons.getLast().addActionListener(this);
 					
 					if(buffer[i] == BlockInterface.TYP_BUTTON || buffer[i] == BlockInterface.TYP_GATE){
+						if(buffer[i] == BlockInterface.TYP_BUTTON){
+							indexCounter++;
+						}
 						buttons.getLast().setIndex(buffer[++i]);
 					}
 				}
@@ -225,7 +226,6 @@ private JFileChooser fileChooser = null;
 			return;
 		}
 		if(!file.getName().endsWith(".lvl")){
-			System.out.println(file.getName());
 			file = new File(file.getAbsoluteFile()+".lvl");
 		}
 		levelLoader.setOutputFile(file);
@@ -264,13 +264,26 @@ private JFileChooser fileChooser = null;
 			main.reset();
 		}else{
 			BlockButton button = (BlockButton)e.getSource();
+			button.setType(selected);
 			if(selected == BlockInterface.TYP_AIR) {
 				button.setIcon(null);
 			}else{
 				button.setIcon(blocks.get(selected).getIcon());
+				if(selected == BlockInterface.TYP_BUTTON){
+					button.setIndex(++indexCounter);
+				}
 			}
-			button.setType(selected);
-			button.setIndex(index);
+		}
+	}
+	
+	@Override
+	public void paint(Graphics g){
+		super.paint(g);
+		if(globalIndex != -1 && xEnd != -1){
+			Graphics2D graphics = (Graphics2D)g;
+			graphics.setColor(Color.GREEN);
+			graphics.setStroke(new BasicStroke(STROKE_SIZE));
+			graphics.drawLine(pLandscape.getX()+xStart, pLandscape.getY()+yStart, pLandscape.getX()+xEnd, pLandscape.getY()+yEnd);
 		}
 	}
 	
@@ -279,14 +292,16 @@ private JFileChooser fileChooser = null;
 	 * @author bjeschle,toofterd
 	 * @version 1.0
 	 */
-	private class BlockButton extends JButton{
+	private class BlockButton extends JButton implements MouseListener{
 		int blockType, index;
 		
-		public BlockButton(int pBlockType){
+		public BlockButton(int pBlockType, boolean landscape){
 			super();
 			blockType = pBlockType;
 			index = -1;
-			setOpaque(true);
+			if(landscape){
+				addMouseListener(this);
+			}
 		}
 		
 		/**
@@ -303,6 +318,7 @@ private JFileChooser fileChooser = null;
 		 */
 		public void setType(int pBlockType){
 			blockType = pBlockType;
+			index = -1;
 		}
 		
 		/**
@@ -325,9 +341,46 @@ private JFileChooser fileChooser = null;
 		public void paint(Graphics g){
 			super.paint(g);
 			if(index != -1){
-				g.setColor(Color.RED);
-				g.drawString(String.valueOf(index), 10, 20);
+				g.setColor(Color.GREEN);
+				g.fillOval(0, 0, OVAL_SIZE, OVAL_SIZE);
+				g.setColor(Color.BLACK);
+				g.drawString(String.valueOf(index-INDEX_START), INDEX_X, INDEX_Y);
 			}
 		}
+
+		@Override
+		public void mouseClicked(MouseEvent arg0) {
+			if(arg0.getButton() == MouseEvent.BUTTON3){
+				if(blockType == BlockInterface.TYP_BUTTON){
+					globalIndex = getIndex();
+					xStart = getX()+getWidth()/2;
+					yStart = getY()+getHeight()-STROKE_SIZE/2;
+				}else if(blockType == BlockInterface.TYP_GATE  && globalIndex != -1){
+					setIndex(globalIndex);
+				}else{
+					globalIndex = -1;
+				}
+			}else{
+				globalIndex = -1;
+			}
+		}
+
+		@Override
+		public void mouseEntered(MouseEvent arg0) {
+			if(blockType == BlockInterface.TYP_GATE  && globalIndex != -1){
+				xEnd = getX()+getWidth()/2;
+				yEnd = getY()+getHeight()/2;
+			}else{
+				xEnd = -1;
+			}
+			instance.repaint();
+		}
+		
+		@Override
+		public void mouseExited(MouseEvent arg0) {}
+		@Override
+		public void mousePressed(MouseEvent arg0) {}
+		@Override
+		public void mouseReleased(MouseEvent arg0) {}
 	}
 }

@@ -30,7 +30,7 @@ private List<BlockInterface[]> objects = new LinkedList<BlockInterface[]>();
 private List<EnemyInterface> enemies = new LinkedList<EnemyInterface>();
 private List<BlockInterface> crates = new LinkedList<BlockInterface>();
 private Map<Integer, ButtonInterface> buttons = new HashMap<Integer, ButtonInterface>();
-private Map<Integer, GateInterface> gates = new HashMap<Integer, GateInterface>();
+private Map<Integer, LinkedList<GateInterface>> gates = new HashMap<Integer, LinkedList<GateInterface>>();
 private LevelLoaderInterface loader = new LevelLoader();
 private int start, length, size, change = 0;
 
@@ -70,9 +70,10 @@ private int start, length, size, change = 0;
 				}else if(blockType[j] == BlockInterface.TYP_BUTTON){
 					blocks.add(new Button(this, size*i, size*blocks.size(), size, blockType[j]));
 					buttons.put(blockType[++j], (ButtonInterface) blocks.getLast());
-					GateInterface gate = gates.get(blockType[j]);
-					if (gate != null){
-						buttons.get(blockType[j]).registerSwitchable(gate);
+					if(gates.get(blockType[j]) != null){
+						for(GateInterface gate: gates.get(blockType[j])){
+							buttons.get(blockType[j]).registerSwitchable(gate);
+						}
 					}
 					continue;
 				}else if(blockType[j] == BlockInterface.TYP_GATE){
@@ -81,7 +82,10 @@ private int start, length, size, change = 0;
 					if(button != null){
 						button.registerSwitchable((GateInterface)blocks.getLast());
 					}else{
-						gates.put(blockType[j],(GateInterface) blocks.getLast());
+						if(gates.get(blockType[j]) == null){
+							gates.put(blockType[j], new LinkedList<GateInterface>());
+						}
+						gates.get(blockType[j]).add((GateInterface) blocks.getLast());
 					}
 					continue;
 				}
