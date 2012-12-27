@@ -45,7 +45,7 @@ private List<BlockButton[]> objects = new LinkedList<BlockButton[]>();
 private HashMap<Integer, BlockButton> blocks = new HashMap<Integer, BlockButton>();
 private JPanel pLandscape = new JPanel(), pBlocks = new JPanel(), pSelectableBlocks = new JPanel(), pSettings = new JPanel();
 private JLabel lbSelected = new JLabel();
-private JButton btSave, btLoad, btQuit;
+private JButton btSave, btLoad, btQuit, btAddRow;
 private JScrollBar scrollBar = new JScrollBar(JScrollBar.HORIZONTAL,1,1,1,3);
 private LevelLoaderInterface levelLoader = new LevelLoader();
 private MainMenuGUI main = null;
@@ -53,7 +53,6 @@ private EditorGUI instance = null;
 private JScrollPane scrollPane = new JScrollPane(pSelectableBlocks,JScrollPane.VERTICAL_SCROLLBAR_NEVER,JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 private JFileChooser fileChooser = null;
 private int size, selected, columns, rows, start, globalIndex = -1, indexCounter = INDEX_START, xStart, yStart, xEnd, yEnd;
-
 
 	public EditorGUI(MainMenuGUI pMain, int pWidth, int pHeight, int pLength){
 		size = pWidth / pLength;
@@ -85,6 +84,7 @@ private int size, selected, columns, rows, start, globalIndex = -1, indexCounter
 		btSave = new JButton(new ImageIcon(Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("images/save.png"))));
 		btLoad = new JButton(new ImageIcon(Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("images/load.png"))));
 		btQuit = new JButton(new ImageIcon(Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("images/quit.png"))));
+		btAddRow = new JButton(new ImageIcon(Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("images/add.png"))));
 		
 		ActionListener listener = new ActionListener() {
 			@Override
@@ -108,12 +108,14 @@ private int size, selected, columns, rows, start, globalIndex = -1, indexCounter
 		btLoad.setPreferredSize(new Dimension(size/2, size/2));
 		btQuit.addActionListener(this);
 		btQuit.setPreferredSize(new Dimension(size/2, size/2));
+		btAddRow.addActionListener(this);
+		btAddRow.setPreferredSize(new Dimension(size/2, size/2));
 		
 		pSettings.setLayout(new GridLayout(2, 2));
 		pSettings.add(btSave);
 		pSettings.add(btLoad);
 		pSettings.add(btQuit);
-		
+		pSettings.add(btAddRow);
 		scrollBar.addAdjustmentListener(this);
 		
 		pBlocks.setLayout(new BorderLayout());
@@ -147,9 +149,7 @@ private int size, selected, columns, rows, start, globalIndex = -1, indexCounter
 		rows = pLandscape.getHeight()/size+2;
 		columns = pLandscape.getWidth()/size+1;
 		start = 0;
-		scrollBar.removeAdjustmentListener(this);
 		scrollBar.setMaximum(3);
-		scrollBar.addAdjustmentListener(this);
 		
 		pLandscape.setLayout(new GridLayout(rows, columns));
 		for(int i=0; i<columns+2; i++){
@@ -191,8 +191,9 @@ private int size, selected, columns, rows, start, globalIndex = -1, indexCounter
 	/**
 	 * Loads a map.
 	 */
-	private void loadMap(){
+	private boolean loadMap(){
 		objects.clear();
+		start = 0;
 		indexCounter = INDEX_START;
 		fileChooser.showOpenDialog(this);
 		File file = fileChooser.getSelectedFile();
@@ -211,19 +212,18 @@ private int size, selected, columns, rows, start, globalIndex = -1, indexCounter
 					buttons.getLast().addActionListener(this);
 					
 					if(buffer[i] == BlockInterface.TYP_BUTTON || buffer[i] == BlockInterface.TYP_GATE){
-						if(buffer[i] == BlockInterface.TYP_BUTTON){
-							indexCounter++;
+						if(buffer[i] == BlockInterface.TYP_BUTTON && buffer[i+1] > indexCounter){
+							indexCounter = buffer[i+1];
 						}
 						buttons.getLast().setIndex(buffer[++i]);
 					}
 				}
 				objects.add(buttons.toArray(new BlockButton[buttons.size()]));
 			}
+			scrollBar.setMaximum(objects.size()-columns);
+			return true;
 		}
-		
-		scrollBar.removeAdjustmentListener(this);
-		scrollBar.setMaximum(objects.size()-columns);
-		scrollBar.addAdjustmentListener(this);
+		return false;
 	}
 	
 	/**
@@ -258,11 +258,15 @@ private int size, selected, columns, rows, start, globalIndex = -1, indexCounter
 		if(e.getSource() == btSave){
 			saveMap();
 		}else if(e.getSource() == btLoad){
-			loadMap();
-			start = 0;	
-			loadLandscape(objects.subList(start, start+columns));
+			if(loadMap()){
+				start = 0;	
+				loadLandscape(objects.subList(start, start+columns));
+			}
 		}else if(e.getSource() == btQuit){
 			main.reset();
+		}else if(e.getSource() == btAddRow){
+			addEmptyRow();
+			scrollBar.setMaximum(objects.size()-columns);
 		}else{
 			BlockButton button = (BlockButton)e.getSource();
 			button.setType(selected);
@@ -279,12 +283,6 @@ private int size, selected, columns, rows, start, globalIndex = -1, indexCounter
 	
 	@Override
 	public void adjustmentValueChanged(AdjustmentEvent e) {
-		if(!e.getValueIsAdjusting() && start+columns >= objects.size()-2){
-			addEmptyRow();
-			scrollBar.removeAdjustmentListener(this);
-			scrollBar.setMaximum(scrollBar.getMaximum()+1);
-			scrollBar.addAdjustmentListener(this);
-		}
 		start = scrollBar.getValue()-1;
 		loadLandscape(objects.subList(start, start+columns));
 	}

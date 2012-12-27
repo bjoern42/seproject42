@@ -214,7 +214,7 @@ private Logger logger = Logger.getLogger("de.htwg.project42.view.TUI");
 							return false;
 						}else if(block[y+j].getType() == BlockInterface.TYP_GATE && !((GateInterface)block[y+j]).isOn()){
 							return false;
-						}else if(block[y+1].getType() == BlockInterface.TYP_WATER){
+						}else if(pMoving == LevelInterface.PLAYER_MOVING && block[y+1].getType() == BlockInterface.TYP_WATER){
 								player.setHealth(0);
 						}else if(pMoving == LevelInterface.PLAYER_MOVING && block[y+j].getType() == BlockInterface.TYP_COIN){
 							player.increaseCoins();
