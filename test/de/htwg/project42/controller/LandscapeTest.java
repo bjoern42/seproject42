@@ -286,22 +286,26 @@ private File map = null;
 	
 	@Test
 	public void testIsMovableArea(){
-		assertEquals("Result",false,landscape.isMovableArea(0, 500, 100, 200,LevelInterface.ENEMY_MOVING));
-		assertEquals("Result",true,landscape.isMovableArea(0, 0, 100, 200,LevelInterface.ENEMY_MOVING));
-		assertEquals("Result",true,landscape.isMovableArea(8000, 0, 100, 200,LevelInterface.ENEMY_MOVING));
-		assertEquals("Result",true,landscape.isMovableArea(100, 500, 100, 200,LevelInterface.ENEMY_MOVING));
-		assertEquals("Result",true,landscape.isMovableArea(200, 400, 100, 200,LevelInterface.PLAYER_MOVING));
-		assertEquals("Result",true,landscape.isMovableArea(0, 300, 100, 200,LevelInterface.PLAYER_MOVING));
-		assertEquals("Result",true,landscape.isMovableArea(0, 8000, 100, 200,LevelInterface.PLAYER_MOVING));
+		EnemyInterface e = landscape.getEnemies().get(0);
+		BlockInterface c = landscape.getCrates().get(0);
+		PlayerInterface p = landscape.getPlayer();
 		
-		assertEquals("Result",false,landscape.isMovableArea(610, 500, 100, 200,LevelInterface.PLAYER_MOVING));
-		assertEquals("Result",false,landscape.isMovableArea(610, 500, 100, 200,LevelInterface.CRATE_MOVING));
+		assertEquals("Result",false,landscape.isMovableArea(0, 500, 100, 200,LevelInterface.ENEMY_MOVING, e));
+		assertEquals("Result",true,landscape.isMovableArea(0, 0, 100, 200,LevelInterface.ENEMY_MOVING, e));
+		assertEquals("Result",true,landscape.isMovableArea(8000, 0, 100, 200,LevelInterface.ENEMY_MOVING, e));
+		assertEquals("Result",true,landscape.isMovableArea(100, 500, 100, 200,LevelInterface.ENEMY_MOVING, e));
+		assertEquals("Result",true,landscape.isMovableArea(200, 400, 100, 200,LevelInterface.PLAYER_MOVING, p));
+		assertEquals("Result",true,landscape.isMovableArea(0, 300, 100, 200,LevelInterface.PLAYER_MOVING, p));
+		assertEquals("Result",true,landscape.isMovableArea(0, 8000, 100, 200,LevelInterface.PLAYER_MOVING, p));
 		
-		assertEquals("Result",false,landscape.isMovableArea(1310, 0, 100, 200,LevelInterface.PLAYER_MOVING));
-		assertEquals("Result",true,landscape.isMovableArea(1400, 500, 100, 200,LevelInterface.PLAYER_MOVING));
-		assertEquals("Result",true,landscape.isMovableArea(1310, 0, 100, 200,LevelInterface.PLAYER_MOVING));
+		assertEquals("Result",false,landscape.isMovableArea(610, 500, 100, 200,LevelInterface.PLAYER_MOVING, p));
+		assertEquals("Result",false,landscape.isMovableArea(610, 500, 100, 200,LevelInterface.CRATE_MOVING, c));
 		
-		landscape.isMovableArea(100, 500, 100, 200,LevelInterface.PLAYER_MOVING);
+		assertEquals("Result",false,landscape.isMovableArea(1310, 0, 100, 200,LevelInterface.PLAYER_MOVING, p));
+		assertEquals("Result",true,landscape.isMovableArea(1400, 500, 100, 200,LevelInterface.PLAYER_MOVING, p));
+		assertEquals("Result",true,landscape.isMovableArea(1310, 0, 100, 200,LevelInterface.PLAYER_MOVING, p));
+		
+		landscape.isMovableArea(100, 500, 100, 200,LevelInterface.PLAYER_MOVING, p);
 		assertEquals("Result",0,landscape.getPlayer().getHealth());
 	}
 		
@@ -311,17 +315,17 @@ private File map = null;
 		EnemyInterface enemy = level.getEnemies().get(0);
 		PlayerInterface player = landscape.getPlayer();
 		player.setX(1000);
-		assertEquals("Result",false,landscape.isMovableArea(610, 440, 100, 200,LevelInterface.PLAYER_MOVING));
-		assertEquals("Result",false,landscape.isMovableArea(610, 500, 100, 200,LevelInterface.ENEMY_MOVING));
+		assertEquals("Result",false,landscape.isMovableArea(610, 440, 100, 200,LevelInterface.PLAYER_MOVING, player));
+		assertEquals("Result",false,landscape.isMovableArea(610, 500, 100, 200,LevelInterface.ENEMY_MOVING, enemy));
 		
-		assertEquals("Result",false,landscape.isMovableArea(610, 500, 100, 200,LevelInterface.PLAYER_MOVING));
-		assertEquals("Result",true,landscape.isMovableArea(790, 500, 1, 200,LevelInterface.PLAYER_MOVING));
+		assertEquals("Result",false,landscape.isMovableArea(610, 500, 100, 200,LevelInterface.PLAYER_MOVING, player));
+		assertEquals("Result",true,landscape.isMovableArea(790, 500, 1, 200,LevelInterface.PLAYER_MOVING, player));
 		crate.setX(600);
-		assertEquals("Result",false,landscape.isMovableArea(690, 500, 100, 200,LevelInterface.PLAYER_MOVING));
-		assertEquals("Result",true,landscape.isMovableArea(610, 500, 100, 200,LevelInterface.PLAYER_MOVING));
+		assertEquals("Result",false,landscape.isMovableArea(690, 500, 100, 200,LevelInterface.PLAYER_MOVING, player));
+		assertEquals("Result",true,landscape.isMovableArea(610, 500, 100, 200,LevelInterface.PLAYER_MOVING, player));
 		enemy.setX(600);
 		enemy.setY(500);
-		landscape.isMovableArea(600, 500, 100, 100,LevelInterface.CRATE_MOVING);
+		landscape.isMovableArea(600, 500, 100, 100,LevelInterface.CRATE_MOVING, crate);
 		assertEquals("Result",true,enemy.isDead());
 	}
 	
@@ -329,39 +333,49 @@ private File map = null;
 	public void testIsCrateMovable(){
 		BlockInterface crate = landscape.getCrates().get(0);
 		EnemyInterface enemy = landscape.getEnemies().get(0);
+		PlayerInterface player = landscape.getPlayer();
+		
 		crate.setX(0);
 		crate.setY(400);
-		assertEquals("Result",true,landscape.isMovableArea(90, 300, 100, 200, LevelInterface.PLAYER_MOVING));
+		assertEquals("Result",true,landscape.isMovableArea(90, 300, 100, 200, LevelInterface.PLAYER_MOVING, player));
 		crate.setX(700);
 		crate.setY(600);
 		enemy.setX(8000);
-		assertEquals("Result",true,landscape.isMovableArea(790, 500, 1, 200, LevelInterface.PLAYER_MOVING));
+		assertEquals("Result",true,landscape.isMovableArea(790, 500, 1, 200, LevelInterface.PLAYER_MOVING, player));
 		crate.setX(700);
 		enemy.setX(600);
-		assertEquals("Result",false,landscape.isMovableArea(790, 500, 10, 200, LevelInterface.PLAYER_MOVING));
+		assertEquals("Result",false,landscape.isMovableArea(790, 500, 10, 200, LevelInterface.PLAYER_MOVING, player));
 		enemy.kill();
-		assertEquals("Result",true,landscape.isMovableArea(790, 500, 1, 200, LevelInterface.PLAYER_MOVING));
-		assertEquals("Result",true,landscape.isMovableArea(600, 500, 100, 200, LevelInterface.PLAYER_MOVING));
+		assertEquals("Result",true,landscape.isMovableArea(790, 500, 1, 200, LevelInterface.PLAYER_MOVING, player));
+		assertEquals("Result",true,landscape.isMovableArea(600, 500, 100, 200, LevelInterface.PLAYER_MOVING, player));
 		level.getCrates().get(0).setX(1000);
-		assertEquals("Result",false,landscape.isMovableArea(1090, 500, 100, 200, LevelInterface.PLAYER_MOVING));
+		assertEquals("Result",false,landscape.isMovableArea(1090, 500, 100, 200, LevelInterface.PLAYER_MOVING, player));
 	
 		crate.setX(1200);
 		crate.setY(0);
-		assertEquals("Result",false,landscape.isMovableArea(1110, 0, 100, 200, LevelInterface.PLAYER_MOVING));
+		assertEquals("Result",false,landscape.isMovableArea(1110, 0, 100, 200, LevelInterface.PLAYER_MOVING, player));
 		
 		crate.setX(1300);
 		crate.setY(600);
-		landscape.isMovableArea(1310, 500, 100, 200, LevelInterface.PLAYER_MOVING);
+		landscape.isMovableArea(1310, 500, 100, 200, LevelInterface.PLAYER_MOVING, player);
 		assertEquals("Result",true,level.getButtons().iterator().next().getValue().isPressed());
 		
 		BlockInterface crateTwo = landscape.getCrates().get(1);
 		crateTwo.setX(1000);
 		crateTwo.setY(600);
-		assertEquals("Result",true,landscape.isMovableArea(1090, 500, 100, 200, LevelInterface.PLAYER_MOVING));
+		assertEquals("Result",true,landscape.isMovableArea(1090, 500, 100, 200, LevelInterface.PLAYER_MOVING, player));
 		
 		crate.setX(1200);
 		crate.setY(0);
-		assertEquals("Result",true,landscape.isMovableArea(1110, 0, 100, 200, LevelInterface.PLAYER_MOVING));
+		assertEquals("Result",true,landscape.isMovableArea(1110, 0, 100, 200, LevelInterface.PLAYER_MOVING, player));
+	
+		crate.setX(300);
+		crate.setY(500);
+		assertEquals("Result",true,landscape.isMovableArea(390, 400, 100, 200, LevelInterface.PLAYER_MOVING, player));
+	
+		crate.setX(1400);
+		crate.setY(600);
+		assertEquals("Result",false,landscape.isMovableArea(1400, 610, 100, 100, LevelInterface.CRATE_MOVING, crate));
 	}
 	
 	@Test

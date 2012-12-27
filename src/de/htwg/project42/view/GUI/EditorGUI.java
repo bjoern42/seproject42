@@ -10,6 +10,8 @@ import java.awt.GridLayout;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.AdjustmentEvent;
+import java.awt.event.AdjustmentListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.File;
@@ -23,6 +25,7 @@ import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.filechooser.FileFilter;
 
@@ -36,13 +39,14 @@ import de.htwg.project42.model.GameObjects.Implementation.LevelLoader;
  * @version 1.0
  */
 @SuppressWarnings("serial")
-public class EditorGUI extends JPanel implements ActionListener{
+public class EditorGUI extends JPanel implements ActionListener, AdjustmentListener{
 private static final int INDEX_START = 100, OVAL_SIZE = 20, INDEX_X = 5, INDEX_Y = 15, STROKE_SIZE = 5;
 private List<BlockButton[]> objects = new LinkedList<BlockButton[]>();
 private HashMap<Integer, BlockButton> blocks = new HashMap<Integer, BlockButton>();
 private JPanel pLandscape = new JPanel(), pBlocks = new JPanel(), pSelectableBlocks = new JPanel(), pSettings = new JPanel();
 private JLabel lbSelected = new JLabel();
-private JButton btRight = new JButton(">"), btLeft = new JButton("<"), btSave, btLoad, btQuit;
+private JButton btSave, btLoad, btQuit;
+private JScrollBar scrollBar = new JScrollBar(JScrollBar.HORIZONTAL,1,1,1,3);
 private LevelLoaderInterface levelLoader = new LevelLoader();
 private MainMenuGUI main = null;
 private EditorGUI instance = null;
@@ -110,16 +114,14 @@ private int size, selected, columns, rows, start, globalIndex = -1, indexCounter
 		pSettings.add(btLoad);
 		pSettings.add(btQuit);
 		
+		scrollBar.addAdjustmentListener(this);
+		
 		pBlocks.setLayout(new BorderLayout());
 		pBlocks.add(BorderLayout.CENTER,scrollPane);
 		pBlocks.add(BorderLayout.WEST,lbSelected);
 		pBlocks.add(BorderLayout.EAST,pSettings);
-		
-		btLeft.addActionListener(this);
-		btRight.addActionListener(this);
-		add(BorderLayout.WEST,btLeft);
-		add(BorderLayout.EAST,btRight);
-		
+		pBlocks.add(BorderLayout.NORTH,scrollBar);
+			
 		fileChooser = new JFileChooser(System.getProperty("user.dir"));
 		fileChooser.setFileFilter(new FileFilter() {
 			@Override
@@ -145,6 +147,9 @@ private int size, selected, columns, rows, start, globalIndex = -1, indexCounter
 		rows = pLandscape.getHeight()/size+2;
 		columns = pLandscape.getWidth()/size+1;
 		start = 0;
+		scrollBar.removeAdjustmentListener(this);
+		scrollBar.setMaximum(3);
+		scrollBar.addAdjustmentListener(this);
 		
 		pLandscape.setLayout(new GridLayout(rows, columns));
 		for(int i=0; i<columns+2; i++){
@@ -187,6 +192,7 @@ private int size, selected, columns, rows, start, globalIndex = -1, indexCounter
 	 * Loads a map.
 	 */
 	private void loadMap(){
+		objects.clear();
 		indexCounter = INDEX_START;
 		fileChooser.showOpenDialog(this);
 		File file = fileChooser.getSelectedFile();
@@ -214,6 +220,10 @@ private int size, selected, columns, rows, start, globalIndex = -1, indexCounter
 				objects.add(buttons.toArray(new BlockButton[buttons.size()]));
 			}
 		}
+		
+		scrollBar.removeAdjustmentListener(this);
+		scrollBar.setMaximum(objects.size()-columns);
+		scrollBar.addAdjustmentListener(this);
 	}
 	
 	/**
@@ -245,16 +255,7 @@ private int size, selected, columns, rows, start, globalIndex = -1, indexCounter
 	
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		if(e.getSource() == btRight){
-			addEmptyRow();
-			start++;
-			loadLandscape(objects.subList(start, start+columns));
-		}else if(e.getSource() == btLeft){
-			if(start>0){
-				start--;
-				loadLandscape(objects.subList(start, start+columns));
-			}
-		}else if(e.getSource() == btSave){
+		if(e.getSource() == btSave){
 			saveMap();
 		}else if(e.getSource() == btLoad){
 			loadMap();
@@ -274,6 +275,18 @@ private int size, selected, columns, rows, start, globalIndex = -1, indexCounter
 				}
 			}
 		}
+	}
+	
+	@Override
+	public void adjustmentValueChanged(AdjustmentEvent e) {
+		if(!e.getValueIsAdjusting() && start+columns >= objects.size()-2){
+			addEmptyRow();
+			scrollBar.removeAdjustmentListener(this);
+			scrollBar.setMaximum(scrollBar.getMaximum()+1);
+			scrollBar.addAdjustmentListener(this);
+		}
+		start = scrollBar.getValue()-1;
+		loadLandscape(objects.subList(start, start+columns));
 	}
 	
 	@Override
