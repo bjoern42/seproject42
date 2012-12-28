@@ -13,6 +13,7 @@ import de.htwg.project42.model.GameObjects.ButtonInterface;
 import de.htwg.project42.model.GameObjects.LevelInterface;
 import de.htwg.project42.model.GameObjects.Implementation.Block;
 import de.htwg.project42.model.GameObjects.Implementation.Level;
+import de.htwg.project42.model.GameObjects.Implementation.LevelLoader;
 
 public class LevelTest{
 File map = null;
@@ -24,7 +25,7 @@ File map = null;
 	
 	@Test
 	public void testUpdate(){
-		LevelInterface level = new Level(100, 12);
+		LevelInterface level = new Level(new LevelLoader(), 100, 12);
 		level.loadData(map);
 		BlockInterface block = level.getVisibleBlocks().get(0)[0];
 		int oldX = block.getX();
@@ -40,7 +41,7 @@ File map = null;
 	
 	@Test
 	public void testRemoveFirst(){
-		LevelInterface level = new Level(100, 12);
+		LevelInterface level = new Level(new LevelLoader(), 100, 12);
 		level.loadData(map);
 		level.removeFirst();
 		assertEquals("Result",1,level.getStart());
@@ -51,7 +52,7 @@ File map = null;
 	
 	@Test
 	public void testRemoveLast(){
-		LevelInterface level = new Level(100, 12);
+		LevelInterface level = new Level(new LevelLoader(), 100, 12);
 		level.loadData(map);
 		level.removeLast();
 		assertEquals("Result",0,level.getStart());
@@ -62,7 +63,7 @@ File map = null;
 	
 	@Test
 	public void testIsInFrame(){
-		LevelInterface level = new Level(100, 12);
+		LevelInterface level = new Level(new LevelLoader(), 100, 12);
 		level.loadData(map);
 		assertEquals("Result",false,level.isInFrame(1300));
 		assertEquals("Result",true,level.isInFrame(800));
@@ -71,7 +72,7 @@ File map = null;
 	
 	@Test
 	public void testGetVisibleBlocks(){
-		LevelInterface level = new Level(100, 12);
+		LevelInterface level = new Level(new LevelLoader(), 100, 12);
 		level.loadData(map);
 		assertEquals("Result",level.getLength(),level.getVisibleBlocks().size());
 		level.loadData(new File("mapTUI.lvl"));
@@ -80,14 +81,14 @@ File map = null;
 	
 	@Test
 	public void testGetEnemies(){
-		LevelInterface level = new Level(100, 12);
+		LevelInterface level = new Level(new LevelLoader(), 100, 12);
 		level.loadData(map);
 		assertEquals("Result",level.getEnemies(),level.getEnemies());
 	}
 	
 	@Test
 	public void testSetBlocks(){
-		LevelInterface level = new Level(100, 12);
+		LevelInterface level = new Level(new LevelLoader(), 100, 12);
 		level.loadData(map);
 		LinkedList<BlockInterface[]> list = new LinkedList<BlockInterface[]>();
 		BlockInterface tmp[] = new Block[1];
@@ -99,13 +100,13 @@ File map = null;
 	
 	@Test
 	public void testGetBlockSize(){
-		LevelInterface level = new Level(100, 12);
+		LevelInterface level = new Level(new LevelLoader(), 100, 12);
 		assertEquals("Result",100,level.getBlockSize());
 	}
 	
 	@Test
 	public void testGetChange(){
-		LevelInterface level = new Level(100, 12);
+		LevelInterface level = new Level(new LevelLoader(), 100, 12);
 		level.loadData(map);
 		assertEquals("Result",0,level.getChange());
 		level.update(10);
@@ -114,21 +115,21 @@ File map = null;
 	
 	@Test
 	public void testGetBlocks(){
-		LevelInterface level = new Level(100, 12);
+		LevelInterface level = new Level(new LevelLoader(), 100, 12);
 		level.loadData(map);
 		assertEquals("Result",18,level.getBlocks().size());
 	}
 	
 	@Test
 	public void testGetCrates(){
-		LevelInterface level = new Level(100, 12);
+		LevelInterface level = new Level(new LevelLoader(), 100, 12);
 		level.loadData(map);
 		assertEquals("Result",2,level.getCrates().size());
 	}
 	
 	@Test
 	public void testReleaseButtons(){
-		LevelInterface level = new Level(100, 12);
+		LevelInterface level = new Level(new LevelLoader(), 100, 12);
 		level.loadData(map);
 		ButtonInterface button = level.getButtons().iterator().next().getValue();
 		button.press(level.getEnemies().get(0));

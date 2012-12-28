@@ -42,20 +42,17 @@ private Image imgGras, imgWater, imgGoal, imgCrate, imgButtonPressed, imgButtonR
 private int action = ACTION_NORMAL;
 private MainMenuGUI main = null;
 private GUI gui;
-
+private TUI tui;
 
 	/**
 	 * Creates GUI.
 	 * @param pMain - Main
 	 * @param pLandscape - Landscape
-	 * @param pTUI - runs parallel TUI if true
 	 */
-	public GUI(final MainMenuGUI pMain, LandscapeInterface pLandscape, boolean pTUI){		
+	public GUI(final MainMenuGUI pMain, LandscapeInterface pLandscape){		
 		landscape = pLandscape;
 		landscape.addAnObserver(this);
-		if(pTUI){
-			new TUI(landscape);
-		}
+		
 		player = landscape.getPlayer();
 		main = pMain;
 		gui = this;
@@ -84,9 +81,16 @@ private GUI gui;
 
 	/**
 	 * Starts Game.
+	 * @param pTUI - runs parallel TUI if true
 	 */
-	public void start(){
+	public void start(boolean pTUI){
 		getGraphics().drawImage(imgBackground,0,0, getWidth(), getHeight(),this);
+		if(pTUI){
+			tui = new TUI(landscape);
+		}
+		up = false;
+		right = false;
+		left = false;
 		player.pause(PAUSE_LONG);
 		requestFocus();
 		landscape.start();
@@ -110,6 +114,7 @@ private GUI gui;
 				}else if(player.getHealth() == 0){
 					JOptionPane.showMessageDialog(gui, "Player died!", "Game over!", JOptionPane.OK_OPTION);
 				}
+				landscape.removeAnObserver(tui);
 				main.reset();
 			}
 		}.start();

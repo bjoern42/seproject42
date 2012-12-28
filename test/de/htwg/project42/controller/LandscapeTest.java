@@ -13,6 +13,7 @@ import de.htwg.project42.model.GameObjects.EnemyInterface;
 import de.htwg.project42.model.GameObjects.LevelInterface;
 import de.htwg.project42.model.GameObjects.PlayerInterface;
 import de.htwg.project42.model.GameObjects.Implementation.Level;
+import de.htwg.project42.model.GameObjects.Implementation.LevelLoader;
 import de.htwg.project42.model.GameObjects.Implementation.Player;
 import de.htwg.project42.observer.Observable;
 
@@ -24,7 +25,7 @@ private File map = null;
 	@Before
 	public void setUp() throws Exception {
 		map = new File("testmap.lvl");
-		level = new Level(100, 12);
+		level = new Level(new LevelLoader(), 100, 12);
 		PlayerInterface player = new Player(0, 0, 100, 200);
 		landscape = new Landscape(player, level, 1200, 800);
 		landscape.loadLevel(map);
@@ -243,6 +244,15 @@ private File map = null;
 		assertEquals("Result", 0, landscape.getObserver().size());
 		landscape.addObserver(this);
 		assertEquals("Result", this, landscape.getObserver().get(0));
+	}
+	
+	@Test
+	public void testRemoveAnObserver() {
+		landscape.addObserver(this);
+		assertEquals("Result", this, landscape.getObserver().get(0));
+		int amount = landscape.getObserver().size();
+		landscape.removeAnObserver(this);
+		assertEquals("Result", amount-1, landscape.getObserver().size());
 	}
 	
 	@Test

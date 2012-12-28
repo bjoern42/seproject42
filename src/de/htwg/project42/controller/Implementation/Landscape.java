@@ -64,6 +64,14 @@ private Logger logger = Logger.getLogger("de.htwg.project42.view.TUI");
 	}
 	
 	/**
+	 * Removes an Observer
+	 */
+	@Override
+	public void removeAnObserver(Observable o){
+		removeObserver(o);
+	}
+	
+	/**
 	 * Loads a Level.
 	 */
 	@Override

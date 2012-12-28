@@ -5,6 +5,7 @@ import com.google.inject.name.Names;
 
 import de.htwg.project42.controller.LandscapeInterface;
 import de.htwg.project42.model.GameObjects.LevelInterface;
+import de.htwg.project42.model.GameObjects.LevelLoaderInterface;
 import de.htwg.project42.model.GameObjects.PlayerInterface;
 
 public class JumpNRunModule extends AbstractModule{
@@ -25,5 +26,6 @@ public static final int LANDSCAPE_SIZE_X = 1200, LANDSCAPE_SIZE_Y = 800, LANDSCA
 		bind(PlayerInterface.class).to(de.htwg.project42.model.GameObjects.Implementation.Player.class);
 		bind(LevelInterface.class).to(de.htwg.project42.model.GameObjects.Implementation.Level.class);
 		bind(LandscapeInterface.class).to(de.htwg.project42.controller.Implementation.Landscape.class);
+		bind(LevelLoaderInterface.class).to(de.htwg.project42.model.GameObjects.Implementation.LevelLoader.class);
 	}
 }

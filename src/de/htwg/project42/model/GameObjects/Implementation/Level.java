@@ -31,7 +31,7 @@ private List<EnemyInterface> enemies = new LinkedList<EnemyInterface>();
 private List<BlockInterface> crates = new LinkedList<BlockInterface>();
 private Map<Integer, ButtonInterface> buttons = new HashMap<Integer, ButtonInterface>();
 private Map<Integer, LinkedList<GateInterface>> gates = new HashMap<Integer, LinkedList<GateInterface>>();
-private LevelLoaderInterface loader = new LevelLoader();
+private LevelLoaderInterface loader = null;
 private int start, length, size, change = 0;
 
 	/**
@@ -40,7 +40,8 @@ private int start, length, size, change = 0;
 	 * @param pLength - Visible blocks
 	 */
 	@Inject
-	public Level(@Named("blockSize") int pSize, @Named("visibleBlockIndex") int pLength){
+	public Level(LevelLoaderInterface pLoader, @Named("blockSize") int pSize, @Named("visibleBlockIndex") int pLength){
+		loader = pLoader;
 		length = pLength+2;
 		size = pSize;
 	}

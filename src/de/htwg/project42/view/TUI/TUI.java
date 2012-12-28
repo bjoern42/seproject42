@@ -15,6 +15,7 @@ import de.htwg.project42.model.GameObjects.PlayerInterface;
 import de.htwg.project42.observer.Observable;
 
 import de.htwg.project42.model.GameObjects.Implementation.Level;
+import de.htwg.project42.model.GameObjects.Implementation.LevelLoader;
 import de.htwg.project42.model.GameObjects.Implementation.Player;
 import de.htwg.project42.controller.Implementation.Landscape;
 
@@ -42,7 +43,7 @@ private Logger logger = Logger.getLogger("de.htwg.project42.view.TUI");
 			
 			int size = LANDSCAPE_SIZE/LANDSCAPE_LENGTH;
 			PlayerInterface player = new Player((LANDSCAPE_SIZE-size)/2, 0, size, size*2);
-			LevelInterface level = new Level(size, LANDSCAPE_LENGTH-2);
+			LevelInterface level = new Level(new LevelLoader(),size, LANDSCAPE_LENGTH-2);
 			
 			landscape = new Landscape(player, level, LANDSCAPE_SIZE, LANDSCAPE_SIZE);
 			landscape.loadLevel(new File("mapTUI.lvl"));
@@ -51,7 +52,7 @@ private Logger logger = Logger.getLogger("de.htwg.project42.view.TUI");
 		}
 		landscape.addAnObserver(this);
 	}
-		
+	
 	/**
 	 * Testruns.
 	 */

@@ -27,6 +27,12 @@ public interface ObserverInterface {
 	void removeAllObserver();
 	
 	/**
+	 * Removes observable from observer
+	 * @param o - observable
+	 */
+	void removeObserver(Observable o);
+	
+	/**
 	 * Notifies all added observables.
 	 */
 	void notifyObserver();

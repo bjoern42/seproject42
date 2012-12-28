@@ -25,6 +25,7 @@ import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
 
 import de.htwg.project42.controller.LandscapeInterface;
+import de.htwg.project42.model.GameObjects.LevelLoaderInterface;
 
 /**
  * Main class for JumpNRun.
@@ -38,7 +39,6 @@ private EditorGUI egui = null;
 private JPanel pMenu, pButtons = new JPanel(),pList = new JPanel(),pCurrent;
 private JButton btStart = new JButton("Starten"), btEditor = new JButton("Level Editor");
 private JCheckBox cbTUI = new JCheckBox("Enable TUI output",false);
-
 private DefaultListModel<File> model = new DefaultListModel<File>();
 private JList<File> list = new JList<File>(model);
 private JScrollPane scroll = null;
@@ -52,12 +52,13 @@ private LandscapeInterface landscape = null;
 	 * @param pHeight - Height
 	 * @param pLength - Visible blocks
 	 */
-	public MainMenuGUI(LandscapeInterface pLandscape, int pWidth, int pHeight, int pLength){
+	public MainMenuGUI(LandscapeInterface pLandscape, LevelLoaderInterface loader, int pWidth, int pHeight, int pLength){
 		super("Jump and Run");
 		landscape = pLandscape;
 		width = pWidth;
 		height = pHeight;
 		length = pLength;
+
 		setResizable(false);
 		Insets insets = getInsets();
 		setSize(width+insets.left+insets.right, height+insets.bottom+insets.top);
@@ -69,7 +70,8 @@ private LandscapeInterface landscape = null;
 		Image img = Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("images/mainframe.png"));
 		pMenu = new ImgPanel(img);
 		
-		egui = new EditorGUI(this, width, height, length);
+		egui = new EditorGUI(this, loader, width, height, length);
+		gui = new GUI(this, landscape);
 		
 		pMenu.setLayout(new BorderLayout());
 		GridLayout layout = new GridLayout(ROWS, 1);
@@ -127,10 +129,8 @@ private LandscapeInterface landscape = null;
 	public void actionPerformed(ActionEvent arg0) {
 		if(arg0.getSource() == btStart){
 			if(landscape.loadLevel((File)list.getSelectedValue())){
-				gui = new GUI(this, landscape, cbTUI.isSelected());
-				
 				changePanel(gui);
-				gui.start();
+				gui.start(cbTUI.isSelected());
 			}else{
 				JOptionPane.showMessageDialog(this, "Selected map has failures!", "Error loading map", JOptionPane.ERROR_MESSAGE);
 			}

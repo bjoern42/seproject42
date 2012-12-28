@@ -6,13 +6,12 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 
 import de.htwg.project42.controller.LandscapeInterface;
+import de.htwg.project42.model.GameObjects.LevelLoaderInterface;
 import de.htwg.project42.view.GUI.MainMenuGUI;
 
 
 
 public class JumpNRun {
-private Injector injector = null;
-private LandscapeInterface landscape;
 
 	public static void main(String[] args) {
 		new JumpNRun();
@@ -23,11 +22,12 @@ private LandscapeInterface landscape;
 		PropertyConfigurator.configure("log4j.properties");
 		
 		// Set up Google Guice Dependency Injector
-		injector = Guice.createInjector(new JumpNRunModule());
+		Injector injector = Guice.createInjector(new JumpNRunModule());
 		
 		// Build up the application, resolving dependencies automatically by Guice
-		landscape  = injector.getInstance(LandscapeInterface.class);
+		LandscapeInterface landscape  = injector.getInstance(LandscapeInterface.class);
+		LevelLoaderInterface loader = injector.getInstance(LevelLoaderInterface.class);
 		
-		new MainMenuGUI(landscape, JumpNRunModule.LANDSCAPE_SIZE_X, JumpNRunModule.LANDSCAPE_SIZE_Y, JumpNRunModule.LANDSCAPE_LENGTH);
+		new MainMenuGUI(landscape, loader, JumpNRunModule.LANDSCAPE_SIZE_X, JumpNRunModule.LANDSCAPE_SIZE_Y, JumpNRunModule.LANDSCAPE_LENGTH);
 	}
 }

@@ -12,6 +12,8 @@ import java.io.OutputStreamWriter;
 
 import org.apache.log4j.Logger;
 
+import com.google.inject.Singleton;
+
 import de.htwg.project42.model.GameObjects.LevelLoaderInterface;
 
 /**
@@ -19,6 +21,7 @@ import de.htwg.project42.model.GameObjects.LevelLoaderInterface;
  * @author bjeschle,toofterd
  * @version 1.0
  */
+@Singleton
 public final class LevelLoader implements LevelLoaderInterface {
 private BufferedReader reader = null;
 private BufferedWriter writer = null;

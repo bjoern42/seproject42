@@ -25,6 +25,11 @@ private List<Observable> observables = new LinkedList<Observable>();
 	public void removeAllObserver() {
 		observables.clear();
 	}
+	
+	@Override
+	public void removeObserver(Observable o) {
+		observables.remove(o);
+	}
 
 	@Override
 	public void notifyObserver() {
