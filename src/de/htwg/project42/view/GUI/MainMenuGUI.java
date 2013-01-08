@@ -40,7 +40,8 @@ private JPanel pMenu, pButtons = new JPanel(),pList = new JPanel(),pCurrent;
 private JButton btStart = new JButton("Starten"), btEditor = new JButton("Level Editor");
 private JCheckBox cbTUI = new JCheckBox("Enable TUI output",false);
 private DefaultListModel<File> model = new DefaultListModel<File>();
-private JList<File> list = new JList<File>(model);
+@SuppressWarnings({ "rawtypes", "unchecked" })
+private JList list = new JList(model);
 private JScrollPane scroll = null;
 private int width, height, length;
 private static final int GAP = 5, FACTOR_1 = 3, FACTOR_2 = 5, RECT_BORDER = 20, RECT_BORDER_BOTTOM = 100, ROWS = 3;
