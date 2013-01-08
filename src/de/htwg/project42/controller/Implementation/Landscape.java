@@ -103,6 +103,7 @@ private Logger logger = Logger.getLogger("de.htwg.project42.view.TUI");
 				removeAllObserver();
 			}
 		}.start();
+		
 	}
 	
 	/**

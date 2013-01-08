@@ -41,14 +41,14 @@ import de.htwg.project42.model.GameObjects.LevelLoaderInterface;
  */
 @SuppressWarnings("serial")
 public class EditorGUI extends JPanel implements ActionListener, AdjustmentListener{
-private static final int INDEX_START = 100, OVAL_SIZE = 20, INDEX_X = 5, INDEX_Y = 15, STROKE_SIZE = 5;
+private static final int INDEX_START = 100, OVAL_SIZE = 20, INDEX_X = 5, INDEX_Y = 15, STROKE_SIZE = 5, SCROLLBAR_START_MAX = 3;
 private List<BlockButton[]> objects = new LinkedList<BlockButton[]>();
-private HashMap<Integer, BlockButton> blocks = new HashMap<Integer, BlockButton>();
+private Map<Integer, BlockButton> blocks = new HashMap<Integer, BlockButton>();
 private Image imgBackground = null;
 private JPanel pLandscape = new JPanel(), pBlocks = new JPanel(), pSelectableBlocks = new JPanel(), pSettings = new JPanel();
 private JLabel lbSelected = new JLabel();
 private JButton btSave, btLoad, btQuit, btAddRow;
-private JScrollBar scrollBar = new JScrollBar(JScrollBar.HORIZONTAL,1,1,1,3);
+private JScrollBar scrollBar = new JScrollBar(JScrollBar.HORIZONTAL,1,1,1,SCROLLBAR_START_MAX);
 private LevelLoaderInterface levelLoader = null;
 private MainMenuGUI main = null;
 private EditorGUI instance = null;
@@ -56,7 +56,7 @@ private JScrollPane scrollPane = new JScrollPane(pSelectableBlocks,JScrollPane.V
 private JFileChooser fileChooser = null;
 private int size, selected, columns, rows, start, globalIndex = -1, indexCounter = INDEX_START, xStart, yStart, xEnd, yEnd;
 
-	public EditorGUI(MainMenuGUI pMain, LevelLoaderInterface pLoader, int pWidth, int pHeight, int pLength){
+	public EditorGUI(MainMenuGUI pMain, LevelLoaderInterface pLoader, int pWidth, int pLength){
 		size = pWidth / pLength;
 		main = pMain;
 		instance = this;
@@ -166,7 +166,7 @@ private int size, selected, columns, rows, start, globalIndex = -1, indexCounter
 		columns = pLandscape.getWidth()/size+1;
 		start = 0;
 		scrollBar.setValue(1);
-		scrollBar.setMaximum(3);
+		scrollBar.setMaximum(SCROLLBAR_START_MAX);
 		objects.clear();
 		
 		pLandscape.setLayout(new GridLayout(rows, columns));
@@ -328,7 +328,7 @@ private int size, selected, columns, rows, start, globalIndex = -1, indexCounter
 	 * @version 1.0
 	 */
 	private class BlockButton extends JButton implements MouseListener{
-		int blockType, index;
+		private int blockType, index;
 		
 		public BlockButton(int pBlockType, boolean landscape){
 			super();

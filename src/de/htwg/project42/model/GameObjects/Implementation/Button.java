@@ -2,6 +2,7 @@ package de.htwg.project42.model.GameObjects.Implementation;
 
 
 import java.util.LinkedList;
+import java.util.List;
 
 import de.htwg.project42.model.GameObjects.ButtonInterface;
 import de.htwg.project42.model.GameObjects.GameObjectsInterface;
@@ -9,7 +10,7 @@ import de.htwg.project42.model.GameObjects.LevelInterface;
 import de.htwg.project42.model.GameObjects.Features.Switchable;
 
 public class Button extends Block implements ButtonInterface, Runnable {
-private LinkedList<Switchable> switchables = new LinkedList<Switchable>();
+private List<Switchable> switchables = new LinkedList<Switchable>();
 private GameObjectsInterface object = null;
 private LevelInterface level = null;
 private boolean pressed = false;

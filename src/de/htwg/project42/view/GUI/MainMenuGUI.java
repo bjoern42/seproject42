@@ -43,7 +43,6 @@ private DefaultListModel model = new DefaultListModel();
 
 private JList list = new JList(model);
 private JScrollPane scroll = null;
-private int width, height, length;
 private static final int GAP = 5, FACTOR_1 = 3, FACTOR_2 = 5, RECT_BORDER = 20, RECT_BORDER_BOTTOM = 100, ROWS = 3;
 private LandscapeInterface landscape = null;
 	
@@ -56,13 +55,10 @@ private LandscapeInterface landscape = null;
 	public MainMenuGUI(LandscapeInterface pLandscape, LevelLoaderInterface loader, int pWidth, int pHeight, int pLength){
 		super("Jump and Run");
 		landscape = pLandscape;
-		width = pWidth;
-		height = pHeight;
-		length = pLength;
 
 		setResizable(false);
 		Insets insets = getInsets();
-		setSize(width+insets.left+insets.right, height+insets.bottom+insets.top);
+		setSize(pWidth+insets.left+insets.right, pHeight+insets.bottom+insets.top);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		
 		btStart.addActionListener(this);
@@ -71,7 +67,7 @@ private LandscapeInterface landscape = null;
 		Image img = Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("images/mainframe.png"));
 		pMenu = new ImgPanel(img);
 		
-		egui = new EditorGUI(this, loader, width, height, length);
+		egui = new EditorGUI(this, loader, pWidth, pLength);
 		gui = new GUI(this, landscape);
 		
 		pMenu.setLayout(new BorderLayout());

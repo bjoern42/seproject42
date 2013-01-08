@@ -140,7 +140,7 @@ private boolean lock = false, goal = false;
 	public void reset() {
 		setX(startX);
 		setY(startY);
-		setHealth(3);
+		setHealth(STD_HEALTH);
 		setGoal(false);
 		setCoins(0);
 	}

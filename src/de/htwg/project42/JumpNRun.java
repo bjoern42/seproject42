@@ -11,7 +11,7 @@ import de.htwg.project42.view.GUI.MainMenuGUI;
 
 
 
-public class JumpNRun {
+public final class JumpNRun {
 
 	public static void main(String[] args) {
 		new JumpNRun();
