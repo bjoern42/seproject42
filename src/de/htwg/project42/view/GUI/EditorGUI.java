@@ -241,6 +241,7 @@ private int size, selected, columns, rows, start, globalIndex = -1, indexCounter
 				objects.add(buttons.toArray(new BlockButton[buttons.size()]));
 			}
 			scrollBar.setMaximum(objects.size()-columns);
+			scrollBar.setValue(scrollBar.getMaximum());
 			return true;
 		}
 		return false;
@@ -279,7 +280,7 @@ private int size, selected, columns, rows, start, globalIndex = -1, indexCounter
 			saveMap();
 		}else if(e.getSource() == btLoad){
 			if(loadMap()){
-				start = 0;	
+				start = 0;
 				loadLandscape(objects.subList(start, start+columns));
 			}
 		}else if(e.getSource() == btQuit){
