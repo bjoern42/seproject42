@@ -32,15 +32,15 @@ import de.htwg.project42.model.GameObjects.LevelLoaderInterface;
  * @author bjeschle,toofterd
  * @version 1.0
  */
-@SuppressWarnings("serial")
+@SuppressWarnings({ "serial", "rawtypes", "unchecked" })
 public class MainMenuGUI extends JFrame implements ActionListener{
 private GUI gui = null;
 private EditorGUI egui = null;
 private JPanel pMenu, pButtons = new JPanel(),pList = new JPanel(),pCurrent;
 private JButton btStart = new JButton("Starten"), btEditor = new JButton("Level Editor");
 private JCheckBox cbTUI = new JCheckBox("Enable TUI output",false);
-private DefaultListModel<File> model = new DefaultListModel<File>();
-@SuppressWarnings({ "rawtypes", "unchecked" })
+private DefaultListModel model = new DefaultListModel();
+
 private JList list = new JList(model);
 private JScrollPane scroll = null;
 private int width, height, length;
