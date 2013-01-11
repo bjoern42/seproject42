@@ -1,8 +1,8 @@
-## JumpNRun
+# JumpNRun
 
 This project is a basic **JumpNRun** game with a **level editor** programmed for the lecture **Software Engineering** at the University of Applied Science Konstanz, Germany.
 
-# It implements the following programming methods: 
+### It implements the following programming methods: 
 * test driven development with JUnit
 * layered architecture (view, controller, model)
 * software design patterns
