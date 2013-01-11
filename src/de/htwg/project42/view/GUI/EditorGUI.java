@@ -54,7 +54,7 @@ private MainMenuGUI main = null;
 private EditorGUI instance = null;
 private JScrollPane scrollPane = new JScrollPane(pSelectableBlocks,JScrollPane.VERTICAL_SCROLLBAR_NEVER,JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 private JFileChooser fileChooser = null;
-private int size, selected, columns, rows, start, globalIndex = -1, indexCounter = INDEX_START, xStart, yStart, xEnd, yEnd;
+private int size, selected, columns, rows, start, globalIndex = -1, indexCounter = INDEX_START, xStart, yStart, xEnd, yEnd, btWidth, btHeight;
 
 	public EditorGUI(MainMenuGUI pMain, LevelLoaderInterface pLoader, int pWidth, int pLength){
 		size = pWidth / pLength;
@@ -174,7 +174,8 @@ private int size, selected, columns, rows, start, globalIndex = -1, indexCounter
 			addEmptyRow();
 		}
 		loadLandscape(objects);
-
+		btWidth = objects.get(0)[0].getWidth();
+		btHeight = objects.get(0)[0].getHeight();
 		validate();
 	}
 	
@@ -225,11 +226,14 @@ private int size, selected, columns, rows, start, globalIndex = -1, indexCounter
 				LinkedList<BlockButton> buttons = new LinkedList<BlockButton>();
 				for(int i=0; i<buffer.length; i++){
 					buttons.add(new BlockButton(buffer[i],true));
-					if(buffer[i] != BlockInterface.TYP_AIR){
-						buttons.getLast().setIcon(blocks.get(buffer[i]).getIcon());
-					}
 					buttons.getLast().setPreferredSize(new Dimension(size, size));
 					buttons.getLast().addActionListener(this);
+					buttons.getLast().setContentAreaFilled(false);
+					buttons.getLast().setOpaque(false);
+					if(buffer[i] != BlockInterface.TYP_AIR){
+						ScaledImageIcon icon = new ScaledImageIcon((ImageIcon)blocks.get(buffer[i]).getIcon(), btWidth, btHeight);
+						buttons.getLast().setIcon(icon);
+					}
 					
 					if(buffer[i] == BlockInterface.TYP_BUTTON || buffer[i] == BlockInterface.TYP_GATE){
 						if(buffer[i] == BlockInterface.TYP_BUTTON && buffer[i+1] > indexCounter){

@@ -51,7 +51,6 @@ private TUI tui;
 	 */
 	public GUI(final MainMenuGUI pMain, LandscapeInterface pLandscape){		
 		landscape = pLandscape;
-		landscape.addAnObserver(this);
 		
 		player = landscape.getPlayer();
 		main = pMain;
@@ -88,6 +87,8 @@ private TUI tui;
 		if(pTUI){
 			tui = new TUI(landscape);
 		}
+		landscape.addAnObserver(this);
+		action = ACTION_NORMAL;
 		up = false;
 		right = false;
 		left = false;

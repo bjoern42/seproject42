@@ -9,7 +9,7 @@ import de.htwg.project42.model.GameObjects.LevelLoaderInterface;
 import de.htwg.project42.model.GameObjects.PlayerInterface;
 
 public class JumpNRunModule extends AbstractModule{
-public static final int LANDSCAPE_SIZE_X = 1200, LANDSCAPE_SIZE_Y = 800, LANDSCAPE_LENGTH = 12;
+public static final int LANDSCAPE_SIZE_X = 1200, LANDSCAPE_SIZE_Y = 800, LANDSCAPE_LENGTH = 15;
 
 	@Override
 	protected void configure() {

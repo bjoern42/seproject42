@@ -55,6 +55,7 @@ public class LevelLoaderTest {
 	public void testCloseStreams() {
 		File file = new File("output.lvl");
 		LevelLoader loader = new LevelLoader();
+		loader.closeStreams();
 		loader.setInputFile(file);
 		loader.closeStreams();
 		loader.setOutputFile(file);
