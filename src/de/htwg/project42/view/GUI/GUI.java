@@ -42,7 +42,6 @@ private Image imgGras, imgWater, imgGoal, imgCrate, imgButtonPressed, imgButtonR
 private int action = ACTION_NORMAL;
 private MainMenuGUI main = null;
 private GUI gui;
-private TUI tui;
 
 	/**
 	 * Creates GUI.
@@ -85,7 +84,7 @@ private TUI tui;
 	public void start(boolean pTUI){
 		getGraphics().drawImage(imgBackground,0,0, getWidth(), getHeight(),this);
 		if(pTUI){
-			tui = new TUI(landscape);
+			new TUI(landscape);
 		}
 		landscape.addAnObserver(this);
 		action = ACTION_NORMAL;

@@ -183,15 +183,15 @@ private int size, selected, columns, rows, start, globalIndex = -1, indexCounter
 	 * Adds an empty Row to the landscape.
 	 */
 	private void addEmptyRow(){
-		BlockButton[] blocks = new BlockButton[rows];
+		BlockButton buttonBlocks[] = new BlockButton[rows];
 		for(int j=0; j<rows; j++){
-			blocks[j] = new BlockButton(BlockInterface.TYP_AIR,true);
-			blocks[j].setPreferredSize(new Dimension(size, size));
-			blocks[j].addActionListener(this);
-			blocks[j].setContentAreaFilled(false);
-			blocks[j].setOpaque(false);
+			buttonBlocks[j] = new BlockButton(BlockInterface.TYP_AIR,true);
+			buttonBlocks[j].setPreferredSize(new Dimension(size, size));
+			buttonBlocks[j].addActionListener(this);
+			buttonBlocks[j].setContentAreaFilled(false);
+			buttonBlocks[j].setOpaque(false);
 		}
-		objects.add(blocks);
+		objects.add(buttonBlocks);
 	}
 	
 	/**
