@@ -60,9 +60,13 @@ private Logger logger = Logger.getLogger("de.htwg.project42.view.TUI");
 		int size = LANDSCAPE_SIZE/LANDSCAPE_LENGTH;
 		landscape.start();
 		
-		while(landscape.getPlayer().getY() != size){}
+		while(landscape.getPlayer().getY() != size){
+			landscape.getPlayer().pause(WALK_CYCLES);
+		}
 		landscape.jump();
-		while(landscape.getPlayer().getY() != size){}
+		while(landscape.getPlayer().getY() != size){
+			landscape.getPlayer().pause(WALK_CYCLES);
+		}
 		
 		for(int i=0;i<WALK_CYCLES;i++){
 			landscape.right();

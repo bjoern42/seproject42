@@ -115,7 +115,6 @@ private TUI tui;
 				}else if(player.getHealth() == 0){
 					JOptionPane.showMessageDialog(gui, "Player died!", "Game over!", JOptionPane.OK_OPTION);
 				}
-				landscape.removeAnObserver(tui);
 				main.reset();
 			}
 		}.start();
