@@ -265,12 +265,12 @@ private int size, selected, columns, rows, start, globalIndex = -1, indexCounter
 		}
 		levelLoader.setOutputFile(file);
 		for(int i=0; i<objects.size(); i++){
-			BlockButton blocks[] = objects.get(i);
+			BlockButton buttonBlocks[] = objects.get(i);
 			LinkedList<Integer> line = new LinkedList<Integer>();
-			for(int j=0; j<blocks.length; j++){
-				line.add(blocks[j].getType());
-				if(blocks[j].getIndex() != -1){
-					line.add(blocks[j].getIndex());
+			for(int j=0; j<buttonBlocks.length; j++){
+				line.add(buttonBlocks[j].getType());
+				if(buttonBlocks[j].getIndex() != -1){
+					line.add(buttonBlocks[j].getIndex());
 				}
 			}
 			levelLoader.writeNext(line.toArray(new Integer[line.size()]));
