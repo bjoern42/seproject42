@@ -127,7 +127,7 @@ private LandscapeInterface landscape = null;
 		if(arg0.getSource() == btStart){
 			if(landscape.loadLevel((File)list.getSelectedValue())){
 				changePanel(gui);
-				gui.start(cbTUI.isSelected());
+				gui.startGame(cbTUI.isSelected());
 			}else{
 				JOptionPane.showMessageDialog(this, "Selected map has failures!", "Error loading map", JOptionPane.ERROR_MESSAGE);
 			}

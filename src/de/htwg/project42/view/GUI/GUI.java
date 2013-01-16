@@ -12,6 +12,8 @@ import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
+import ch.aplu.xboxcontroller.*;
+
 
 import de.htwg.project42.controller.LandscapeInterface;
 import de.htwg.project42.model.GameObjects.BlockInterface;
@@ -28,7 +30,7 @@ import de.htwg.project42.view.TUI.TUI;
  * @version 1.0
  */
 @SuppressWarnings("serial")
-public final class GUI extends JPanel implements KeyListener, Observable{
+public final class GUI extends JPanel implements KeyListener, XboxControllerListener, Observable{
 private static final int ACTION_RIGHT = 0, ACTION_LEFT = 1, ACTION_NORMAL = 2, ACTION_JUMP = 3, PAUSE_LONG = 100, PAUSE_SHORT = 20, HEALTH_SIZE = 30, COIN_SIZE = 50, COIN_STRING_POS =35, GAP = 10, FONT_SIZE = 15;
 private List<BlockInterface[]> objects = new LinkedList<BlockInterface[]>();
 private LandscapeInterface landscape = null;
@@ -42,6 +44,8 @@ private Image imgGras, imgWater, imgGoal, imgCrate, imgButtonPressed, imgButtonR
 private int action = ACTION_NORMAL;
 private MainMenuGUI main = null;
 private GUI gui;
+private XboxController xc;
+private final double deadZone = 0.4;
 
 	/**
 	 * Creates GUI.
@@ -54,6 +58,8 @@ private GUI gui;
 		player = landscape.getPlayer();
 		main = pMain;
 		gui = this;
+		xc = new XboxController();
+		xc.setLeftThumbDeadZone(deadZone);
 		
 		imgBackground = Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("images/background.png"));
 		imgGras = Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("images/gras.jpg"));
@@ -75,13 +81,16 @@ private GUI gui;
 		imgGateOpened = Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("images/gateOpened.png"));
 		
 		addKeyListener(this);
+		if(xc.isConnected()){
+			xc.addXboxControllerListener(this);
+		}
 	}
 
 	/**
 	 * Starts Game.
 	 * @param pTUI - runs parallel TUI if true
 	 */
-	public void start(boolean pTUI){
+	public void startGame(boolean pTUI){
 		getGraphics().drawImage(imgBackground,0,0, getWidth(), getHeight(),this);
 		if(pTUI){
 			new TUI(landscape);
@@ -306,4 +315,56 @@ private GUI gui;
 
 	@Override
 	public void keyTyped(KeyEvent arg0) {}
+
+	@Override
+	public void start(boolean arg0) {
+		player.setHealth(0);
+	}
+	
+	@Override
+	public void buttonA(boolean arg0) {
+		up = arg0;
+	}
+
+	@Override
+	public void leftThumbDirection(double arg0) {
+		if(arg0 < 180){
+			right = true;
+			left = false;
+		}else{
+			left = true;
+			right = false;
+		}
+	}
+
+	@Override
+	public void leftThumbMagnitude(double arg0) {}
+	@Override
+	public void isConnected(boolean arg0) {}
+	@Override
+	public void leftShoulder(boolean arg0) {}
+	@Override
+	public void leftThumb(boolean arg0) {}
+	@Override
+	public void buttonB(boolean arg0) {}
+	@Override
+	public void buttonX(boolean arg0) {}
+	@Override
+	public void buttonY(boolean arg0) {}
+	@Override
+	public void dpad(int arg0, boolean arg1) {}
+	@Override
+	public void leftTrigger(double arg0) {}
+	@Override
+	public void rightShoulder(boolean arg0) {}
+	@Override
+	public void rightThumb(boolean arg0) {}
+	@Override
+	public void rightThumbDirection(double arg0) {}
+	@Override
+	public void rightThumbMagnitude(double arg0) {}
+	@Override
+	public void rightTrigger(double arg0) {}
+	@Override
+	public void back(boolean arg0) {}
 }
