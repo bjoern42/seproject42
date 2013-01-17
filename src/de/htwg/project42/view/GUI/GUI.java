@@ -31,7 +31,8 @@ import de.htwg.project42.view.TUI.TUI;
  */
 @SuppressWarnings("serial")
 public final class GUI extends JPanel implements KeyListener, XboxControllerListener, Observable{
-private static final int ACTION_RIGHT = 0, ACTION_LEFT = 1, ACTION_NORMAL = 2, ACTION_JUMP = 3, PAUSE_LONG = 100, PAUSE_SHORT = 20, HEALTH_SIZE = 30, COIN_SIZE = 50, COIN_STRING_POS =35, GAP = 10, FONT_SIZE = 15;
+private static final int ACTION_RIGHT = 0, ACTION_LEFT = 1, ACTION_NORMAL = 2, ACTION_JUMP = 3, PAUSE_LONG = 100, PAUSE_SHORT = 20, HEALTH_SIZE = 30, COIN_SIZE = 50, COIN_STRING_POS =35, GAP = 10, FONT_SIZE = 15, MAX_DEGREE = 360;
+private final double DEAD_ZONE = 0.6;
 private List<BlockInterface[]> objects = new LinkedList<BlockInterface[]>();
 private LandscapeInterface landscape = null;
 private PlayerInterface player = null;
@@ -44,8 +45,7 @@ private Image imgGras, imgWater, imgGoal, imgCrate, imgButtonPressed, imgButtonR
 private int action = ACTION_NORMAL;
 private MainMenuGUI main = null;
 private GUI gui;
-private XboxController xc;
-private final double deadZone = 0.4;
+private double magnitude;
 
 	/**
 	 * Creates GUI.
@@ -58,8 +58,6 @@ private final double deadZone = 0.4;
 		player = landscape.getPlayer();
 		main = pMain;
 		gui = this;
-		xc = new XboxController();
-		xc.setLeftThumbDeadZone(deadZone);
 		
 		imgBackground = Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("images/background.png"));
 		imgGras = Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("images/gras.jpg"));
@@ -81,9 +79,6 @@ private final double deadZone = 0.4;
 		imgGateOpened = Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("images/gateOpened.png"));
 		
 		addKeyListener(this);
-		if(xc.isConnected()){
-			xc.addXboxControllerListener(this);
-		}
 	}
 
 	/**
@@ -324,21 +319,33 @@ private final double deadZone = 0.4;
 	@Override
 	public void buttonA(boolean arg0) {
 		up = arg0;
-	}
-
-	@Override
-	public void leftThumbDirection(double arg0) {
-		if(arg0 < 180){
-			right = true;
-			left = false;
-		}else{
-			left = true;
-			right = false;
+		if(!up){
+			action = ACTION_NORMAL;
 		}
 	}
 
 	@Override
-	public void leftThumbMagnitude(double arg0) {}
+	public void leftThumbDirection(double arg0) {
+		if(magnitude > DEAD_ZONE){
+			if(arg0  < MAX_DEGREE/2){
+				right = true;
+				left = false;
+			}else{
+				left = true;
+				right = false;
+			}
+		}else{
+			action = ACTION_NORMAL;
+			right = false;
+			left = false;
+		}
+	}
+
+	@Override
+	public void leftThumbMagnitude(double arg0) {
+		magnitude = arg0;
+	}
+	
 	@Override
 	public void isConnected(boolean arg0) {}
 	@Override

@@ -10,6 +10,8 @@ import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.FilenameFilter;
 
@@ -23,6 +25,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
+
+import ch.aplu.xboxcontroller.XboxController;
 
 import de.htwg.project42.controller.LandscapeInterface;
 import de.htwg.project42.model.GameObjects.LevelLoaderInterface;
@@ -40,12 +44,12 @@ private JPanel pMenu, pButtons = new JPanel(),pList = new JPanel(),pCurrent;
 private JButton btStart = new JButton("Starten"), btEditor = new JButton("Level Editor");
 private JCheckBox cbTUI = new JCheckBox("Enable TUI output",false);
 private DefaultListModel model = new DefaultListModel();
-
 private JList list = new JList(model);
 private JScrollPane scroll = null;
 private static final int GAP = 5, FACTOR_1 = 3, FACTOR_2 = 5, RECT_BORDER = 20, RECT_BORDER_BOTTOM = 100, ROWS = 3;
 private LandscapeInterface landscape = null;
-	
+private XboxController xc;
+
 	/**
 	 * Initialises main screen.
 	 * @param pWidth - Width
@@ -59,7 +63,13 @@ private LandscapeInterface landscape = null;
 		setResizable(false);
 		Insets insets = getInsets();
 		setSize(pWidth+insets.left+insets.right, pHeight+insets.bottom+insets.top);
-		setDefaultCloseOperation(EXIT_ON_CLOSE);
+		addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosing(WindowEvent e){
+				xc.release();
+				System.exit(0);
+			}
+		});
 		
 		btStart.addActionListener(this);
 		btEditor.addActionListener(this);
@@ -69,6 +79,11 @@ private LandscapeInterface landscape = null;
 		
 		egui = new EditorGUI(this, loader, pWidth, pLength);
 		gui = new GUI(this, landscape);
+		xc = new XboxController();
+		
+		if(xc.isConnected()){
+			xc.addXboxControllerListener(gui);
+		}
 		
 		pMenu.setLayout(new BorderLayout());
 		GridLayout layout = new GridLayout(ROWS, 1);
