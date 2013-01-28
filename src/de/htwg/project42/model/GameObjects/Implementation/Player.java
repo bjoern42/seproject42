@@ -14,7 +14,7 @@ import de.htwg.project42.model.GameObjects.PlayerInterface;
  */
 @Singleton
 public final class Player extends GameObject implements PlayerInterface{
-private int health = STD_HEALTH, coins = STD_COINS, startX, startY;
+private int health = STD_HEALTH, coins = STD_COINS, startX, startY, lastDirection = 1;
 private boolean lock = false, goal = false;
 
 	/**
@@ -143,5 +143,15 @@ private boolean lock = false, goal = false;
 		setHealth(STD_HEALTH);
 		setGoal(false);
 		setCoins(0);
+	}
+
+	@Override
+	public int getLastDirection() {
+		return lastDirection;
+	}
+
+	@Override
+	public void setLastDirection(int pDirection) {
+		lastDirection = pDirection;
 	}
 }

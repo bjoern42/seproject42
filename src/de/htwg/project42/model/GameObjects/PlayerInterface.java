@@ -15,6 +15,8 @@ public interface PlayerInterface extends GameObjectsInterface{
 	void hit();
 	void increaseCoins();
 	int getCoins();
+	int getLastDirection();
+	void setLastDirection(int pDirection);
 	int getCoinsForLife();
 	void setCoins(int coinsForLife);
 	void reset();

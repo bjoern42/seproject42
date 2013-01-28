@@ -14,12 +14,15 @@ import com.sun.corba.se.impl.orbutil.concurrent.Mutex;
 
 import de.htwg.project42.controller.LandscapeInterface;
 import de.htwg.project42.model.GameObjects.BlockInterface;
+import de.htwg.project42.model.GameObjects.BulletInterface;
 import de.htwg.project42.model.GameObjects.ButtonInterface;
 import de.htwg.project42.model.GameObjects.EnemyInterface;
 import de.htwg.project42.model.GameObjects.GameObjectsInterface;
 import de.htwg.project42.model.GameObjects.GateInterface;
 import de.htwg.project42.model.GameObjects.LevelInterface;
 import de.htwg.project42.model.GameObjects.PlayerInterface;
+import de.htwg.project42.model.GameObjects.Implementation.Bullet;
+import de.htwg.project42.model.GameObjects.Implementation.Enemy;
 import de.htwg.project42.observer.Observable;
 import de.htwg.project42.observer.Observer;
 
@@ -34,6 +37,7 @@ private double enemyJumpChances = STANDARD_ENEMY_JUMP_CHANCES;
 private int width, height;
 private PlayerInterface player = null;
 private List<EnemyInterface> enemies = null;
+private List<BulletInterface> bullets = null;
 private List<BlockInterface> crates = null;
 private List<BlockInterface[]> objects = null;
 private LevelInterface level = null;
@@ -83,6 +87,7 @@ private Logger logger = Logger.getLogger("de.htwg.project42.view.TUI");
 		objects = level.getBlocks();
 		enemies = level.getEnemies();
 		crates = level.getCrates();
+		bullets = level.getBullets();
 		return true;
 	}
 	
@@ -97,6 +102,7 @@ private Logger logger = Logger.getLogger("de.htwg.project42.view.TUI");
 					player.pause(RUN_PAUSE);
 					gravity();
 					handleEnemies();
+					handleBullets();
 					notifyObserver();
 				}
 				level.releaseButtons();
@@ -164,6 +170,7 @@ private Logger logger = Logger.getLogger("de.htwg.project42.view.TUI");
 			}
 		}
 	}
+	
 	
 	/**
 	 * Increases Y-Position and decreases it afterwards till its on the ground again.
@@ -256,7 +263,11 @@ private Logger logger = Logger.getLogger("de.htwg.project42.view.TUI");
 					e.kill();
 				}
 			}
-			
+			for(BulletInterface b:bullets){
+				if(b.isInArea(pX, pY, pWidth, pHeight)){
+					b.remove();
+				}
+			}
 			for(Entry<Integer, ButtonInterface> b:level.getButtons()){
 				if(b.getValue().isInArea(pX, pY, pWidth, pHeight-b.getValue().getHeight())){
 					b.getValue().press(object);
@@ -353,6 +364,7 @@ private Logger logger = Logger.getLogger("de.htwg.project42.view.TUI");
 			mutex.acquire();
 			if(isMovableArea(player.getX() + SPEED, player.getY(), player.getWidth(), player.getHeight(),LevelInterface.PLAYER_MOVING, player)){
 				level.update(-SPEED);
+				player.setLastDirection(1);
 				notifyObserver();
 			}
 		} catch (InterruptedException e) {
@@ -372,6 +384,7 @@ private Logger logger = Logger.getLogger("de.htwg.project42.view.TUI");
 			mutex.acquire();
 			if(isMovableArea(player.getX() - SPEED, player.getY(), player.getWidth(), player.getHeight(),LevelInterface.PLAYER_MOVING, player)){
 				level.update(SPEED);
+				player.setLastDirection(-1);
 				notifyObserver();
 			}
 		} catch (InterruptedException e) {
@@ -455,5 +468,27 @@ private Logger logger = Logger.getLogger("de.htwg.project42.view.TUI");
 	 */
 	public int getWidth(){
 		return width;
+	}
+
+	@Override
+	public void shoot() {
+		level.addBullet(new Bullet(player.getX(), player.getY()+50, 15, player.getLastDirection()));
+	}
+	
+	public void handleBullets(){
+		if(bullets == null){
+			System.out.println("no bullets there\n");
+			return;
+			}else
+		for(BulletInterface b:bullets){
+			if(b.isGone()){
+				level.removeBullet(b);}
+			b.move(b.getSpeed()*b.getDirection(), 0);
+			}
+		}
+
+	@Override
+	public List<BulletInterface> getBullets() {
+		return bullets;
 	}
 }

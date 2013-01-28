@@ -17,8 +17,11 @@ public interface LevelInterface {
 	boolean isInFrame(int x);
 	void update(int speed2);
 	List<EnemyInterface> getEnemies();
+	List<BulletInterface> getBullets();
 	void addEnemy(EnemyInterface enemy);
 	void addCrate(BlockInterface crate);
+	void addBullet(BulletInterface bullet);
+	void removeBullet(BulletInterface bullet);
 	void removeFirst();
 	int getStart();
 	void setStart(int i);

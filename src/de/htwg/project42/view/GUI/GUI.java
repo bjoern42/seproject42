@@ -17,6 +17,7 @@ import ch.aplu.xboxcontroller.*;
 
 import de.htwg.project42.controller.LandscapeInterface;
 import de.htwg.project42.model.GameObjects.BlockInterface;
+import de.htwg.project42.model.GameObjects.BulletInterface;
 import de.htwg.project42.model.GameObjects.ButtonInterface;
 import de.htwg.project42.model.GameObjects.EnemyInterface;
 import de.htwg.project42.model.GameObjects.GateInterface;
@@ -31,17 +32,17 @@ import de.htwg.project42.view.TUI.TUI;
  */
 @SuppressWarnings("serial")
 public final class GUI extends JPanel implements KeyListener, XboxControllerListener, Observable{
-private static final int ACTION_RIGHT = 0, ACTION_LEFT = 1, ACTION_NORMAL = 2, ACTION_JUMP = 3, PAUSE_LONG = 100, PAUSE_SHORT = 20, HEALTH_SIZE = 30, COIN_SIZE = 50, COIN_STRING_POS =35, GAP = 10, FONT_SIZE = 15, MAX_DEGREE = 360;
+private static final int ACTION_RIGHT = 0, ACTION_LEFT = 1, ACTION_NORMAL = 2, ACTION_JUMP = 3, ACTION_SHOOT = 4, PAUSE_LONG = 100, PAUSE_SHORT = 20, HEALTH_SIZE = 30, COIN_SIZE = 50, COIN_STRING_POS =35, GAP = 10, FONT_SIZE = 15, MAX_DEGREE = 360;
 private final double DEAD_ZONE = 0.6;
 private List<BlockInterface[]> objects = new LinkedList<BlockInterface[]>();
 private LandscapeInterface landscape = null;
 private PlayerInterface player = null;
-private boolean up = false, right = false, left = false;
+private boolean up = false, right = false, left = false, shoot = false;
 private Image buffer = null;
 private Image imgPlayerNormal, imgPlayerJump, imgPlayerRight, imgPlayerLeft;
 private Image imgBackground ,imgHealth, imgCoin, imgCoinCount;
 private Image imgEnemie,imgEnemieDead;
-private Image imgGras, imgWater, imgGoal, imgCrate, imgButtonPressed, imgButtonReleased,imgGateClosed, imgGateOpened;
+private Image imgGras, imgWater, imgGoal, imgCrate, imgButtonPressed, imgButtonReleased,imgGateClosed, imgGateOpened, imgBullet;
 private int action = ACTION_NORMAL;
 private MainMenuGUI main = null;
 private GUI gui;
@@ -77,6 +78,7 @@ private double magnitude;
 		imgButtonReleased = Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("images/buttonReleased.png"));
 		imgGateClosed = Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("images/gateClosed.png"));
 		imgGateOpened = Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("images/gateOpened.png"));
+		imgBullet = Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("images/bullet.png"));
 		
 		addKeyListener(this);
 	}
@@ -95,6 +97,7 @@ private double magnitude;
 		up = false;
 		right = false;
 		left = false;
+		shoot = false;
 		player.pause(PAUSE_LONG);
 		requestFocus();
 		landscape.start();
@@ -111,7 +114,11 @@ private double magnitude;
 					}if(left){
 						action = ACTION_LEFT;
 						landscape.left();
+					}if(shoot){
+						action = ACTION_SHOOT;
+						landscape.shoot();
 					}
+					
 				}
 				if(player.isInGoal()){
 					JOptionPane.showMessageDialog(gui, "You won!", "Congratulations!", JOptionPane.INFORMATION_MESSAGE);
@@ -145,9 +152,11 @@ private double magnitude;
 		paintCrates(bufG);
 		paintPlayer(bufG);
 		paintOverlay(bufG);
+		paintBullets(bufG);
 		
 		g.drawImage(buffer,0,0,this);
 	}
+
 
 	/**
 	 * Draws the landscape.
@@ -207,6 +216,15 @@ private double magnitude;
 			}
 		}
 	}
+	
+	private void paintBullets(Graphics g){
+		if(landscape.getBullets() == null){return;}
+		for(BulletInterface b:landscape.getBullets()){
+				g.drawImage(imgBullet, b.getX(), b.getY(), b.getWidth(), b.getHeight(), this);
+		}
+	}
+	
+	
 	
 	
 	private void paintCrates(Graphics g){
@@ -279,6 +297,11 @@ private double magnitude;
 				right = true;
 				break;
 			}
+			case KeyEvent.VK_SPACE:{
+				setShoot(true);
+				System.out.println("shootin");
+				break;
+			}
 			case KeyEvent.VK_ESCAPE:{
 				player.setHealth(0);
 			}
@@ -301,6 +324,11 @@ private double magnitude;
 			}
 			case KeyEvent.VK_RIGHT:{
 				right = false;
+				break;
+			}
+			
+			case KeyEvent.VK_SPACE:{
+				setShoot(false);
 				break;
 			}
 		}
@@ -374,4 +402,12 @@ private double magnitude;
 	public void rightTrigger(double arg0) {}
 	@Override
 	public void back(boolean arg0) {}
+
+	public boolean isShooting() {
+		return shoot;
+	}
+
+	public void setShoot(boolean shoot) {
+		this.shoot = shoot;
+	}
 }

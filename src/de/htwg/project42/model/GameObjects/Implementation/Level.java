@@ -13,6 +13,7 @@ import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 
 import de.htwg.project42.model.GameObjects.BlockInterface;
+import de.htwg.project42.model.GameObjects.BulletInterface;
 import de.htwg.project42.model.GameObjects.ButtonInterface;
 import de.htwg.project42.model.GameObjects.EnemyInterface;
 import de.htwg.project42.model.GameObjects.GateInterface;
@@ -29,6 +30,7 @@ public final class Level implements LevelInterface {
 private List<BlockInterface[]> objects = new LinkedList<BlockInterface[]>();
 private List<EnemyInterface> enemies = new LinkedList<EnemyInterface>();
 private List<BlockInterface> crates = new LinkedList<BlockInterface>();
+private List<BulletInterface> bullets = new LinkedList<BulletInterface>();
 private Map<Integer, ButtonInterface> buttons = new HashMap<Integer, ButtonInterface>();
 private Map<Integer, LinkedList<GateInterface>> gates = new HashMap<Integer, LinkedList<GateInterface>>();
 private LevelLoaderInterface loader = null;
@@ -56,6 +58,7 @@ private int start, length, size, change = 0;
 		enemies.clear();
 		crates.clear();
 		objects.clear();
+		bullets.clear();
 		int blockType[] = null;
 		int i = 0;
 		loader.setInputFile(map);
@@ -176,6 +179,10 @@ private int start, length, size, change = 0;
 		for(BlockInterface c:crates){
 			c.update(pChange);
 		}
+		for(BulletInterface b:bullets){
+			b.update(pChange);
+		}
+		
 		change += pChange*-1;
 	}
 	
@@ -201,6 +208,18 @@ private int start, length, size, change = 0;
 	 */
 	public void addCrate(BlockInterface block){
 		crates.add(block);
+	}
+	
+	@Override
+	public void addBullet(BulletInterface pBullet) {
+		bullets.add(pBullet);
+		
+	}
+
+	@Override
+	public void removeBullet(BulletInterface pBullet) {
+		bullets.remove(pBullet);
+		
 	}
 	
 	/**
@@ -285,4 +304,10 @@ private int start, length, size, change = 0;
 	public int getBlockSize(){
 		return size;
 	}
+
+	@Override
+	public List<BulletInterface> getBullets() {
+		return bullets;
+	}
+
 }
